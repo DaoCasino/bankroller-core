@@ -5,10 +5,12 @@
 This is the core code that powers the [Bankroller desktop application](https://github.com/DaoCasino/BankRollerApp) and the the bankroller command line tool.
 
 ## Install
+bankroller-core is written in Javascript. Make sure you have Node.js (>= v9.5) installed, and your environment is capable of installing and compiling npm modules.
+
+macOS Make sure you have the XCode Command Line Tools installed. These are needed in general to be able to compile most C based languages on your machine, as well as many npm modules.
 ```
 npm i -S DaoCasino/bankroller-core
 ```
-Requirements: nodejs >= 9.5, npm >5
 
 
 ## Contribute
