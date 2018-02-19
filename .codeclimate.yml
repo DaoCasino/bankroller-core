@@ -1,4 +1,5 @@
-engines:
+version: 2
+plugins:
   eslint:
     enabled: true
   fixme:
@@ -11,11 +12,7 @@ engines:
   git-legal:
     enabled: true
 
-ratings:
-  paths:
-  - "src/**.js"
-
-exclude_paths:
+exclude_patterns:
   - "public/tests/**"
   - "scripts/**"
   - "manual/**"
