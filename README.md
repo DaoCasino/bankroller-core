@@ -1,4 +1,4 @@
-[![npm_version](https://img.shields.io/npm/v/npm.svg)](https://www.npmjs.com/get-npm)[![nodejs version](https://img.shields.io/badge/nodejs-%3E=9.5-green.svg)](https://nodejs.org/en/download/current/)[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![npm_version](https://img.shields.io/npm/v/npm.svg)](https://www.npmjs.com/get-npm) [![nodejs version](https://img.shields.io/badge/nodejs-%3E=9.5-green.svg)](https://nodejs.org/en/download/current/) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 # Bankroller Core
 
