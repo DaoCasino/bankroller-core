@@ -1,0 +1,28 @@
+{
+  "name": "bankroller-core",
+  "version": "1.0.0",
+  "description": "Core bankroller functionality",
+  "main": "server.js",
+  "scripts": {
+    "postinstall" : "cd packages/dc-messaging/ && npm i",
+    "start"       : "npm run develop",
+    "develop"     : "nodemon --watch ./ --exec babel-node ./server.js",
+    "run"         : "babel-node server.js",
+    "test"        : "exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "big-integer": "^1.6.26",
+    "nedb": "^1.8.0",
+    "node-fetch": "^2.0.0",
+    "web3": "^1.0.0-beta.30"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-module-resolver": "^3.1.0",
+    "babel-preset-env": "^1.6.1",
+    "nodemon": "^1.15.0"
+  }
+}
