@@ -1,4 +1,4 @@
-[![npm_version](https://img.shields.io/npm/v/npm.svg)](https://www.npmjs.com/get-npm) [![nodejs version](https://img.shields.io/badge/nodejs-%3E=9.5-green.svg)](https://nodejs.org/en/download/current/) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![Maintainability](https://api.codeclimate.com/v1/badges/d48797878570cbc411ac/maintainability)](https://codeclimate.com/github/DaoCasino/bankroller-core/maintainability) [![npm_version](https://img.shields.io/npm/v/npm.svg)](https://www.npmjs.com/get-npm) [![nodejs version](https://img.shields.io/badge/nodejs-%3E=9.5-green.svg)](https://nodejs.org/en/download/current/) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 # Bankroller Core
 
