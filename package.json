@@ -4,11 +4,11 @@
   "description": "Core bankroller functionality",
   "main": "server.js",
   "scripts": {
-    "preinstall"  : "cd packages/dc-messaging/ && npm i",
-    "start"       : "npm run develop",
-    "develop"     : "nodemon --watch ./ --exec babel-node ./server.js",
-    "run"         : "babel-node server.js",
-    "test"        : "exit 1"
+    "preinstall": "cd packages/dc-messaging/ && npm i",
+    "start": "npm run develop",
+    "develop": "nodemon --watch ./ --exec babel-node ./server.js",
+    "run": "babel-node server.js",
+    "test": "exit 1"
   },
   "keywords": [],
   "author": "",
