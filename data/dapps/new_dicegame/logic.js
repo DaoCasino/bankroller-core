@@ -1,5 +1,5 @@
 /* global DCLib */
-DCLib.defineDAppLogic('new_dicegame', function () {
+DCLib.defineDAppLogic('new_dicegame_v1', function () {
 	const _self = this
 
 	const MAX_RAND_NUM = 65535
