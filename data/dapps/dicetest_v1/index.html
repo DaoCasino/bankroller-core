@@ -87,7 +87,7 @@
 			}
 
 			function endGame(){
-				MyDApp.disconnect({}, function(res){
+				MyDApp.disconnect({session:0}, function(res){
 					console.log('disconnect result', res)
 				})
 			}
