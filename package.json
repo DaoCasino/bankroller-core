@@ -4,7 +4,6 @@
   "description": "Core bankroller functionality",
   "main": "server.js",
   "scripts": {
-    "preinstall": "cd packages/dc-messaging/ && npm i",
     "start": "npm run develop",
     "develop": "nodemon --watch ./ --exec babel-node ./server.js",
     "run": "babel-node server.js",
@@ -15,6 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "big-integer": "^1.6.26",
+    "dc-messaging": "git+ssh://git@github.com/DaoCasino/dc-messaging.git",
     "nedb": "^1.8.0",
     "node-fetch": "^2.0.0",
     "web3": "^1.0.0-beta.30"
