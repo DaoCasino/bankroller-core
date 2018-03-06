@@ -14,7 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "big-integer": "^1.6.26",
-    "dc-messaging": "git+ssh://git@github.com/DaoCasino/dc-messaging.git",
+    "dc-messaging": "DaoCasino/dc-messaging",
     "js-cryptico": "^1.0.2",
     "nedb": "^1.8.0",
     "node-fetch": "^2.0.0",
