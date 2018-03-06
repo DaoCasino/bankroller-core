@@ -4,7 +4,6 @@
   "description": "Core bankroller functionality",
   "main": "server.js",
   "scripts": {
-    "preinstall": "cd packages/dc-messaging/ && yarn",
     "start": "npm run develop",
     "develop": "nodemon --watch ./ --exec babel-node ./server.js",
     "run": "babel-node server.js",
@@ -15,6 +14,8 @@
   "license": "ISC",
   "dependencies": {
     "big-integer": "^1.6.26",
+    "dc-messaging": "DaoCasino/dc-messaging",
+    "js-cryptico": "^1.0.2",
     "nedb": "^1.8.0",
     "node-fetch": "^2.0.0",
     "web3": "^1.0.0-beta.30"
@@ -23,6 +24,7 @@
     "babel-cli": "^6.26.0",
     "babel-plugin-module-resolver": "^3.1.0",
     "babel-preset-env": "^1.6.1",
+    "debug": "^3.1.0",
     "nodemon": "^1.15.0"
   }
 }
