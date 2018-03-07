@@ -4,10 +4,10 @@
   "description": "Core bankroller functionality",
   "main": "server.js",
   "scripts": {
-    "start": "npm run develop",
+    "start": "DC_NETWORK=local npm run develop",
     "develop": "nodemon --watch ./ --exec babel-node ./server.js",
     "run": "babel-node server.js",
-    "test": "exit 1"
+    "test": "DC_NETWORK=local babel-node ./test/checks.js"
   },
   "keywords": [],
   "author": "",
