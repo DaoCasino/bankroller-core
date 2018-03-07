@@ -14,11 +14,10 @@ if (!fs.existsSync(filpath)) {
 
 const conf = require(filpath)
 
-
-// {
-// 	address:
-// 	abi:
-// }
+const ERC20 = {
+	address: conf.ERC20,
+	abi: require( path.resolve('../protocol/build/contracts/ERC20.json') ).abi
+}
 
 module.exports = {
   upd     : '07.03.2018',
@@ -26,8 +25,8 @@ module.exports = {
   rpc_url : 'https://localhost:9545/',
 
   contracts : {
-    erc20      : require('./contracts/erc20.js'),
-    paychannel : require('./contracts/paychannel.js')
+    erc20      : ERC20,
+    // paychannel : require('./contracts/paychannel.js')
   },
 
   gasPrice : 40 * 1000000000,

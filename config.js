@@ -1,16 +1,21 @@
 const path = require('path')
 
+let faucet_server = {}
 let network
 if (process.env.DC_NETWORK==='local') {
 	network = require('./configs/local/config.js')
+	faucet_server.get_acc_url = 'https://localhost:5436/?get=account'
 } else {
 	network = require('./configs/ropsten/config.js')
+	faucet_server.get_acc_url = 'https://platform.dao.casino/faucet?get=account'
 }
 
 
 module.exports = {
   wallet_pass : '1234',
   loglevel: 'light',
+
+  faucet : faucet_server,
 
   dapps_dir: path.join(path.resolve(), './data/dapps/'),
   network: network
