@@ -1,4 +1,5 @@
 const path = require('path')
+const fs   = require('fs')
 
 const filpath = path.resolve('../protocol/build/contracts_adressess.json')
 if (!fs.existsSync(filpath)) {
@@ -24,7 +25,7 @@ module.exports = {
   name    : 'local',
   rpc_url : 'https://localhost:9545/',
 
-  contracts: {
+  contracts : {
     erc20      : require('./contracts/erc20.js'),
     paychannel : require('./contracts/paychannel.js')
   },
