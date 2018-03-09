@@ -1,32 +1,30 @@
 const path = require('path')
 const fs   = require('fs')
 
-const filpath = path.resolve('../protocol/build/contracts_adressess.json')
+const filpath = path.resolve('../protocol/build/contracts.json')
 if (!fs.existsSync(filpath)) {
-	console.log('')
-	console.log('')
-	console.log('Cant find contracts_adressess ', filpath)
-	console.log('')
-	console.log('BANKROLLER NODE SHUT DOWN')
-	console.log('')
-	proccess.exit()
+  console.log('')
+  console.log('')
+  console.log('Cant find contracts_adressess ', filpath)
+  console.log('')
+  console.log('BANKROLLER NODE SHUT DOWN')
+  console.log('')
+  process.exit()
 }
 
 const conf = require(filpath)
 
 const ERC20 = {
-	address: conf.ERC20,
-	abi: require( path.resolve('../protocol/build/contracts/ERC20.json') ).abi
+  address: conf.ERC20,
+  abi: require( path.resolve('../protocol/build/contracts/ERC20.json') ).abi
 }
 
 module.exports = {
-  upd     : '07.03.2018',
   name    : 'local',
   rpc_url : 'https://localhost:9545/',
 
   contracts : {
-    erc20      : ERC20,
-    // paychannel : require('./contracts/paychannel.js')
+    erc20 : ERC20
   },
 
   gasPrice : 40 * 1000000000,
