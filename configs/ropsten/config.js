@@ -1,6 +1,5 @@
 
 module.exports = {
-  upd     : '17.10.2017',
   name    : 'ropsten',
   rpc_url : 'https://ropsten.infura.io/JCnK5ifEPH9qcQkX0Ahl',
 
