@@ -12,7 +12,13 @@ macOS Make sure you have the XCode Command Line Tools installed. These are neede
 npm i -S DaoCasino/bankroller-core
 ```
 
-
+preinstall (on ubuntu)
+```
+curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash -
+sudo apt-get install -y nodejs
+sudo apt-get install -y build-essential
+sudo apt-get install python2.7 git-all pkg-config libncurses5-dev libssl-dev libnss3-dev libexpat-dev
+```
 ## Contribute
 
 Feel free to dive in! [Open an issue](https://github.com/DaoCasino/bankroller-core/issues/new) or submit PRs.
