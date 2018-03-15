@@ -22,7 +22,7 @@ const ERC20 = {
 
 module.exports = {
   name    : 'local',
-  rpc_url : 'https://localhost:9545/',
+  rpc_url : 'http://localhost:9545/',
 
   privateKeys: [
     'bd09810322a16c92882feb58405f269917a52d3f97c5e66bd0069b2e1ab026a4',
