@@ -38,11 +38,7 @@ module.exports = {
   ],
 
   contracts : {
-    erc20 : ERC20,
-    paychannel: {
-      address: require('../ropsten/contracts/paychannel').address,
-      abi: require('../ropsten/contracts/paychannel').abi
-    }
+    erc20 : ERC20
   },
 
   gasPrice : 40 * 1000000000,
