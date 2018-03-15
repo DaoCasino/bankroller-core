@@ -1,6 +1,9 @@
 import fs    from 'fs'
 import path  from 'path'
+import fetch  from 'node-fetch'
 import DApps from 'dapps/dapps.js'
+
+global.fetch = fetch
 
 console.log('')
 console.log('')
