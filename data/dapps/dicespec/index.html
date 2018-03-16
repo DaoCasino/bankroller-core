@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Dice test</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mocha/5.0.2/mocha.min.css">
+
+  <!-- require lib for testing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mocha/5.0.2/mocha.min.js"></script>
+  <script src="http://chaijs.com/chai.js"></script>
+  <script src="http://sinonjs.org/releases/sinon-4.4.2.js"></script>
+  <script src="./lib/DC.js"></script>
+  <!-- Game logic -->
+  <script src="./logic.js" defer></script>
+
+  <!-- Create mocha -->
+  <script>mocha.setup('bdd')</script>
+</head>
+  <body>
+    <!-- Add tests -->
+    <script src="./test.js"></script>
+    
+    <!-- div for mocha test -->
+    <div id="mocha"></div>
+    
+    <!-- mocha run -->
+    <script>DCLib.on('ready', mocha.run)</script>
+  </body>
+</html>
