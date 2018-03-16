@@ -1,9 +1,0 @@
-{
-	"name" : "dicetest_v12",
-	"slug" : "dicetest_v12",
-
-	"index" : "./index.html",
-	"logic" : "./logic.js",
-
-	"run"   : "./bankroller.js"
-}

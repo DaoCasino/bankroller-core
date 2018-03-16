@@ -1,5 +1,5 @@
 /* eslint-env mocha */
-/* global DCLib describe it chai sinon localStorage fetch */
+/* global DCLib describe it chai sinon fetch */
 
 const assert = chai.assert
 const expect = chai.expect
@@ -56,8 +56,16 @@ function connect (address = 'auto', deposit = 0.1, gamedata = {type:'uint', valu
 }
 
 describe('Test dicegame', function () {
-
+  
   describe('Create ecosystem', function () {
+
+    // it('waiting account', function (done) {
+    //   setTimeout(function () {
+    //     done()
+    //   }, 3000)
+    // })
+
+
     it('Get game contract from local dev server', function (done) {
       getDAppContract(function (localGameContract) {
         dappContract = localGameContract
@@ -65,14 +73,16 @@ describe('Test dicegame', function () {
       })
     })
 
-    it('Init account', function () {
-
-      DCLib.Account.initAccount()
+    it('Init account', async function (done) {
+      this.timeout(10000)
+      await DCLib.Account.initAccount()
 
       _openkey = DCLib.Account.get().openkey
-
+      console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!', _openkey)
+  
       // Assert
       expect(DCLib.Account.get().openkey).to.be.equal(_openkey)
+      done()
     })
       
     it('Check balance', async function () {
@@ -108,7 +118,7 @@ describe('Test dicegame', function () {
         // Arrange
 
         // Act
-        console.log(DCLib.Account.get().openkey)
+
         this.timeout(100000)
         connect().then(info => {
         // Assert
