@@ -7,7 +7,7 @@
     "start": "DC_NETWORK=local npm run develop",
     "develop": "nodemon --watch ./ --exec babel-node ./server.js",
     "run": "babel-node server.js",
-    "reset_db":"rm -rf ./data/DB && rm -rf ./data/messaging",
+    "reset_db": "rm -rf ./data/DB && rm -rf ./data/messaging",
     "test": "DC_NETWORK=local babel-node ./test/checks.js"
   },
   "keywords": [],
@@ -20,7 +20,7 @@
     "js-cryptico": "^1.0.2",
     "nedb": "^1.8.0",
     "node-fetch": "^2.0.0",
-    "web3": "^1.0.0-beta.30"
+    "web3": "1.0.0-beta.30"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
