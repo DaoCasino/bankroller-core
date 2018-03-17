@@ -73,16 +73,14 @@ describe('Test dicegame', function () {
       })
     })
 
-    it('Init account', async function (done) {
-      this.timeout(10000)
+    it('Init account', async function () {
       await DCLib.Account.initAccount()
 
       _openkey = DCLib.Account.get().openkey
-      console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!', _openkey)
   
       // Assert
-      expect(DCLib.Account.get().openkey).to.be.equal(_openkey)
-      done()
+      assert.isOk(DCLib.Account.get().openkey)
+
     })
       
     it('Check balance', async function () {
@@ -95,8 +93,8 @@ describe('Test dicegame', function () {
       const res = await DCLib.Eth.getBalances(_openkey)
 
       // Assert
-      expect(Math.round(res.eth)).to.be.least(min_eth)
-      expect(res.bets).to.be.least(min_bets)
+      expect(parseInt(Math.round(res.eth))).to.be.least(min_eth)
+      expect(parseInt(res.bets)).to.be.least(min_bets)
     })
 
     it('Create DApp', function () {
@@ -122,7 +120,7 @@ describe('Test dicegame', function () {
         this.timeout(100000)
         connect().then(info => {
         // Assert
-          expect(info.bankroller_address).to.be.equal('0xaf6300ee7e91b5Cf13aA4CbE2832087b5f35D86a')
+          assert.isOk(info.bankroller_address)
           done()
         }).catch(err => {
           console.log(err)
@@ -277,7 +275,7 @@ describe('Test dicegame', function () {
             })  
         }).then(res => {
           // Assert
-          assert.isDefined(res.random_num, 'random num is defined')
+          return assert.isDefined(res.random_num, 'random num is defined')
         })
       })
 
