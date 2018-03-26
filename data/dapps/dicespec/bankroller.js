@@ -13,6 +13,7 @@ function getGameContract (callback) {
 
 (function () {
   getGameContract(function (gameContract) {
+    if (process.env.DC_NETWORK !== 'local') gameContract = false
     return new DCLib.DApp({
       slug     : 'dicetest_v12',
       contract : gameContract
