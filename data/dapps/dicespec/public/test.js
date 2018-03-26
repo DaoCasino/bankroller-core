@@ -19,7 +19,8 @@ const getDAppContract = function (callback) {
   })
 }
 
-function createDApp () {
+function createDApp (flag = true) {
+  if (!flag) dappContract = false
   App = new DCLib.DApp({
     slug: 'dicetest_v12',
     contract : dappContract
@@ -101,7 +102,8 @@ describe('Test dicegame', function () {
       const logicHash = '0xfacb5ed56f04123e39945190cae9bba895e695c9b3d1ad248c99c81a3f25381c'
         
       // Act
-      createDApp()
+      createDApp(false)
+      console.log('ADDRESS',window.App.contract_address)
     
       // Assert
       expect(window.App.hash).to.be.equal(logicHash)
@@ -181,8 +183,8 @@ describe('Test dicegame', function () {
         
         // Act
         this.timeout(100000)
-        createDApp()
-        connect(connect_address, deposit, {type: 'uint', value: []}).then(info => {
+        createDApp(false)
+        connect(connect_address, {deposit:deposit}, {type: 'uint', value: []}).then(info => {
           // Assert
           expect(info.bankroller_address).to.be.equal(connect_address)
           done()
@@ -258,7 +260,7 @@ describe('Test dicegame', function () {
         expect(callMethod()).to.be.equal(error)
       })
   
-      it('roll with user_num 0', function () {
+      it('roll with user_num 0', function (done) {
         this.timeout(10000)
         return new Promise((resolve, reject) => {
           // Arrange
@@ -274,7 +276,8 @@ describe('Test dicegame', function () {
             })  
         }).then(res => {
           // Assert
-          return assert.isDefined(res.random_num, 'random num is defined')
+          assert.isDefined(res.random_num, 'random num is defined')
+          done()
         })
       })
 
