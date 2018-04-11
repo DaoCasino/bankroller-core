@@ -1,6 +1,6 @@
 {
-	"name" : "dicetest_v12",
-	"slug" : "dicetest_v12",
+	"name" : "dicetest_v32",
+	"slug" : "dicetest_v32",
 
 	"index" : "./index.html",
 	"logic" : "./logic.js",
