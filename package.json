@@ -4,7 +4,7 @@
   "description": "Core bankroller functionality",
   "main": "server.js",
   "scripts": {
-    "start": "DC_NETWORK=ropsten npm run develop",
+    "start": "DC_NETWORK=local npm run develop",
     "develop": "nodemon --watch ./ --exec babel-node ./server.js",
     "run": "babel-node server.js",
     "reset_db": "rm -rf ./data/DB && rm -rf ./data/messaging",

@@ -22,15 +22,15 @@ const getDAppContract = function (callback) {
 function createDApp (flag = true) {
   if (!flag) dappContract = false
   App = new DCLib.DApp({
-    slug: 'dicetest_v12',
+    slug: 'dicetest_v32',
     contract : dappContract
   })
   window.App = App    
 }
 
-function disconnect (session, done) {
+function disconnect (session, total) {
   return new Promise((resolve, reject) => { 
-    App.disconnect({session:session}, res => {
+    App.disconnect({session:session, totalAmount:total}, res => {
       resolve(res)
     })
   })
@@ -41,7 +41,6 @@ function connect (address = 'auto', deposit = 0.1, gamedata = {type:'uint', valu
     // Arrange
 
     // Act
-    console.log(address)
     App.connect({
       bankroller : address,
       paychannel : {deposit : deposit},
@@ -77,7 +76,6 @@ describe('Test dicegame', function () {
 
       _openkey = DCLib.Account.get().openkey
       
-      console.log(_openkey)
       // Assert
       assert.isOk(DCLib.Account.get().openkey)
 
@@ -86,7 +84,7 @@ describe('Test dicegame', function () {
     it('Check balance', async function () {
       // Arrange
       const min_bets = 0.1
-      const min_eth = 0.2
+      const min_eth  = 0.2
 
       // Act
       this.timeout(10000)
@@ -99,12 +97,11 @@ describe('Test dicegame', function () {
 
     it('Create DApp', function () {
       // Arrange
-      const logicHash = '0xfacb5ed56f04123e39945190cae9bba895e695c9b3d1ad248c99c81a3f25381c'
+      const logicHash = '0x7def975aba61c88d09b971afeb07c14e981a379a3c6df871e364234b02554014'
         
       // Act
       createDApp(false)
-      console.log('ADDRESS',window.App.contract_address)
-    
+
       // Assert
       expect(window.App.hash).to.be.equal(logicHash)
     })
@@ -119,14 +116,15 @@ describe('Test dicegame', function () {
         // Act
 
         this.timeout(100000)
-        connect().then(info => {
-        // Assert
-          assert.isOk(info.bankroller_address)
-          done()
-        }).catch(err => {
-          console.log(err)
-          done(err)
-        })
+        connect()
+          .then(info => {
+            // Assert
+            assert.isOk(info.bankroller_address)
+          })
+          .then(() => done())
+          .catch(err => {
+            done(err)
+          })
       })
 
       it('Game', function () {
@@ -145,8 +143,7 @@ describe('Test dicegame', function () {
             })  
         }).then(res => {
           // Assert
-          console.log(res)
-          assert.isDefined(res.random_num, 'random num is defined')
+          assert.isDefined(res.random_num, 'random num is defined')        
         })
       })
 
@@ -156,7 +153,7 @@ describe('Test dicegame', function () {
         
         // Act
         this.timeout(50000)
-        disconnect(session, done).then(res => {
+        disconnect(session, 1).then(res => {
           // Assert
           expect(res.connection.disconnected).to.be.equal(true)
           done()
@@ -171,26 +168,55 @@ describe('Test dicegame', function () {
       beforeEach(function () {
         sandbox = sinon.sandbox.create()
       })
-  
+      
       afterEach(function () {
         sandbox.restore()
       })
-
-      it('connect without gamedata', function (done) {
+      
+      it('connect without gamedata', function () {
         // Arrange
-        const connect_address = '0xaf6300ee7e91b5Cf13aA4CbE2832087b5f35D86a'
-        const deposit = 0.1
+        const deposit         = 0.1
+        const game_data       = {type: 'uint', value: []}
+        const callMethod      = sandbox.stub(App, 'connect')
+        const connect_address = 'auto'
         
         // Act
-        this.timeout(100000)
-        createDApp(false)
-        connect(connect_address, {deposit:deposit}, {type: 'uint', value: []}).then(info => {
-          // Assert
-          expect(info.bankroller_address).to.be.equal(connect_address)
-          done()
-        }).catch(err => {
-          done(err)
-        })
+        this.timeout(20000)
+        callMethod.withArgs({
+          bankroller : connect_address,
+          paychannel : {deposit: deposit},
+          gamedata   : game_data          
+        }).returns(true)
+
+        // Assert
+        expect(callMethod({
+          bankroller : connect_address,
+          paychannel : {deposit: deposit},
+          gamedata   : game_data
+        })).to.be.equal(true)
+      })
+
+      it('connect without deposit', function () {
+        // Arrange
+        const error      = '😓 Your deposit can not be 0'
+        const deposit    = 0
+        const game_data  = {type: 'uint', value: [1, 2, 3]}
+        const callMethod = sandbox.stub(App, 'connect')
+
+        // Act
+        this.timeout(20000)
+        callMethod.withArgs({
+          bankroller: 'auto',
+          paychannel: {deposit: deposit},
+          gamedata: game_data
+        }).returns(error)
+
+        // Assert
+        expect(callMethod({
+          bankroller: 'auto',
+          paychannel: {deposit: deposit},
+          gamedata: game_data
+        })).to.be.equal(error)
       })
   
       it('roll with big user_num', function () {
@@ -204,7 +230,6 @@ describe('Test dicegame', function () {
         // Act
         this.timeout(10000)
         callMethod.withArgs(amount, num, Hash).returns(error)
-        console.error(callMethod(amount, num, Hash))
 
         // Assert
         expect(callMethod(amount, num, Hash)).to.be.equal(error)
@@ -222,7 +247,6 @@ describe('Test dicegame', function () {
         this.timeout(10000)
         App.call('roll', [amount, num, Hash])
         disconnect.returns(error)
-        console.error(disconnect())
 
         // Assert
         expect(disconnect()).to.be.equal(error)
@@ -240,7 +264,6 @@ describe('Test dicegame', function () {
         this.timeout(10000)
         App.call('roll', [amount, num, Hash])
         disconnect.returns(error)
-        console.error(disconnect())
 
         // Assert
         expect(disconnect()).to.be.equal(error)
@@ -254,31 +277,32 @@ describe('Test dicegame', function () {
         // Act
         this.timeout(10000)
         callMethod.returns(error)
-        console.error(callMethod())
 
         // Assert
         expect(callMethod()).to.be.equal(error)
       })
   
-      it('roll with user_num 0', function (done) {
-        this.timeout(10000)
-        return new Promise((resolve, reject) => {
-          // Arrange
-          const amount = 0.1
-          const num    = 0
-          const Hash   = DCLib.randomHash()
-  
-          // Act
-          App.call(
-            'roll', [amount, num, Hash], 
-            function (res, advabnced) {
-              resolve(res)
-            })  
-        }).then(res => {
-          // Assert
-          assert.isDefined(res.random_num, 'random num is defined')
-          done()
-        })
+      it('roll with user_num 0 or user_bet 0', function () {
+        const user_bet = 0
+        const user_num = 0
+        const hash     = 'd93b5913c94a6e67b883cf61eb321709d6996ce890e7180b808ed686ac77624505880923a4ea5c2a1ae6a92f0ff143a60e3d35875bdc25b8a48cdd47eb4a776c1c'
+        const result   = {
+          balance     : '0.1',
+          profit      : 0,
+          random_hash : 'd93b5913c94a6e67b883cf61eb321709d6996ce890e7180b808ed686ac77624505880923a4ea5c2a1ae6a92f0ff143a60e3d35875bdc25b8a48cdd47eb4a776c1c',
+          random_num  : 27676,
+          timestamp   : 1523433689084,
+          user_bet    : 0,
+          user_num    : '0'
+        }
+        const callMethod = sandbox.stub(App, 'call')
+
+        // Act
+        this.timeout(20000)
+        callMethod.withArgs(user_bet, user_num, hash).returns(result)
+
+        // Assert
+        expect(callMethod(user_bet, user_num, hash)).to.be.equal(result)
       })
 
       it('disconnect with wrong value session', function () {
