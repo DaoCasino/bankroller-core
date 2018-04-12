@@ -23,7 +23,9 @@ const ERC20 = {
 module.exports = {
   name    : 'local',
   rpc_url : 'http://localhost:9545/',
-
+  
+  signal  : '/ip4/127.0.0.1/tcp/9090/ws/p2p-websocket-star/',
+  
   contracts : {
     erc20 : ERC20
   },
