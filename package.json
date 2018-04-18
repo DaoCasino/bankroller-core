@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "DC_NETWORK=local npm run develop",
-    "develop": "nodemon --watch ./ --exec babel-node ./server.js",
+    "develop": "nodemon --watch ./ --exec babel-node --inspect ./server.js",
     "devtest": "nodemon --watch ./ --exec babel-node ./test.js",
     "run": "babel-node server.js",
     "reset_db": "rm -rf ./data/DB && rm -rf ./data/messaging",
