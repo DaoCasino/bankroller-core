@@ -7,11 +7,11 @@ DCLib.defineDAppLogic('dicetest_v32', function () {
 
   let history = []
 
-  var Roll = function (userBet, userNum, randomHash) {
+  var Roll = function (userBet, userNum, random_hash) {
     // convert 1BET to 100000000
     userBet = DCLib.Utils.bet2dec(userBet)
     // generate random number
-    const randomNum = DCLib.numFromHash(randomHash, 0, MAX_RAND_NUM)
+    const randomNum = DCLib.numFromHash(random_hash, 0, MAX_RAND_NUM)
 
     let profit = -userBet
     // if user win
@@ -30,7 +30,7 @@ DCLib.defineDAppLogic('dicetest_v32', function () {
       profit      : profit,
       user_num    : userNum,
       balance     : _self.payChannel.getBalance(),
-      random_hash : randomHash,
+      random_hash : random_hash,
       random_num  : randomNum
     }
     history.push(rollItem)
