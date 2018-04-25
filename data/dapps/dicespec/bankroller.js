@@ -8,12 +8,14 @@ function getGameContract (callback) {
       address:localGameContract.address,
       abi: JSON.parse(localGameContract.abi)
     })
+  }).catch(function() {
+    callback(false)
   })
 }
 
 (function () {
   getGameContract(function (gameContract) {
-    if (process.env.DC_NETWORK !== 'local') gameContract = false
+    // if (process.env.DC_NETWORK !== 'local') gameContract = false
     return new DCLib.DApp({
       slug     : 'dicetest_v32',
       contract : gameContract
