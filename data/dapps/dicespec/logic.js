@@ -39,7 +39,7 @@ DCLib.defineDAppLogic('dicetest_v32', function () {
   }
 
   return {
-    roll: Roll,
+    Game: Roll,
     history: history
   }
 })
