@@ -16,7 +16,10 @@ function getGameContract (callback) {
     if (process.env.DC_NETWORK !== 'local') gameContract = false
     return new DCLib.DApp({
       slug     : 'dicetest_v32',
-      contract : gameContract
+      contract : gameContract,
+      rules    : {
+        depositX:2
+      }
     })
   })
 })()
