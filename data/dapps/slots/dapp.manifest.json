@@ -1,9 +1,0 @@
-{
-    "name" : "slot_game",
-    "slug" : "slot_game",
-  
-    "index" : "./index.html",
-    "logic" : "./slot_logic.js",
-  
-    "run"   : "./bankroller.js"
-}
