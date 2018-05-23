@@ -4,10 +4,9 @@
 
 # dependencies
 /node_modules
+data/messaging/*
 
 # misc
 npm-debug.log
-package-lock.json
 yarn-error.log
-yarn.lock
 .DS_Store
