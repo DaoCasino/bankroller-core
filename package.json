@@ -16,7 +16,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "big-integer": "^1.6.26",
     "dc-messaging": "github:DaoCasino/dc-messaging",
     "debug": "^3.1.0",
     "js-cryptico": "^1.0.2",
