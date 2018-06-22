@@ -1,7 +1,5 @@
 /* global DCLib */
-DCLib.defineDAppLogic('dicetest_v42', function () {
-  const _self = this
-
+DCLib.defineDAppLogic('dicetest_v42', function (payChannel) {
   const MAX_RAND_NUM = 65535
   const HOUSEEDGE    = 0.02 // 2%
 
@@ -20,8 +18,8 @@ DCLib.defineDAppLogic('dicetest_v42', function () {
       profit = (userBet * (MAX_RAND_NUM - MAX_RAND_NUM * HOUSEEDGE) / userNum) - userBet
     }
     // add result to paychannel
-    _self.payChannel.addTX(profit)
-    _self.payChannel.printLog()
+    payChannel.addTX(profit)
+    payChannel.printLog()
 
     // push all data to our log
     // just for debug
@@ -30,7 +28,7 @@ DCLib.defineDAppLogic('dicetest_v42', function () {
       user_bet    : userBet,
       profit      : profit,
       user_num    : userNum,
-      balance     : _self.payChannel.getBalance(),
+      balance     : payChannel.getBalance(),
       random_hash : random_hash,
       random_num  : randomNum
     }
