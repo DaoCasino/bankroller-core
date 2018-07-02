@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "DC_NETWORK=local npm run develop",
+    "start_ropsten": "DC_NETWORK=ropsten npm run develop",
     "develop": "nodemon --watch ./ --exec babel-node --inspect ./server.js",
     "devtest": "nodemon --watch ./ --exec babel-node ./test.js",
     "run": "babel-node server.js",
@@ -15,12 +16,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "big-integer": "^1.6.26",
-    "dc-messaging": "github:DaoCasino/dc-messaging",
+    "dc-messaging": "github:DaoCasino/dc-messaging#develop",
     "debug": "^3.1.0",
     "js-cryptico": "^1.0.2",
     "nedb": "^1.8.0",
     "node-fetch": "^2.0.0",
+    "p-queue": "^2.4.2",
     "web3": "1.0.0-beta.30"
   },
   "devDependencies": {
