@@ -4,8 +4,8 @@
   "description": "Core bankroller functionality",
   "main": "server.js",
   "scripts": {
-    "start": "DC_NETWORK=local npm run develop",
-    "start_ropsten": "DC_NETWORK=ropsten npm run develop",
+    "start": "DC_NETWORK=local DATA_SUBPATH=d2 npm run develop",
+    "start_ropsten": "DC_NETWORK=ropsten DATA_SUBPATH=d3 npm run develop",
     "develop": "nodemon --watch ./ --exec babel-node --inspect ./server.js",
     "devtest": "nodemon --watch ./ --exec babel-node ./test.js",
     "run": "babel-node server.js",
@@ -16,7 +16,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "dc-messaging": "github:DaoCasino/dc-messaging#develop",
+    "dc-messaging": "github:DaoCasino/dc-messaging#master",
     "debug": "^3.1.0",
     "js-cryptico": "^1.0.2",
     "nedb": "^1.8.0",
