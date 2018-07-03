@@ -12,13 +12,14 @@ if (process.env.DC_NETWORK === 'local') {
 }
 
 
+let data_path = process.env.DATA_PATH || './data'
+
 module.exports = {
   wallet_pass : '1234',
   loglevel: 'light',
 
   faucet : faucet_server,
 
-  data_subpath : process.env.DATA_SUBPATH,
-  dapps_dir    : path.join(path.resolve(), './data/dapps/'),
+  dapps_dir    : path.join(path.resolve(), ( process.env.DAPPS_PATH || (data_path + '/dapps/') )),
   network      : network
 }
