@@ -22,7 +22,8 @@
     "nedb": "^1.8.0",
     "node-fetch": "^2.0.0",
     "p-queue": "^2.4.2",
-    "web3": "1.0.0-beta.30"
+    "web3": "1.0.0-beta.30",
+    "xmlhttprequest": "1.8.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

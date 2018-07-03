@@ -1,4 +1,3 @@
-import PayChannel from '../../lib/dapps/PayChannel'
 const path = require('path')
 const fs   = require('fs')
 
@@ -27,6 +26,7 @@ module.exports = {
   signal  : '/ip4/127.0.0.1/tcp/9090/ws/p2p-websocket-star/',
   
   contracts : {
+    paychannelContract: 'http://127.0.0.1:8181/?get=contract&name=Dice',
     erc20 : ERC20
   },
 
