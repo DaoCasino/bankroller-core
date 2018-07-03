@@ -18,6 +18,7 @@ module.exports = {
 
   faucet : faucet_server,
 
-  dapps_dir: path.join(path.resolve(), './data/dapps/'),
-  network: network
+  data_subpath : process.env.DATA_SUBPATH,
+  dapps_dir    : path.join(path.resolve(), './data/dapps/'),
+  network      : network
 }
