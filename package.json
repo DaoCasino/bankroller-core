@@ -8,7 +8,7 @@
     "start_ropsten": "DC_NETWORK=ropsten DATA_PATH=data2 DAPPS_PATH=data/dapps  DATA_SUBPATH=d3 npm run develop",
     "develop": "nodemon --watch ./ --exec babel-node --inspect ./server.js",
     "devtest": "nodemon --watch ./ --exec babel-node ./test.js",
-    "run": "babel-node server.js",
+    "run": "DC_NETWORK=local babel-node server.js",
     "reset_db": "rm -rf ./data/DB && rm -rf ./data/messaging",
     "test": "DC_NETWORK=local babel-node ./test/checks.js"
   },
@@ -16,7 +16,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "dc-messaging": "github:DaoCasino/dc-messaging#master",
+    "dc-messaging": "github:DaoCasino/dc-messaging#develop",
     "debug": "^3.1.0",
     "js-cryptico": "^1.0.2",
     "nedb": "^1.8.0",
