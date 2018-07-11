@@ -7,8 +7,11 @@ if (process.env.DC_NETWORK === 'local') {
   faucet_server.get_acc_url = 'http://localhost:8181/?get=account'
 } else {
   network = require('./configs/ropsten/config.js')
-  // faucet_server.get_acc_url = 'https://platform.dao.casino/faucet?get=account'
-  faucet_server.get_acc_url = 'https://platform.dao.casino/faucet2?get=account'
+  faucet_server.get_acc_url = 'https://stage.dao.casino/faucet/?get=account'
+  
+  if(process.env.NODE_ENV === 'production') {
+    faucet_server.get_acc_url = 'https://faucet.dao.casino/?get=account'
+  }
 }
 
 
