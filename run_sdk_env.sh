@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 DC_NETWORK=sdk            \
 DATA_PATH=data_sdk        \
 DATA_SUBPATH=sdk          \
