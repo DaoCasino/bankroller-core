@@ -2,7 +2,10 @@ const path = require('path')
 
 let faucet_server = {}
 let network
-if (process.env.DC_NETWORK === 'local') {
+if (process.env.DC_NETWORK === 'sdk') {
+  network = require('./configs/sdk/config.js')
+  faucet_server.get_acc_url = 'https://stage.dao.casino/faucet/?get=account'
+} else if (process.env.DC_NETWORK === 'local') {
   network = require('./configs/local/config.js')
   faucet_server.get_acc_url = 'http://localhost:8181/?get=account'
 } else {
