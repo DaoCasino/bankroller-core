@@ -1,7 +1,7 @@
 const path = require('path')
 const fs   = require('fs')
 
-const filpath = path.resolve('../protocol/contracts.json')
+const filpath = path.resolve('../protocol/addresses.json')
 if (!fs.existsSync(filpath)) {
   console.log('')
   console.log('')
