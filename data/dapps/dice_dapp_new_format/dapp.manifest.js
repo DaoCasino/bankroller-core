@@ -1,4 +1,6 @@
 export default {
+	// disabled : true,
+	
   slug  : "dice_ex_v1",
   logic : "./dapp.logic.js",
   
