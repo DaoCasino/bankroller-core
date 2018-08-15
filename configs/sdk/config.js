@@ -23,7 +23,10 @@ module.exports = {
   name    : 'sdk',
   rpc_url : 'http://dc_protocol:8545/',
 
-  signal  : '/dns4/signal3.dao.casino/tcp/443/wss/p2p-websocket-star/',
+  signal  : [
+    '/dns4/signal2.dao.casino/tcp/443/wss/p2p-websocket-star/',
+    '/dns4/signal3.dao.casino/tcp/443/wss/p2p-websocket-star/',
+  ],
 
   contracts : {
     erc20 : ERC20
