@@ -21,7 +21,7 @@ const ERC20 = {
 
 module.exports = {
   name    : 'sdk',
-  rpc_url : 'http://dc_ganache_testrpc:8545/',
+  rpc_url : 'http://dc_protocol:8545/',
 
   signal  : '/dns4/signal3.dao.casino/tcp/443/wss/p2p-websocket-star/',
 
