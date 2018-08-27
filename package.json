@@ -4,13 +4,20 @@
   "description": "Core bankroller functionality",
   "main": "server.js",
   "scripts": {
-    "start": "DC_NETWORK=local npm run develop",
-    "start_ropsten": "DC_NETWORK=ropsten npm run develop",
+    "postinstall": "bash ./postinstall.sh",
+    "start": "DC_NETWORK=local DATA_SUBPATH=d2 npm run develop",
+    "start_ropsten": "DC_NETWORK=ropsten DATA_PATH=data2 DAPPS_PATH=data/dapps  DATA_SUBPATH=d3 npm run develop",
     "develop": "nodemon --watch ./ --exec babel-node --inspect ./server.js",
     "devtest": "nodemon --watch ./ --exec babel-node ./test.js",
-    "run": "babel-node server.js",
+    "run": "DC_NETWORK=local babel-node server.js",
     "reset_db": "rm -rf ./data/DB && rm -rf ./data/messaging",
-    "test": "DC_NETWORK=local babel-node ./test/checks.js"
+    "test": "DC_NETWORK=local babel-node ./test/checks.js",
+    "lint": "eslint ./lib"
+  },
+  "husky": {
+    "hooks": {
+      "pre-push": "npm run lint"
+    }
   },
   "keywords": [],
   "author": "",
@@ -20,14 +27,24 @@
     "debug": "^3.1.0",
     "js-cryptico": "^1.0.2",
     "nedb": "^1.8.0",
-    "node-fetch": "^2.0.0",
+    "node-fetch": "2.1.2",
     "p-queue": "^2.4.2",
     "web3": "1.0.0-beta.30"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
+    "babel-eslint": "8.2.6",
     "babel-plugin-module-resolver": "^3.1.0",
     "babel-preset-env": "^1.6.1",
+    "eslint": "^4.16.0",
+    "eslint-config-standard": "^11.0.0-beta.0",
+    "eslint-plugin-babel": "5.1.0",
+    "eslint-plugin-flowtype": "2.33.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-node": "^5.2.1",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "husky": "1.0.0-rc.13",
     "nodemon": "^1.15.0"
   }
 }
