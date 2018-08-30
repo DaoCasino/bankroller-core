@@ -8,7 +8,14 @@
       "localStorage"   : true,
       "self"           : true,
       "DCLib"          : true,
-      "XMLHttpRequest" : true
+      "XMLHttpRequest" : true,
+      "describe"       : true,
+      "test"           : true,
+      "beforeEach"     : true,
+      "afterEach"      : true,
+      "beforeAll"      : true,
+      "afterAll"       : true,
+      "expect"         : true
   },
   "plugins": [
     "babel"
@@ -17,6 +24,7 @@
     "no-debugger"                             : ["warn"],
     "no-unreachable"                          : ["warn"],
     "no-unused-vars"                          : ["warn"],
+    "no-new"                                  : ["off"],
     "no-return-await"                         : ["off"],
     "no-multi-spaces"                         : ["off"],
     "key-spacing"                             : ["off"],
