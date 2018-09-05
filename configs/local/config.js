@@ -1,5 +1,5 @@
-const path = require('path')
 const fs   = require('fs')
+const path = require('path')
 
 const erc20Path      = path.resolve(__dirname, '../..', './protocol/addresses.json')
 const paychannelPath = path.resolve(__dirname, '../..', './protocol/dapp.contract.json')
@@ -33,7 +33,7 @@ module.exports = {
 
   signal  : [
     '/dns4/signal2.dao.casino/tcp/443/wss/p2p-websocket-star/',
-    '/dns4/signal3.dao.casino/tcp/443/wss/p2p-websocket-star/',
+    '/dns4/signal3.dao.casino/tcp/443/wss/p2p-websocket-star/'
   ],
 
   contracts : {
