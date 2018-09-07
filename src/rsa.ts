@@ -5,20 +5,22 @@ const parseBigInt = (a, b) => {
 }
 
 export default class RSA {
+  _RSAKey: cryptico.RSAKey;
+  private _publicExponent: string;
   constructor (publickExponent = '10001') {
-    this.RSA = new cryptico.RSAKey()
-    this.publicExponent = publickExponent
+    this._RSAKey = new cryptico.RSAKey()
+    this._publicExponent = publickExponent
   }
 
   // Method for creation private RSA keys for sign (for Bankroller)
   generateRSAkey (long = 2048) {
-    this.RSA.generate(long, this.publicExponent)
+    this._RSAKey.generate(long, this._publicExponent)
   }
 
   // Sign rawMsg
   signHash (message) {
     let msg = parseBigInt(message, 16)
-    msg = msg.mod(this.RSA.n)
-    return this.RSA.doPrivate(msg)
+    msg = msg.mod(this._RSAKey.n)
+    return this._RSAKey.doPrivate(msg)
   }
 }

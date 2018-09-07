@@ -2,19 +2,17 @@ import _config    from '../../config.js'
 import fs         from 'fs'
 import path       from 'path'
 import DApp       from './DApp.js'
-import Eth        from '../Eth'
-import * as Utils from '../utils'
+import Eth        from '../../src/Eth.js'
+import * as Utils from '../utils.js'
 
 /*
  * Lib constructor
  */
-class _DCLib {
+class BankrollerDCLib {
+  eth: Eth;
   constructor () {
-    this.Eth   = Eth
-    this.web3  = Eth.web3
-    this.acc   = Eth.acc
-    this.Utils = Utils
-    this.DApp  = DApp
+    this.eth   = new Eth()
+
   }
 
   /**
@@ -31,7 +29,7 @@ class _DCLib {
       ) ? dapp_slug : `${dapp_slug}_dev`] = logic_constructor
   }
 
-  randomHash () { return this.acc.sign(Utils.makeSeed()).messageHash }
+  randomHash () { return this.eth.acc.sign(Utils.makeSeed()).messageHash }
 
   numFromHash (randomHash, min = 0, max = 100) {
     if (min > max) { let c = min; min = max; max = c }
