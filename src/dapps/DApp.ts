@@ -71,14 +71,12 @@ const ERC20approve = async function(spender, amount) {
 
 type ConnectionId = string;
 
-interface IClient {
-
-}
+interface IClient {}
 
 interface ConnectionInfo {
-  connectionId: ConnectionId,
-  num: number,
-  room: IClient
+  connectionId: ConnectionId;
+  num: number;
+  room: IClient;
 }
 
 /*
@@ -255,11 +253,10 @@ export class DApp implements IDapp {
       room: this._params.roomProvider.getRoom(
         account.address,
         `${this.hash}_${connectionId}`,
-        { privateKey: account.privateKey, allowedUsers: [userId] },
-        
+        { privateKey: account.privateKey, allowedUsers: [userId] }
       )
     };
-    .pcha = new logicPaychannel();
+    connectionInfo.pcha = new logicPaychannel();
     U.logic = new global.DAppsLogic[this.slug](U.pcha);
     U.logic.payChannel = U.pcha;
 
@@ -271,22 +268,6 @@ export class DApp implements IDapp {
         return;
 
       let User = this.users[data.user_id];
-
-      if (data.action === "open_channel") {
-        this._openChannel(data);
-      }
-      if (data.action === "check_open_channel") {
-        this._checkOpenChannel(data);
-      }
-      if (data.action === "update_state") {
-        this._updateState(data);
-      }
-      if (data.action === "close_by_consent") {
-        this._closeByConsent(data);
-      }
-      if (data.action === "channel_closed") {
-        this._checkCloseChannel(data);
-      }
 
       if (data.action === "reconnect") {
         Utils.debugLog("User reconnect", _config.loglevel);
