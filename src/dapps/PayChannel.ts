@@ -1,5 +1,5 @@
 import * as Utils from "../utils";
-import _config from " ../../config";
+import _config from "../../config";
 
 /** max items in history */
 const MAX_HISTORY_ITEMS = 100;
