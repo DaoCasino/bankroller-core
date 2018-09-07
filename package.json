@@ -4,14 +4,13 @@
   "description": "Core bankroller functionality",
   "main": "server.js",
   "scripts": {
-    "_postinstall": "bash ./postinstall.sh",
-    "start": "DC_NETWORK=local DATA_SUBPATH=d2 npm run develop",
-    "start_ropsten": "DC_NETWORK=ropsten DATA_PATH=data2 DAPPS_PATH=data/dapps  DATA_SUBPATH=d3 npm run develop",
-    "develop": "nodemon --watch ./ --exec babel-node --inspect ./server.js",
-    "devtest": "nodemon --watch ./ --exec babel-node ./test.js",
-    "run": "DC_NETWORK=local babel-node server.js",
+    "postinstall": "bash ./postinstall.sh",
+    "dev": "sh ./run_dev_env.sh",
+    "start": "dc-scripts start -p && npm run dev",
+    "start:ropsten": "DC_NETWORK=ropsten DATA_PATH=data2 DAPPS_PATH=data/dapps  DATA_SUBPATH=d3 npm run develop",
+    "stop": "dc-scripts stop",
     "reset_db": "rm -rf ./data/DB && rm -rf ./data/messaging",
-    "test": "DC_NETWORK=local babel-node ./test/checks.js",
+    "test": "dc-scripts test",
     "lint": "eslint ./lib"
   },
   "husky": {
@@ -29,14 +28,14 @@
     "nedb": "^1.8.0",
     "node-fetch": "2.1.2",
     "p-queue": "^2.4.2",
-    "web3": "1.0.0-beta.36",
-    "web3-providers-http": "1.0.0-beta.36"
+    "web3": "1.0.0-beta.34"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-eslint": "8.2.6",
     "babel-plugin-module-resolver": "^3.1.0",
     "babel-preset-env": "^1.6.1",
+    "dc-scripts": "github:daocasino/dc-scripts#develop",
     "eslint": "^4.16.0",
     "eslint-config-standard": "^11.0.0-beta.0",
     "eslint-plugin-babel": "5.1.0",

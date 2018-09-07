@@ -7,12 +7,12 @@ if (process.env.DC_NETWORK === 'sdk') {
   faucet_server.get_acc_url = false
 } else if (process.env.DC_NETWORK === 'local') {
   network = require('./configs/local/config.js')
-  faucet_server.get_acc_url = 'http://localhost:8181/?get=account'
+  faucet_server.get_acc_url = false // 'http://localhost:8181/?get=account'
 } else {
   network = require('./configs/ropsten/config.js')
   faucet_server.get_acc_url = 'https://stage.dao.casino/faucet/?get=account'
-  
-  if(process.env.NODE_ENV === 'production') {
+
+  if (process.env.NODE_ENV === 'production') {
     faucet_server.get_acc_url = 'https://faucet.dao.casino/?get=account'
   }
 }
@@ -22,7 +22,7 @@ let data_path = process.env.DATA_PATH || './data'
 
 module.exports = {
   wallet_pass : '1234',
-  loglevel: 'light',
+  loglevel: (process.env.DC_NETWORK === 'test') ? 'none' : 'hight',
 
   faucet : faucet_server,
 
