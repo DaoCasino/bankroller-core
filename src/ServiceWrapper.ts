@@ -1,6 +1,6 @@
 import { ResponseMessage, RequestMessage } from "./dapps/Interfaces";
 
-class ServiceWrapper<TService> {
+export class ServiceWrapper<TService> {
   _service: TService;
   _responseSuffix: string;
   sendResponse: (response: ResponseMessage) => void;

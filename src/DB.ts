@@ -16,7 +16,7 @@ class DB {
       autoload: true
     });
   }
-  get(key) {
+  get(key: string): Promise<string> {
     // console.log('DB:get', key)
     return new Promise((resolve, reject) => {
       this._keyValueDB.findOne({ k: key }, (err, doc) => {
@@ -30,7 +30,7 @@ class DB {
     });
   }
 
-  set(key, val) {
+  set(key: string, val: string) {
     return new Promise(async (resolve, reject) => {
       const exist = await this.get(key);
       if (exist) {

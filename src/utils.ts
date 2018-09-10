@@ -37,7 +37,7 @@ export const localGameContract = async url => {
 export const sha3 = web3_sha3;
 
 export const dec2bet = function(val, r = 2) {
-  return web3_utils.fromWei(numToHex(val));
+  return web3_utils.fromWei(numToHex(val)) * 1;
 };
 
 export const bet2dec = function(val) {

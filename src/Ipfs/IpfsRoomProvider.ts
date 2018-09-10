@@ -1,27 +1,31 @@
+import Ipfs from "ipfs";
+import IpfsRoom from "ipfs-pubsub-room";
 import {
   IRoomProvider,
   ISharedRoom,
   RoomInfo,
   RequestMessage,
-  IRemoteInterface
-} from "./Interfaces";
-import * as messaging from "dc-messaging";
+  IRemoteInterface,
+  ResponseMessage
+} from "../dapps/Interfaces";
 import { RemoteProxy, getId } from "../RemoteProxy";
+import { createIpfsNode } from "./Ipfs";
 
 export class IPFSSharedRoom implements ISharedRoom {
   onConnect: (dappId: string, callback: (data: any) => void) => void;
-  rtc: messaging.RTC;
   gameId: string;
+  ipfsRoom: any;
   constructor(
-    rtc: messaging.RTC,
+    ipfsRoom: any,
     gameId: string,
     onConnect: (dappId: string, callback: (data: any) => void) => void
   ) {
     this.onConnect = onConnect;
-    this.rtc = rtc;
+    this.ipfsRoom = ipfsRoom;
     this.gameId = gameId;
-    rtc.on("all", data => {
-      if (!data || !data.action || data.action === "bankroller_active") {
+
+    ipfsRoom.on("message", data => {
+      if (!data || !data.action || data.action === "bankrollerActive") {
         return;
       }
       // User want to connect
@@ -34,36 +38,39 @@ export class IPFSSharedRoom implements ISharedRoom {
     deposit: number;
     dapp: { slug: string; hash: string };
   }) {
-    this.rtc.sendMsg({
+    this.ipfsRoom.broadcast({
       method: "bankrollerActive",
       params: [params],
       id: getId()
     });
   }
+  sendResponse: (message: ResponseMessage) => void;
 }
 
 export class IpfsRoomProvider implements IRoomProvider {
   private sharedRoom: IPFSSharedRoom;
-
-  getSharedRoom(
+  ipfsNodePromise: Promise<Ipfs>;
+  constructor() {
+    this.ipfsNodePromise = createIpfsNode();
+  }
+  async getSharedRoom(
     gameId: string,
-    userId: any,
-    address: any,
     onConnect: (data: any) => void
-  ): ISharedRoom {
+  ): Promise<ISharedRoom> {
+    const ipfsNode = await this.ipfsNodePromise;
     if (!this.sharedRoom) return this.sharedRoom;
-    const rtc = new messaging.RTC(userId, address);
-    this.sharedRoom = new IPFSSharedRoom(rtc, gameId, onConnect);
+    const ipfsRoom = IpfsRoom(ipfsNode, gameId, {});
+    this.sharedRoom = new IPFSSharedRoom(ipfsRoom, gameId, onConnect);
     return this.sharedRoom;
   }
-  getRoom<TRemoteInterface extends IRemoteInterface>(
-    userId: string,
+  async getRoom<TRemoteInterface extends IRemoteInterface>(
     address: string,
     roomInfo: RoomInfo
-  ): TRemoteInterface {
-    const ipfsRTC = new messaging.RTC(userId, address, roomInfo);
+  ): Promise<TRemoteInterface> {
+    const ipfsNode = await this.ipfsNodePromise;
+    const ipfsRoom = IpfsRoom(ipfsNode, address, {});
     const proxy = new RemoteProxy();
-    ipfsRTC.on("all", proxy.onRequestResponse);
-    return proxy.getProxy(ipfsRTC);
+    ipfsRoom.on("message", proxy.onRequestResponse);
+    return proxy.getProxy(ipfsRoom.broadcast);
   }
 }

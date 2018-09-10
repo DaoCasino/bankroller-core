@@ -4,7 +4,13 @@ import _config from "../../config";
 /** max items in history */
 const MAX_HISTORY_ITEMS = 100;
 
-export default class PayChannel {
+interface IPayChannelLogic {
+  addTX: (profit: number) => void;
+  getBalance: () => number;
+  printLog: () => void;
+}
+
+export default class PayChannelLogic implements IPayChannelLogic {
   deposit: {
     player: number | null;
     bankroller: number | null;
@@ -66,10 +72,10 @@ export default class PayChannel {
   }
 
   updateBalance(p) {
-    return this.addTransaction;
+    return this.addTX(p);
   }
 
-  addTransaction(profit: number) {
+  addTX(profit: number) {
     this._profit += profit * 1;
     this.balance.player = this.deposit.player + this._profit;
     this.balance.bankroller = this.deposit.bankroller - this._profit;
