@@ -40,7 +40,7 @@ export class DApp implements IDApp {
 
   async start() {
     this._sharedRoom = await this._params.roomProvider.getSharedRoom(
-      this._gameInfo.gameId,
+      `dapp_room${this._gameInfo.hash}`,
       this.onNewUserConnect
     );
     let { contract } = this._params;
@@ -64,11 +64,11 @@ export class DApp implements IDApp {
     const self = this;
 
     this._beaconInterval = setInterval(() => {
-      this._sharedRoom.bankrollerActive({
+      self._sharedRoom.bankrollerActive({
         deposit: Utils.bet2dec(balance), // bets * 100000000,
         dapp: {
-          slug: this._params.slug,
-          hash: this._gameInfo.hash
+          slug: self._params.slug,
+          hash: self._gameInfo.hash
         }
       });
     }, timeOut);

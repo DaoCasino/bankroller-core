@@ -19,6 +19,12 @@
       "request": "launch",
       "name": "Launch Program",
       "program": "${workspaceFolder}/lib/index.js",
+      "env": {
+        "DC_NETWORK": "ropsten",
+        "DATA_PATH": "data_ropsten",
+        "DATA_SUBPATH": "r",
+        "DAPPS_PATH": "data/dapps"
+      },
       "preLaunchTask": "tsc build",
       "outFiles": ["${workspaceFolder}/lib/**/*.js"]
     }
