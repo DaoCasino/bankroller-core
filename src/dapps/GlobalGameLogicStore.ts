@@ -1,4 +1,4 @@
-class GlobalGameLogicStore {
+export default class GlobalGameLogicStore {
   /**
    * Define DApp logic constructor function
    * @param {string} dapp_slug         unique slug of your dapp

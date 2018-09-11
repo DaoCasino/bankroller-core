@@ -3,8 +3,8 @@ import fs from "fs";
 import path from "path";
 import { DApp } from "./DApp";
 import Eth from "../Eth";
+import GlobalGameLogicStore from "./GlobalGameLogicStore";
 import * as Utils from "../utils";
-import { isNull } from "util";
 import PayChannelLogic from "./PayChannelLogic";
 import { IpfsRoomProvider } from "../Ipfs/IpfsRoomProvider";
 
@@ -18,7 +18,7 @@ const checkFileExists = (
   maybeExtension: string[]
 ): string | null => {
   for (let i = 0; i < maybeExtension.length; i++) {
-    const path = `${fileName}${maybeExtension}`;
+    const path = `${fileName}${maybeExtension[i]}`;
     if (fs.existsSync(path)) {
       return path;
     }
@@ -39,15 +39,15 @@ export default class Bankroller {
   }
 
   loadDir(directoryPath: string) {
-    fs.readdirSync(directoryPath).forEach(key =>
-      this.loadDApp(path.join(directoryPath, key))
+    fs.readdirSync(directoryPath).forEach(subDir =>
+      this.tryLoadDApp(path.join(directoryPath, subDir))
     );
   }
 
   loadLogic(
     directoryPath: string
   ): { manifest: any; logic: (payChannel: PayChannelLogic) => void } {
-    let manifestPath: string = `directoryPath/${MANIFEST_FILENAME}`;
+    let manifestPath: string = `${directoryPath}/${MANIFEST_FILENAME}`;
     const manifestFoundPath = checkFileExists(manifestPath, [
       ".js",
       "",
@@ -57,7 +57,7 @@ export default class Bankroller {
       throw new Error(`Manifest file not found ${manifestPath}`);
     }
     const manifest = manifestFoundPath.endsWith(".js")
-      ? require(manifestFoundPath).default
+      ? require(manifestFoundPath)
       : JSON.parse(fs.readFileSync(manifestFoundPath).toString());
 
     if (
@@ -68,36 +68,44 @@ export default class Bankroller {
     ) {
       return { manifest, logic: null };
     }
-    let logicPath: string = manifest.logic;
+    let logicPath: string = path.join(directoryPath, manifest.logic);
     const logicFoundPath = checkFileExists(logicPath, [".js", "", ".json"]);
     if (!logicFoundPath) {
       throw new Error(`Manifest file not found ${logicFoundPath}`);
     }
     require(logicFoundPath);
-    const logic = global["DCLib"][manifest.slug];
+    const logic = global["DAppsLogic"][manifest.slug];
     if (!logic) {
       throw new Error(`Error loading logic from directory ${directoryPath}`);
     }
     return { manifest: { ...manifest }, logic };
   }
 
-  loadDApp(directoryPath) {
-    const { logic, manifest } = this.loadLogic(directoryPath);
+  async tryLoadDApp(directoryPath: string): Promise<DApp | null> {
+    try {
+      const { logic, manifest } = this.loadLogic(directoryPath);
+      const roomProvider = await IpfsRoomProvider.create();
 
-    if (logic) {
-      const { slug, rules, contract } = manifest;
-      const dapp = new DApp({
-        slug,
-        rules,
-        contract,
-        roomProvider: new IpfsRoomProvider()
-      });
-      this.gamesMap.set(slug, dapp);
+      if (logic) {
+        const { slug, rules, contract } = manifest;
+        const dapp = new DApp({
+          slug,
+          rules,
+          contract,
+          roomProvider
+        });
+        await dapp.start();
+        this.gamesMap.set(slug, dapp);
+        Utils.debugLog("", _config.loglevel);
+        Utils.debugLog("", _config.loglevel);
+        Utils.debugLog(["Load Dapp ", directoryPath], _config.loglevel);
+        Utils.debugLog(manifest, _config.loglevel);
+        Utils.debugLog("", _config.loglevel);
+        return dapp;
+      }
+    } catch (error) {
+      console.error(error);
     }
-    Utils.debugLog("", _config.loglevel);
-    Utils.debugLog("", _config.loglevel);
-    Utils.debugLog(["Load Dapp ", directoryPath], _config.loglevel);
-    Utils.debugLog(manifest, _config.loglevel);
-    Utils.debugLog("", _config.loglevel);
+    return null;
   }
 }

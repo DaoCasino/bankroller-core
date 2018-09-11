@@ -49,17 +49,27 @@ export class IPFSSharedRoom implements ISharedRoom {
 
 export class IpfsRoomProvider implements IRoomProvider {
   private sharedRoom: IPFSSharedRoom;
-  ipfsNodePromise: Promise<Ipfs>;
-  constructor() {
-    this.ipfsNodePromise = createIpfsNode();
+  private static _ipfsNode: Ipfs;
+  private static _ipfsNodePromise: Promise<Ipfs>;
+  private constructor(ipfsNode: Ipfs) {}
+  static async create(): Promise<IpfsRoomProvider> {
+    if (!IpfsRoomProvider._ipfsNode) {
+      if (IpfsRoomProvider._ipfsNodePromise) {
+        IpfsRoomProvider._ipfsNode = await IpfsRoomProvider._ipfsNodePromise;
+      } else {
+        IpfsRoomProvider._ipfsNodePromise = createIpfsNode();
+        IpfsRoomProvider._ipfsNode = await IpfsRoomProvider._ipfsNodePromise;
+        IpfsRoomProvider._ipfsNodePromise = null;
+      }
+    }
+    return new IpfsRoomProvider(IpfsRoomProvider._ipfsNode);
   }
   async getSharedRoom(
     gameId: string,
     onConnect: (data: any) => void
   ): Promise<ISharedRoom> {
-    const ipfsNode = await this.ipfsNodePromise;
     if (!this.sharedRoom) return this.sharedRoom;
-    const ipfsRoom = IpfsRoom(ipfsNode, gameId, {});
+    const ipfsRoom = IpfsRoom(IpfsRoomProvider._ipfsNode, gameId, {});
     this.sharedRoom = new IPFSSharedRoom(ipfsRoom, gameId, onConnect);
     return this.sharedRoom;
   }
@@ -67,8 +77,7 @@ export class IpfsRoomProvider implements IRoomProvider {
     address: string,
     roomInfo: RoomInfo
   ): Promise<TRemoteInterface> {
-    const ipfsNode = await this.ipfsNodePromise;
-    const ipfsRoom = IpfsRoom(ipfsNode, address, {});
+    const ipfsRoom = IpfsRoom(IpfsRoomProvider._ipfsNode, address, {});
     const proxy = new RemoteProxy();
     ipfsRoom.on("message", proxy.onRequestResponse);
     return proxy.getProxy(ipfsRoom.broadcast);

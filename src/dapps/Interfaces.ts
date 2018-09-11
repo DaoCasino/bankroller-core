@@ -69,7 +69,7 @@ export interface IDappInstance {
   updateState: (data: { userId: UserId; state: any }) => { status: string };
   closeByConsent: (data: any) => { sign: string };
   checkCloseChannel: (data: any) => void;
-  call: (data: any) => void;
+  call: (data: CallParams) => void;
   reconnect: (data: any) => void;
   //closeTimeout(); WTF???
   disconnect: (data: any) => void;

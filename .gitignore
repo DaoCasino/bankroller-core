@@ -7,7 +7,7 @@
 
 protocol
 /test/coverage
-
+/lib
 # dependencies
 /node_modules
 data/messaging/*

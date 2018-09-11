@@ -1,14 +1,8 @@
 import _config from "../../config";
-import path from "path";
-import web3 from "web3";
-import PQueue from "p-queue";
 import Eth from "../Eth";
-import RSA from "../../src/rsa";
 import * as Utils from "../utils";
-import { disconnect } from "cluster";
+
 import { DAppParams, IDApp, UserId, GameInfo, ISharedRoom } from "./Interfaces";
-import PayChannelLogic from "./PayChannelLogic";
-import { ServiceWrapper } from "../ServiceWrapper";
 import { DAppInstance } from "./DAppInstance";
 import { setInterval } from "timers";
 
@@ -23,7 +17,7 @@ export class DApp implements IDApp {
   _sharedRoom: ISharedRoom;
   _gameInfo: GameInfo;
   _beaconInterval: NodeJS.Timer;
-  constructor(params: DAppParams, init: boolean = true) {
+  constructor(params: DAppParams) {
     const { slug } = params;
     if (!slug) {
       Utils.debugLog(["Create DApp error", params], "error");
@@ -42,12 +36,9 @@ export class DApp implements IDApp {
     };
 
     this._params = params;
-
-    //TODO ???
-    if (init) this.init();
   }
 
-  async init() {
+  async start() {
     this._sharedRoom = await this._params.roomProvider.getSharedRoom(
       this._gameInfo.gameId,
       this.onNewUserConnect
