@@ -8,7 +8,7 @@ import {
   OpenChannelResponse,
   CallParams
 } from "./Interfaces";
-import RSA from "../../src/rsa";
+import RSA from "../Rsa";
 import _config from "../../config";
 
 import * as Utils from "../utils";

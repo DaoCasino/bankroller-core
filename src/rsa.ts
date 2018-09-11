@@ -1,10 +1,12 @@
 import cryptico from "js-cryptico";
+import crypto from "crypto";
 
 export default class RSA {
   RSAKey: any;
   private _publicExponent: string;
   constructor(publickExponent = "10001") {
     this.RSAKey = new cryptico.RSAKey();
+    const dh = crypto.createDiffieHellman(2048);
     this._publicExponent = publickExponent;
   }
 

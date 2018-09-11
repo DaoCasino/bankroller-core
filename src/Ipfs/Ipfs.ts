@@ -4,8 +4,9 @@ import Channel from "ipfs-pubsub-room";
 import { createTempRepo } from "./Utils";
 
 let Swarm = [
-  "/dns4/signal1.dao.casino/tcp/443/wss/p2p-websocket-star/",
   "/dns4/signal2.dao.casino/tcp/443/wss/p2p-websocket-star/",
+  "/dns4/signal1.dao.casino/tcp/443/wss/p2p-websocket-star/",
+
   "/dns4/signal3.dao.casino/tcp/443/wss/p2p-websocket-star/"
 ];
 
@@ -15,6 +16,7 @@ export function createIpfsNode(yourSwarm = []): Promise<Ipfs> {
   }
 
   return new Promise((resolve, reject) => {
+    const errors = [];
     const ipfs = new Ipfs({
       repo: createTempRepo(),
       EXPERIMENTAL: {
@@ -30,7 +32,7 @@ export function createIpfsNode(yourSwarm = []): Promise<Ipfs> {
         resolve(ipfs);
       })
       .on("error", error => {
-        reject(error);
+        errors.push(error);
       });
   });
 }
