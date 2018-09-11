@@ -196,7 +196,9 @@ export default new class Eth {
 
   async getBetBalance(address): Promise<Balance> {
     if (!address) throw new Error("Empty address in BET balance request");
-    const decBalance = this._ERC20Contract.methods.balanceOf(address).call();
+    const decBalance = await this._ERC20Contract.methods
+      .balanceOf(address)
+      .call();
     const balance = Utils.dec2bet(decBalance);
     return { balance, updated: Date.now() };
   }

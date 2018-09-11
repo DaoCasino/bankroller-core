@@ -38,11 +38,13 @@ export class IPFSSharedRoom implements ISharedRoom {
     deposit: number;
     dapp: { slug: string; hash: string };
   }) {
-    this.ipfsRoom.broadcast({
-      method: "bankrollerActive",
-      params: [params],
-      id: getId()
-    });
+    this.ipfsRoom.broadcast(
+      JSON.stringify({
+        method: "bankrollerActive",
+        params: [params],
+        id: getId()
+      })
+    );
   }
   sendResponse: (message: ResponseMessage) => void;
 }
@@ -68,7 +70,7 @@ export class IpfsRoomProvider implements IRoomProvider {
     gameId: string,
     onConnect: (data: any) => void
   ): Promise<ISharedRoom> {
-    if (!this.sharedRoom) return this.sharedRoom;
+    if (this.sharedRoom) return this.sharedRoom;
     const ipfsRoom = IpfsRoom(IpfsRoomProvider._ipfsNode, gameId, {});
     this.sharedRoom = new IPFSSharedRoom(ipfsRoom, gameId, onConnect);
     return this.sharedRoom;
@@ -80,6 +82,8 @@ export class IpfsRoomProvider implements IRoomProvider {
     const ipfsRoom = IpfsRoom(IpfsRoomProvider._ipfsNode, address, {});
     const proxy = new RemoteProxy();
     ipfsRoom.on("message", proxy.onRequestResponse);
-    return proxy.getProxy(ipfsRoom.broadcast);
+    return proxy.getProxy(message =>
+      ipfsRoom.broadcast(JSON.stringify(message))
+    );
   }
 }
