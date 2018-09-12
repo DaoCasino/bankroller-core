@@ -10,6 +10,7 @@
     "start:ropsten": "DC_NETWORK=ropsten DATA_PATH=data2 DAPPS_PATH=data/dapps  DATA_SUBPATH=d3 npm run develop",
     "stop": "dc-scripts stop",
     "reset_db": "rm -rf ./data/DB && rm -rf ./data/messaging",
+    "nodemon": "nodemon --watch ./ --exec babel-node ./server.js",
     "test": "dc-scripts test",
     "lint": "eslint ./lib"
   },
