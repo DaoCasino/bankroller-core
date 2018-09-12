@@ -28,5 +28,19 @@
       "preLaunchTask": "tsc build",
       "outFiles": ["${workspaceFolder}/lib/**/*.js"]
     }
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch test",
+      "program": "${workspaceFolder}/lib/__tests__/IpfsMessaging.test",
+      "env": {
+        "DC_NETWORK": "ropsten",
+        "DATA_PATH": "data_ropsten",
+        "DATA_SUBPATH": "r",
+        "DAPPS_PATH": "data/dapps"
+      },
+      "preLaunchTask": "tsc build",
+      "outFiles": ["${workspaceFolder}/lib/**/*.js"]
+    }
   ]
 }

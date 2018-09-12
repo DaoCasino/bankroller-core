@@ -11,7 +11,7 @@ export class ServiceWrapper<TService> {
   ) {
     this._service = service;
     this.onRequest = this.onRequest.bind(this);
-    this.sendResponse = this.sendResponse.bind(this);
+    this.sendResponse = sendResponse.bind(this);
   }
 
   async onRequest(message: RequestMessage): Promise<any> {
@@ -34,7 +34,7 @@ export class ServiceWrapper<TService> {
     if (typeof func !== "function") {
       response.error = {
         status: "ERROR",
-        mesage: `No function ${event} in ${this._service.constructor.name}`
+        mesage: `No function ${method} in ${this._service.constructor.name}`
       };
     }
     if (!response.error) {

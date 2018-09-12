@@ -25,6 +25,9 @@ const checkFileExists = (
   }
   return null;
 };
+interface IBankroller {
+  id: string;
+}
 
 export default class Bankroller {
   gamesMap: Map<string, DApp>;

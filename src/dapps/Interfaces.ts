@@ -98,11 +98,12 @@ export interface IRoomProvider {
   getSharedRoom: (
     gameId: string,
     onConnect: (data: any) => void
-  ) => Promise<ISharedRoom>;
-  getRoom: <TRemoteInterface extends IRemoteInterface>(
+  ) => ISharedRoom;
+  getRoom: <TRemoteInterface>(
     address: string,
-    RoomInfo: RoomInfo
-  ) => Promise<TRemoteInterface>;
+    roomInfo?: RoomInfo
+  ) => TRemoteInterface;
+  expose: (address: string, service: any) => void;
 }
 export interface IRemoteInterface {
   onRequest: (message: RequestMessage) => void;

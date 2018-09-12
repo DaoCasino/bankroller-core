@@ -28,8 +28,14 @@ export function createIpfsNode(yourSwarm = []): Promise<Ipfs> {
         }
       }
     })
-      .on("ready", () => {
-        resolve(ipfs);
+      .on("start", () => {
+        const id = ipfs.id().then(info => {
+          ipfs.id = info.id;
+          resolve(ipfs);
+        });
+      })
+      .on("peer joined", id => {
+        console.log(`Peer joined. Id: ${id}, this.id: ${ipfs.id}`);
       })
       .on("error", error => {
         errors.push(error);
