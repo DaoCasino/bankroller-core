@@ -23,8 +23,7 @@ export class RemoteProxy {
       {
         get: (target, prop: string) => {
           if (!prop.startsWith("_")) {
-            return async (params): Promise<any> => {
-              const { symbol, exchangeId, timeFrame } = params;
+            return async (...params): Promise<any> => {
               const id = getId();
               sendRequest({ method: prop, params, id });
               const promise = new Promise((resolve, reject) => {

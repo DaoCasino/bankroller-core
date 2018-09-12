@@ -33,7 +33,6 @@ export class DAppInstance implements IDappInstance {
   channel: any;
   payChannelLogic: PayChannelLogic;
   nonce: number;
-  room: any;
   channelState: ChannelState;
   closeByConsentData: any;
 
@@ -41,12 +40,10 @@ export class DAppInstance implements IDappInstance {
     this._params = params;
     this.nonce = 0;
     this.RSA = new RSA();
-    this.room = this._params.roomProvider
-      .getRoom(`${params.gameInfo.hash}_${this._params.userId}`, {
-        privateKey: Eth.account().privateKey,
-        allowedUsers: [this._params.userId]
-      })
-      .then(room => new ServiceWrapper(this, room.sendResponse));
+    this._params.roomProvider.expose(
+      `${params.gameInfo.hash}_${this._params.userId}`,
+      this
+    );
     this.payChannelLogic = new PayChannelLogic();
     //TODO rempve fropm global
   }
