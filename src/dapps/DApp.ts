@@ -1,8 +1,10 @@
+import { ISharedRoom } from "dc-messaging";
 import _config from "../../config";
 import Eth from "../Eth";
 import * as Utils from "../utils";
 
-import { DAppParams, IDApp, UserId, GameInfo, ISharedRoom } from "./Interfaces";
+import { DAppParams, IDApp, UserId, GameInfo } from "./Interfaces";
+
 import { DAppInstance } from "./DAppInstance";
 import { setInterval } from "timers";
 

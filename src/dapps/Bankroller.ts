@@ -6,7 +6,7 @@ import Eth from "../Eth";
 import GlobalGameLogicStore from "./GlobalGameLogicStore";
 import * as Utils from "../utils";
 import PayChannelLogic from "./PayChannelLogic";
-import { IpfsTransportProvider } from "../Ipfs/IpfsTransportProvider";
+import { IpfsTransportProvider } from "dc-messaging";
 import {
   getSubDirectoriee,
   loadLogic,

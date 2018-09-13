@@ -1,3 +1,4 @@
+import { ISharedRoom, IMessagingProvider } from "dc-messaging";
 export type UserId = string;
 
 export interface GameInfo {
@@ -5,22 +6,6 @@ export interface GameInfo {
   hash: string;
   contract: Contract;
   gameId: string;
-}
-export interface RoomInfo {
-  privateKey: string;
-  allowedUsers: UserId[];
-}
-export interface RequestMessage {
-  from?: string;
-  method: string;
-  params: any[];
-  id: number;
-}
-export interface ResponseMessage {
-  from?: string;
-  result: any;
-  error: any;
-  id: number;
 }
 export interface DAppInstanceParams {
   userId: UserId;

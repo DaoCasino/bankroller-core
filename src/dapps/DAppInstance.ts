@@ -1,7 +1,7 @@
+import { IMessagingProvider } from "dc-messaging";
 import {
   IDappInstance,
   UserId,
-  IMessagingProvider,
   DAppInstanceParams,
   OpenChannelParams,
   SignedResponse,
@@ -15,7 +15,6 @@ import * as Utils from "../utils";
 import Eth from "../Eth";
 import PayChannelLogic from "./PayChannelLogic";
 import { ChannelState } from "./ChannelState";
-import { ServiceWrapper } from "../ServiceWrapper";
 
 type SolidityType = "bytes32" | "address" | "uint" | "bytes" | "bool";
 interface SolidityTypeValue {
