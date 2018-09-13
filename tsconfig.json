@@ -1,17 +1,10 @@
 {
-  "include": ["src/**/*"],
-
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "target": "es2017",
-    "module": "commonjs",
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "declaration": true,
-    "sourceMap": true,
-    "skipLibCheck": true,
     "composite": true,
     "rootDir": "src",
     "outDir": "lib"
   },
-  "exclude": ["**/node_modules/**/*", "**/lib/**/*"]
+  "include": ["src/**/*"],
+  "references": []
 }
