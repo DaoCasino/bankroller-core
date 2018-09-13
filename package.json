@@ -2,7 +2,7 @@
   "name": "bankroller-core",
   "version": "1.0.0",
   "description": "Core bankroller functionality",
-  "main": "server.js",
+  "main": "./lib/index",
   "scripts": {
     "postinstall": "bash ./shell/postinstall.sh",
     "dev": "sh ./run_dev_env.sh",
@@ -13,13 +13,7 @@
     "test": "dc-scripts test",
     "build": "npm-run-all typescript",
     "clean": "rimraf lib",
-    "typescript": "tsc --build",
-    "format": "prettier --single-quote --write **/src/**/*.ts",
-    "lint": "tslint **/src/**/*.ts",
-    "lint:fix": "tslint **/src/**/*.ts --fix",
-    "typecheck": "tsc --noEmit",
-    "tests": "jest src",
-    "tests:coverage": "jest src --coverage"
+    "typescript": "tsc --build"
   },
   "husky": {
     "hooks": {
@@ -28,7 +22,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "GPL-3",
   "dependencies": {
     "@types/bn.js": "4.11.1",
     "@types/web3": "1.0.3",
@@ -41,26 +35,7 @@
     "nedb": "^1.8.0",
     "node-fetch": "2.1.2",
     "number-to-bn": "1.7.0",
-    "p-queue": "^2.4.2",
     "web3": "1.0.0-beta.36",
     "ws": "6.0.0"
-  },
-  "devDependencies": {
-    "@types/node": "10.9.4",
-    "babel-cli": "^6.26.0",
-    "babel-eslint": "8.2.6",
-    "babel-plugin-module-resolver": "^3.1.0",
-    "babel-preset-env": "^1.6.1",
-    "dc-scripts": "github:daocasino/dc-scripts#develop",
-    "eslint": "^4.16.0",
-    "eslint-config-standard": "^11.0.0-beta.0",
-    "eslint-plugin-babel": "5.1.0",
-    "eslint-plugin-flowtype": "2.33.0",
-    "eslint-plugin-import": "^2.8.0",
-    "eslint-plugin-node": "^5.2.1",
-    "eslint-plugin-promise": "^3.6.0",
-    "eslint-plugin-standard": "^3.0.1",
-    "husky": "1.0.0-rc.13",
-    "nodemon": "^1.15.0"
   }
 }
