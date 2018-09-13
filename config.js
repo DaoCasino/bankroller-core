@@ -21,6 +21,7 @@ if (process.env.DC_NETWORK === 'sdk') {
 let data_path = process.env.DATA_PATH || './data'
 
 module.exports = {
+  privatekey : process.env.privateKey || false, 
   wallet_pass : '1234',
   loglevel: 'light',
 
