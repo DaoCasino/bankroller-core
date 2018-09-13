@@ -6,5 +6,8 @@
     "outDir": "lib"
   },
   "include": ["src/**/*"],
-  "references": [{ "path": "../dc-messaging" }]
+  "references": [
+    { "path": "../dc-messaging" },
+    { "path": "../dc-ethereum-utils" }
+  ]
 }

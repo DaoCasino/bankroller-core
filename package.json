@@ -21,7 +21,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "GPL-3",
+  "license": "GPL-3.0",
   "dependencies": {
     "@types/bn.js": "4.11.1",
     "@types/web3": "1.0.3",
@@ -36,6 +36,7 @@
     "number-to-bn": "1.7.0",
     "web3": "1.0.0-beta.36",
     "ws": "6.0.0",
-    "dc-messaging": "1.0.0"
+    "dc-messaging": "1.0.0",
+    "dc-ethereum-utils": "1.0.0"
   }
 }

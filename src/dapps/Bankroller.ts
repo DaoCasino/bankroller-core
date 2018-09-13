@@ -2,10 +2,11 @@ import _config from "../../config";
 import fs from "fs";
 import path from "path";
 import { DApp } from "./DApp";
-import Eth from "../Eth";
+
 import GlobalGameLogicStore from "./GlobalGameLogicStore";
-import * as Utils from "../utils";
-import PayChannelLogic from "./PayChannelLogic";
+import { Eth } from "dc-ethereum-utils";
+import * as Utils from "dc-ethereum-utils";
+
 import { IpfsTransportProvider } from "dc-messaging";
 import {
   getSubDirectoriee,
@@ -24,8 +25,16 @@ interface IBankroller {
 export default class Bankroller {
   private _started: boolean;
   private _loadedDirectories: Set<string>;
+  private _eth: Eth;
   gamesMap: Map<string, DApp>;
   constructor() {
+    const { gasPrice: price, gasLimit: limit } = _config.network;
+    this._eth = new Eth({
+      httpProviderUrl: _config.network.rpc_url,
+      ERC20ContractInfo: _config.network.contracts.erc20,
+      faucetServerUrl: _config.faucet.get_acc_url,
+      gasParams: { price, limit }
+    });
     this.gamesMap = new Map();
     global["DCLib"] = new GlobalGameLogicStore();
   }
@@ -34,9 +43,9 @@ export default class Bankroller {
     if (this._started) {
       throw new Error("Bankroller allready started");
     }
-    await Eth.initAccount();
+    await this._eth.initAccount();
     (await IpfsTransportProvider.create()).exposeSevice(
-      Eth.account().address,
+      this._eth.account().address,
       this
     );
     this._started = true;
@@ -76,7 +85,8 @@ export default class Bankroller {
           slug,
           rules,
           contract,
-          roomProvider
+          roomProvider,
+          Eth: this._eth
         });
         await dapp.start();
         this.gamesMap.set(slug, dapp);

@@ -1,15 +1,17 @@
-import Eth from "../Eth";
-import * as Utils from "../utils";
-
+import { Eth } from "dc-ethereum-utils";
+import * as Utils from "dc-ethereum-utils";
 /*
  * Channel state manager / store
  */
+
 export class ChannelState {
   states: any;
   wait_states: any;
   state_format: any;
   player_openkey: any;
-  constructor(player_openkey: string) {
+  private eth: Eth;
+  constructor(player_openkey: string, eth: Eth) {
+    this.eth = eth;
     if (!player_openkey) {
       console.error(" player_openkey required in channelState constructor");
       return;
@@ -60,7 +62,7 @@ export class ChannelState {
       { t: "uint", v: state_data._totalBet },
       { t: "uint", v: state_data._session }
     );
-    const state_sign = Eth.signHash(state_hash);
+    const state_sign = this.eth.signHash(state_hash);
 
     if (!this.states[state_hash])
       this.states[state_hash] = { confirmed: false };
@@ -119,7 +121,7 @@ export class ChannelState {
       return false;
     }
 
-    const recover_openkey = Eth.recover(state_hash, state_data._sign);
+    const recover_openkey = this.eth.recover(state_hash, state_data._sign);
     if (recover_openkey.toLowerCase() !== this.player_openkey.toLowerCase()) {
       console.error("State " + recover_openkey + "!=" + this.player_openkey);
       return false;
