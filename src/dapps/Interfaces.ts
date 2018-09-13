@@ -89,25 +89,3 @@ export interface DAppParams {
   contract: Contract;
   roomProvider: IMessagingProvider;
 }
-export interface ISharedRoom {
-  onConnect: (dappId: string, callback: (data: any) => void) => void;
-  bankrollerActive(params: {
-    deposit: number;
-    dapp: { slug: string; hash: string };
-  });
-}
-export interface IMessagingProvider {
-  getSharedRoom: (
-    gameId: string,
-    onConnect: (data: any) => void
-  ) => ISharedRoom;
-  getRemoteInterface: <TRemoteInterface>(
-    address: string,
-    roomInfo?: RoomInfo
-  ) => TRemoteInterface;
-  exposeSevice: (address: string, service: any) => void;
-}
-export interface IRemoteInterface {
-  onRequest: (message: RequestMessage) => void;
-  sendResponse: (message: ResponseMessage) => void;
-}
