@@ -1,8 +1,10 @@
+import { ISharedRoom } from "dc-messaging";
 import _config from "../../config";
-import Eth from "../Eth";
-import * as Utils from "../utils";
+import { Eth } from "dc-ethereum-utils";
+import * as Utils from "dc-ethereum-utils";
 
-import { DAppParams, IDApp, UserId, GameInfo, ISharedRoom } from "./Interfaces";
+import { DAppParams, IDApp, UserId, GameInfo } from "./Interfaces";
+
 import { DAppInstance } from "./DAppInstance";
 import { setInterval } from "timers";
 
@@ -57,17 +59,22 @@ export class DApp implements IDApp {
       );
       // ??? this.contract_abi     = JSON.parse(contract.abi)
     }
-    this._payChannelContract = Eth.getContract(contract.abi, contract.address);
+    this._payChannelContract = this._params.Eth.getContract(
+      contract.abi,
+      contract.address
+    );
 
-    await Eth.ERC20ApproveSafe(contract.address, 100000000);
+    await this._params.Eth.ERC20ApproveSafe(contract.address, 100000000);
 
     this._startSendingBeacon(3000);
   }
 
   async _startSendingBeacon(timeOut) {
     let log_beacon = 0;
-    // Utils.debugLog('Eth.getBetBalance')
-    const { balance } = await Eth.getBetBalance(Eth.account().address);
+    // Utils.debugLog('this._params.Eth.getBetBalance')
+    const { balance } = await this._params.Eth.getBetBalance(
+      this._params.Eth.account().address
+    );
     const self = this;
 
     this._beaconInterval = setInterval(() => {
@@ -88,7 +95,7 @@ export class DApp implements IDApp {
   async onNewUserConnect(params) {
     const connectionId = Utils.makeSeed();
     const { userId } = params;
-    const account = Eth.account();
+    const account = this._params.Eth.account();
     const dappInstance = new DAppInstance({
       userId,
       num: 0,
@@ -97,7 +104,8 @@ export class DApp implements IDApp {
       logic: params.logic,
       roomProvider: params.roomProvider,
       onFinish: this.onGameFinished,
-      gameInfo: this._gameInfo
+      gameInfo: this._gameInfo,
+      Eth: this._params.Eth
     });
 
     //TODO remove circular dependency

@@ -1,7 +1,7 @@
+import { IMessagingProvider } from "dc-messaging";
 import {
   IDappInstance,
   UserId,
-  IMessagingProvider,
   DAppInstanceParams,
   OpenChannelParams,
   SignedResponse,
@@ -11,11 +11,9 @@ import {
 import RSA from "../Rsa";
 import _config from "../../config";
 
-import * as Utils from "../utils";
-import Eth from "../Eth";
+import { sha3, debugLog, dec2bet } from "dc-ethereum-utils";
 import PayChannelLogic from "./PayChannelLogic";
 import { ChannelState } from "./ChannelState";
-import { ServiceWrapper } from "../ServiceWrapper";
 
 type SolidityType = "bytes32" | "address" | "uint" | "bytes" | "bool";
 interface SolidityTypeValue {
@@ -63,10 +61,10 @@ export class DAppInstance implements IDappInstance {
     this.channelId = channelId;
     this.playerAddress = playerAddress;
     this.playerDeposit = playerDeposit;
-    const bankrollerAddress = Eth.account().address;
+    const bankrollerAddress = this._params.Eth.account().address;
     const bankrollerDeposit = playerDeposit * this._params.rules.depositX;
     this.bankrollerDeposit = bankrollerDeposit;
-    const openingBlock = await Eth.getBlockNumber();
+    const openingBlock = await this._params.Eth.getBlockNumber();
     // Args for open channel transaction
     const _N = `0x${this.RSA.RSAKey.n.toString(16)}`;
     const _E = `0x0${this.RSA.RSAKey.e.toString(16)}`;
@@ -94,7 +92,7 @@ export class DAppInstance implements IDappInstance {
       { t: "bytes", v: _E }
     ];
 
-    const signature = Eth.signHash(Utils.sha3(...toSign));
+    const signature = this._params.Eth.signHash(sha3(...toSign));
 
     return { response, signature };
 
@@ -114,7 +112,7 @@ export class DAppInstance implements IDappInstance {
       channel.state === "1" &&
       channel.player.toLowerCase() === data.userId.toLowerCase() &&
       channel.bankroller.toLowerCase() ===
-        Eth.account().address.toLowerCase() &&
+        this._params.Eth.account().address.toLowerCase() &&
       "" + channel.playerBalance === "" + this.playerDeposit &&
       "" + channel.bankrollerBalance === "" + this.bankrollerDeposit
     ) {
@@ -169,7 +167,10 @@ export class DAppInstance implements IDappInstance {
 
     // Инициализируем менеджер состояния канала для этого юзера если ещ нет
     if (!this.channelState) {
-      this.channelState = new ChannelState(this._params.userId);
+      this.channelState = new ChannelState(
+        this._params.userId,
+        this._params.Eth
+      );
     }
     // Проверяем нет ли неподписанных юзером предыдущих состояний
     if (this.channelState.hasUnconfirmed()) {
@@ -186,8 +187,8 @@ export class DAppInstance implements IDappInstance {
       userBets = lastState._playerBalance;
     }
 
-    console.log(Utils.dec2bet(userBets), Utils.dec2bet(data.userBet));
-    if (Utils.dec2bet(userBets) < Utils.dec2bet(data.userBet) * 1) {
+    console.log(dec2bet(userBets), dec2bet(data.userBet));
+    if (dec2bet(userBets) < dec2bet(data.userBet) * 1) {
       throw new Error(
         "Player " + this._params.userId + " not enougth money for this bet"
       );
@@ -201,7 +202,7 @@ export class DAppInstance implements IDappInstance {
       { t: "uint", v: data.gamedata },
       { t: "bytes32", v: data.seed }
     ];
-    const recoverOpenkey = Eth.recover(Utils.sha3(...toSign), data.sign);
+    const recoverOpenkey = this._params.Eth.recover(sha3(...toSign), data.sign);
     if (recoverOpenkey.toLowerCase() !== this._params.userId.toLowerCase()) {
       throw new Error("Invalid signature");
     }
@@ -279,10 +280,10 @@ export class DAppInstance implements IDappInstance {
       { t: "bytes32", v: data.seed }
     ];
 
-    const hash = Utils.sha3(...toSign);
+    const hash = sha3(...toSign);
     const signature = this.RSA.signHash(hash).toString(16);
 
-    const signatureHash = Utils.sha3(signature);
+    const signatureHash = sha3(signature);
 
     args[rnd_i] = signatureHash;
     // TODO refactor math
@@ -312,7 +313,7 @@ export class DAppInstance implements IDappInstance {
     this.closeByConsentData = data;
 
     // Отправляем ему свою подпись закрытия
-    let hash = Utils.sha3(
+    let hash = sha3(
       { t: "bytes32", v: lastState._id },
       { t: "uint", v: lastState._playerBalance },
       { t: "uint", v: lastState._bankrollerBalance },
@@ -320,7 +321,7 @@ export class DAppInstance implements IDappInstance {
       { t: "uint", v: lastState._session },
       { t: "bool", v: true }
     );
-    const sign = Eth.signHash(hash);
+    const sign = this._params.Eth.signHash(hash);
 
     return { sign };
   }
@@ -343,7 +344,7 @@ export class DAppInstance implements IDappInstance {
   }
 
   reconnect(data) {
-    Utils.debugLog("User reconnect", _config.loglevel);
+    debugLog("User reconnect", _config.loglevel);
     //TODE implement or delete
   }
   disconnect() {

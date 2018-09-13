@@ -1,26 +1,12 @@
+import { ISharedRoom, IMessagingProvider } from "dc-messaging";
+import { ContractInfo, Eth } from "dc-ethereum-utils";
 export type UserId = string;
 
 export interface GameInfo {
   slug: string;
   hash: string;
-  contract: Contract;
+  contract: ContractInfo;
   gameId: string;
-}
-export interface RoomInfo {
-  privateKey: string;
-  allowedUsers: UserId[];
-}
-export interface RequestMessage {
-  from?: string;
-  method: string;
-  params: any[];
-  id: number;
-}
-export interface ResponseMessage {
-  from?: string;
-  result: any;
-  error: any;
-  id: number;
 }
 export interface DAppInstanceParams {
   userId: UserId;
@@ -31,6 +17,7 @@ export interface DAppInstanceParams {
   roomProvider: IMessagingProvider;
   onFinish: (userId: UserId) => void;
   gameInfo: GameInfo;
+  Eth: Eth;
 }
 export interface OpenChannelParams {
   channelId: string;
@@ -76,38 +63,12 @@ export interface IDappInstance {
   //closeTimeout(); WTF???
   disconnect: (data: any) => void;
 }
-
-export interface Contract {
-  abi: string;
-  address: string;
-}
 export interface DAppParams {
   slug: string;
   rules: any;
   // timer: number;
   // checkTimeout: number;
-  contract: Contract;
+  contract: ContractInfo;
   roomProvider: IMessagingProvider;
-}
-export interface ISharedRoom {
-  onConnect: (dappId: string, callback: (data: any) => void) => void;
-  bankrollerActive(params: {
-    deposit: number;
-    dapp: { slug: string; hash: string };
-  });
-}
-export interface IMessagingProvider {
-  getSharedRoom: (
-    gameId: string,
-    onConnect: (data: any) => void
-  ) => ISharedRoom;
-  getRemoteInterface: <TRemoteInterface>(
-    address: string,
-    roomInfo?: RoomInfo
-  ) => TRemoteInterface;
-  exposeSevice: (address: string, service: any) => void;
-}
-export interface IRemoteInterface {
-  onRequest: (message: RequestMessage) => void;
-  sendResponse: (message: ResponseMessage) => void;
+  Eth: Eth;
 }

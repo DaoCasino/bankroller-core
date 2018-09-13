@@ -1,6 +1,6 @@
-import { IpfsTransportProvider } from "../Ipfs/IpfsTransportProvider";
+import { IpfsTransportProvider, createIpfsNode } from "dc-messaging";
 import Ipfs from "ipfs";
-import { createIpfsNode } from "../ipfs/Ipfs";
+
 import IpfsRoom from "ipfs-pubsub-room";
 
 const room12 =

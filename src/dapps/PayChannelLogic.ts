@@ -1,4 +1,4 @@
-import * as Utils from "../utils";
+import * as Utils from "dc-ethereum-utils";
 import _config from "../../config";
 
 /** max items in history */

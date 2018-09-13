@@ -16,14 +16,17 @@ export const checkFileExists = (
   }
   return null;
 };
+
 export const getSubDirectoriee = (directoryPath: string): string[] => {
   return fs
     .readdirSync(directoryPath)
     .map(subDir => path.join(directoryPath, subDir));
 };
+
 export const removeDir = (directoryPath: string): void => {
   fs.rmdirSync(directoryPath);
 };
+
 export const saveFilesToNewDir = (
   directoryPath: string,
   files: { fileName: string; fileData: Buffer }[]
@@ -37,6 +40,7 @@ export const saveFilesToNewDir = (
     fs.rmdirSync(directoryPath);
   }
 };
+
 export const loadLogic = (
   directoryPath: string
 ): { manifest: any; logic: (payChannel: PayChannelLogic) => void } => {
