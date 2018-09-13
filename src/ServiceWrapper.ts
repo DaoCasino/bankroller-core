@@ -15,11 +15,12 @@ export class ServiceWrapper<TService> {
   }
 
   async onRequest(message: RequestMessage): Promise<any> {
-    const { method, params, id } = message;
+    const { method, params, id, from } = message;
 
     const func = this._service[method];
     let data;
     const response: ResponseMessage = {
+      from,
       id,
       error: null,
       result: null

@@ -1,4 +1,4 @@
-import { IpfsRoomProvider } from "../Ipfs/IpfsRoomProvider";
+import { IpfsTransportProvider } from "../Ipfs/IpfsTransportProvider";
 import Ipfs from "ipfs";
 import { createIpfsNode } from "../ipfs/Ipfs";
 import IpfsRoom from "ipfs-pubsub-room";
@@ -66,17 +66,17 @@ const testRawIpfs = async () => {
   room1.broadcast("hi from room 1");
 };
 const test = async () => {
-  const roomProvider1 = await IpfsRoomProvider.create();
-  const roomProvider2 = await IpfsRoomProvider.createAdditional();
+  const roomProvider1 = await IpfsTransportProvider.create();
+  const roomProvider2 = await IpfsTransportProvider.createAdditional();
   const peerWaitPromise = roomProvider1.waitForPeer(
     roomProvider2.peerId,
     room12
   );
-  //const serv1: IService1 = roomProvider2.getRoom<IService1>(room12);
-  const serv2: IService2 = roomProvider1.getRoom<IService2>(room12);
+  //const serv1: IService1 = roomProvider2.getRemoteInterface<IService1>(room12);
+  const serv2: IService2 = roomProvider1.getRemoteInterface<IService2>(room12);
 
-  //roomProvider1.expose(room12, new IService1Impl());
-  roomProvider2.expose(room12, new IService2Impl());
+  //roomProvider1.exposeSevice(room12, new IService1Impl());
+  roomProvider2.exposeSevice(room12, new IService2Impl());
   await peerWaitPromise;
   await new Promise(resolve => setTimeout(resolve, 10000));
   const res1 = await serv2.Method2({ count: 1, name: "call serv 2" }, 30);
