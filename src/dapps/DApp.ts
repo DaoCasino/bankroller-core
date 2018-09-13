@@ -11,7 +11,7 @@ import { setInterval } from "timers";
  */
 
 export class DApp implements IDApp {
-  _params: DAppParams;
+  private _params: DAppParams;
   _instancesMap: Map<UserId, DAppInstance>;
   _payChannelContract: any;
   _sharedRoom: ISharedRoom;
@@ -37,7 +37,14 @@ export class DApp implements IDApp {
 
     this._params = params;
   }
-
+  getView() {
+    return { name: this._params.slug };
+  }
+  getInstancesView() {
+    return Array.from(this._instancesMap.values()).map(instance =>
+      instance.getView()
+    );
+  }
   async start() {
     this._sharedRoom = await this._params.roomProvider.getSharedRoom(
       `dapp_room${this._gameInfo.hash}`,

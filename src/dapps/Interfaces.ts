@@ -11,11 +11,13 @@ export interface RoomInfo {
   allowedUsers: UserId[];
 }
 export interface RequestMessage {
+  from?: string;
   method: string;
   params: any[];
   id: number;
 }
 export interface ResponseMessage {
+  from?: string;
   result: any;
   error: any;
   id: number;
@@ -26,7 +28,7 @@ export interface DAppInstanceParams {
   rules: any;
   payChannelContract: any;
   logic: any;
-  roomProvider: IRoomProvider;
+  roomProvider: IMessagingProvider;
   onFinish: (userId: UserId) => void;
   gameInfo: GameInfo;
 }
@@ -85,7 +87,7 @@ export interface DAppParams {
   // timer: number;
   // checkTimeout: number;
   contract: Contract;
-  roomProvider: IRoomProvider;
+  roomProvider: IMessagingProvider;
 }
 export interface ISharedRoom {
   onConnect: (dappId: string, callback: (data: any) => void) => void;
@@ -94,16 +96,16 @@ export interface ISharedRoom {
     dapp: { slug: string; hash: string };
   });
 }
-export interface IRoomProvider {
+export interface IMessagingProvider {
   getSharedRoom: (
     gameId: string,
     onConnect: (data: any) => void
   ) => ISharedRoom;
-  getRoom: <TRemoteInterface>(
+  getRemoteInterface: <TRemoteInterface>(
     address: string,
     roomInfo?: RoomInfo
   ) => TRemoteInterface;
-  expose: (address: string, service: any) => void;
+  exposeSevice: (address: string, service: any) => void;
 }
 export interface IRemoteInterface {
   onRequest: (message: RequestMessage) => void;

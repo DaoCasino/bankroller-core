@@ -1,7 +1,7 @@
 import Ipfs from "ipfs";
 import IpfsRoom from "ipfs-pubsub-room";
 import {
-  IRoomProvider,
+  IMessagingProvider,
   ISharedRoom,
   RoomInfo,
   RequestMessage,
@@ -51,7 +51,7 @@ export class IPFSSharedRoom implements ISharedRoom {
   sendResponse: (message: ResponseMessage) => void;
 }
 
-export class IpfsRoomProvider implements IRoomProvider {
+export class IpfsTransportProvider implements IMessagingProvider {
   private sharedRoom: IPFSSharedRoom;
   private static _defaultIpfsNode: Ipfs;
   private static _ipfsNodePromise: Promise<Ipfs>;
@@ -75,21 +75,21 @@ export class IpfsRoomProvider implements IRoomProvider {
       }, timeout);
     });
   }
-  static async create(): Promise<IpfsRoomProvider> {
-    if (!IpfsRoomProvider._defaultIpfsNode) {
-      if (IpfsRoomProvider._ipfsNodePromise) {
-        IpfsRoomProvider._defaultIpfsNode = await IpfsRoomProvider._ipfsNodePromise;
+  static async create(): Promise<IpfsTransportProvider> {
+    if (!IpfsTransportProvider._defaultIpfsNode) {
+      if (IpfsTransportProvider._ipfsNodePromise) {
+        IpfsTransportProvider._defaultIpfsNode = await IpfsTransportProvider._ipfsNodePromise;
       } else {
-        IpfsRoomProvider._ipfsNodePromise = createIpfsNode();
-        IpfsRoomProvider._defaultIpfsNode = await IpfsRoomProvider._ipfsNodePromise;
-        IpfsRoomProvider._ipfsNodePromise = null;
+        IpfsTransportProvider._ipfsNodePromise = createIpfsNode();
+        IpfsTransportProvider._defaultIpfsNode = await IpfsTransportProvider._ipfsNodePromise;
+        IpfsTransportProvider._ipfsNodePromise = null;
       }
     }
-    return new IpfsRoomProvider(IpfsRoomProvider._defaultIpfsNode);
+    return new IpfsTransportProvider(IpfsTransportProvider._defaultIpfsNode);
   }
-  static async createAdditional(): Promise<IpfsRoomProvider> {
+  static async createAdditional(): Promise<IpfsTransportProvider> {
     const ipfsNode = await createIpfsNode();
-    return new IpfsRoomProvider(ipfsNode);
+    return new IpfsTransportProvider(ipfsNode);
   }
   private _getIpfsRoom(address: string): any {
     let room = this._roomsMap.get(address);
@@ -111,7 +111,7 @@ export class IpfsRoomProvider implements IRoomProvider {
     this.sharedRoom = new IPFSSharedRoom(ipfsRoom, gameId, onConnect);
     return this.sharedRoom;
   }
-  getRoom<TRemoteInterface>(
+  getRemoteInterface<TRemoteInterface>(
     address: string,
     roomInfo?: RoomInfo
   ): TRemoteInterface {
@@ -128,22 +128,22 @@ export class IpfsRoomProvider implements IRoomProvider {
     );
   }
 
-  expose(address: string, service: any) {
+  exposeSevice(address: string, service: any) {
     const ipfsRoom = this._getIpfsRoom(address);
-    let peer;
 
     // todo - that's bullshit
     const wrapper = new ServiceWrapper(service, async response => {
       try {
-        await ipfsRoom.sendTo(peer, JSON.stringify(response));
+        const { from } = response;
+        await ipfsRoom.sendTo(from, JSON.stringify(response));
         console.log("Response sent");
       } catch (error) {
         throw error;
       }
     });
     ipfsRoom.on("message", message => {
-      peer = message.from;
-      wrapper.onRequest(JSON.parse(message.data));
+      const { from } = message;
+      wrapper.onRequest({ ...JSON.parse(message.data), from });
     });
   }
 }

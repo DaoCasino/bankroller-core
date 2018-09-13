@@ -1,7 +1,7 @@
 import {
   IDappInstance,
   UserId,
-  IRoomProvider,
+  IMessagingProvider,
   DAppInstanceParams,
   OpenChannelParams,
   SignedResponse,
@@ -40,14 +40,19 @@ export class DAppInstance implements IDappInstance {
     this._params = params;
     this.nonce = 0;
     this.RSA = new RSA();
-    this._params.roomProvider.expose(
+    this._params.roomProvider.exposeSevice(
       `${params.gameInfo.hash}_${this._params.userId}`,
       this
     );
     this.payChannelLogic = new PayChannelLogic();
     //TODO rempve fropm global
   }
-
+  getView() {
+    return {
+      ...this.payChannelLogic.getView(),
+      playerAddress: this.playerAddress
+    };
+  }
   async openChannel(
     params: OpenChannelParams
   ): Promise<SignedResponse<OpenChannelResponse>> {

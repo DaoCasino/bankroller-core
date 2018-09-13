@@ -6,30 +6,24 @@ import Eth from "../Eth";
 import GlobalGameLogicStore from "./GlobalGameLogicStore";
 import * as Utils from "../utils";
 import PayChannelLogic from "./PayChannelLogic";
-import { IpfsRoomProvider } from "../Ipfs/IpfsRoomProvider";
-
+import { IpfsTransportProvider } from "../Ipfs/IpfsTransportProvider";
+import {
+  getSubDirectoriee,
+  loadLogic,
+  saveFilesToNewDir,
+  removeDir
+} from "./FileUtils";
 /*
  * Lib constructor
  */
-const MANIFEST_FILENAME = "dapp.manifest";
 
-const checkFileExists = (
-  fileName: string,
-  maybeExtension: string[]
-): string | null => {
-  for (let i = 0; i < maybeExtension.length; i++) {
-    const path = `${fileName}${maybeExtension[i]}`;
-    if (fs.existsSync(path)) {
-      return path;
-    }
-  }
-  return null;
-};
 interface IBankroller {
   id: string;
 }
 
 export default class Bankroller {
+  private _started: boolean;
+  private _loadedDirectories: Set<string>;
   gamesMap: Map<string, DApp>;
   constructor() {
     this.gamesMap = new Map();
@@ -37,57 +31,44 @@ export default class Bankroller {
   }
 
   async start() {
+    if (this._started) {
+      throw new Error("Bankroller allready started");
+    }
     await Eth.initAccount();
-    this.loadDir(_config.dapps_dir);
-  }
-
-  loadDir(directoryPath: string) {
-    fs.readdirSync(directoryPath).forEach(subDir =>
-      this.tryLoadDApp(path.join(directoryPath, subDir))
+    (await IpfsTransportProvider.create()).exposeSevice(
+      Eth.account().address,
+      this
     );
+    this._started = true;
+    getSubDirectoriee(_config.dapps_dir).forEach(this.tryLoadDApp);
   }
-
-  loadLogic(
-    directoryPath: string
-  ): { manifest: any; logic: (payChannel: PayChannelLogic) => void } {
-    let manifestPath: string = `${directoryPath}/${MANIFEST_FILENAME}`;
-    const manifestFoundPath = checkFileExists(manifestPath, [
-      ".js",
-      "",
-      ".json"
-    ]);
-    if (!manifestFoundPath) {
-      throw new Error(`Manifest file not found ${manifestPath}`);
+  async uploadGame(
+    name: string,
+    files: { fileName: string; fileData: Buffer }[]
+  ) {
+    const newDir = path.join(_config.dapps_dir, name);
+    saveFilesToNewDir(newDir, files);
+    if (!(await this.tryLoadDApp(newDir))) {
+      removeDir(newDir);
     }
-    const manifest = manifestFoundPath.endsWith(".js")
-      ? require(manifestFoundPath)
-      : JSON.parse(fs.readFileSync(manifestFoundPath).toString());
-
-    if (
-      typeof manifest !== "object" ||
-      manifest.disable ||
-      manifest.disabled ||
-      manifest.enable === false
-    ) {
-      return { manifest, logic: null };
-    }
-    let logicPath: string = path.join(directoryPath, manifest.logic);
-    const logicFoundPath = checkFileExists(logicPath, [".js", "", ".json"]);
-    if (!logicFoundPath) {
-      throw new Error(`Manifest file not found ${logicFoundPath}`);
-    }
-    require(logicFoundPath);
-    const logic = global["DAppsLogic"][manifest.slug];
-    if (!logic) {
-      throw new Error(`Error loading logic from directory ${directoryPath}`);
-    }
-    return { manifest: { ...manifest }, logic };
   }
-
+  getGames(): { name: string }[] {
+    return Array.from(this.gamesMap.values()).map(dapp => dapp.getView);
+  }
+  getGameInstances(name: string) {
+    const dapp = this.gamesMap.get(name);
+    if (!dapp) {
+      throw new Error(`Game ${name} not found`);
+    }
+    return dapp.getInstancesView();
+  }
   async tryLoadDApp(directoryPath: string): Promise<DApp | null> {
+    if (this._loadedDirectories.has(directoryPath)) {
+      throw new Error(`Directory ${directoryPath} allready loadeed`);
+    }
     try {
-      const { logic, manifest } = this.loadLogic(directoryPath);
-      const roomProvider = await IpfsRoomProvider.create();
+      const { logic, manifest } = loadLogic(directoryPath);
+      const roomProvider = await IpfsTransportProvider.create();
 
       if (logic) {
         const { slug, rules, contract } = manifest;

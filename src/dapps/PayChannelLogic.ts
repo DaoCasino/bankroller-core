@@ -90,7 +90,14 @@ export default class PayChannelLogic implements IPayChannelLogic {
 
     return this._profit;
   }
-
+  getView() {
+    return {
+      Deposit: this.getDeposit(),
+      Player_balance: this.getBalance(),
+      Bankroll_balance: this.getBankrollBalance(),
+      Profit: this.getProfit()
+    };
+  }
   printLog() {
     if (_config.loglevel !== "none") {
       console.groupCollapsed("Paychannel state:");
