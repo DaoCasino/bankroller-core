@@ -59,9 +59,9 @@ export default new class Eth {
       try {
         privateKey = await this.getAccountFromServer();
       } catch (error) {
-        // TODO log smth
+        throw new Error("Faucet server is not responding");
       }
-      privateKey = privateKey || Eth._web3.eth.accounts.create().privateKey;
+
       await DB.set("privateKey", privateKey);
     }
     this._account = Eth._web3.eth.accounts.privateKeyToAccount(privateKey);

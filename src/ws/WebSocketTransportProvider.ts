@@ -10,6 +10,13 @@ import ws from "ws";
 import { RemoteProxy, getId } from "../RemoteProxy";
 import { ServiceWrapper } from "../ServiceWrapper";
 
+class WsSharedRoom {
+  onConnect(dappId: string, callback: (data: any) => void) {}
+  bankrollerActive(params: {
+    deposit: number;
+    dapp: { slug: string; hash: string };
+  }) {}
+}
 class WebsocketTransportProvider {
   private _wsMap: Map<string, any>;
   peerId: string;
@@ -34,10 +41,7 @@ class WebsocketTransportProvider {
     return client;
   }
   getSharedRoom(gameId: string, onConnect: (data: any) => void): ISharedRoom {
-    if (this.sharedRoom) return this.sharedRoom;
-    const ipfsRoom = this._getIpfsRoom(gameId);
-    this.sharedRoom = new IPFSSharedRoom(ipfsRoom, gameId, onConnect);
-    return this.sharedRoom;
+    return new WsSharedRoom();
   }
   getRemoteInterface<TRemoteInterface>(
     address: string,
