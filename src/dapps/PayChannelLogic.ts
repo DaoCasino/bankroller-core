@@ -92,10 +92,10 @@ export default class PayChannelLogic implements IPayChannelLogic {
   }
   getView() {
     return {
-      Deposit: this.getDeposit(),
-      Player_balance: this.getBalance(),
-      Bankroll_balance: this.getBankrollBalance(),
-      Profit: this.getProfit()
+      deposit: this.getDeposit(),
+      playerBalance: this.getBalance(),
+      bankrollerBalance: this.getBankrollBalance(),
+      profit: this.getProfit()
     };
   }
   printLog() {

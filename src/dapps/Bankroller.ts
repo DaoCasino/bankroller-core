@@ -14,19 +14,18 @@ import {
   saveFilesToNewDir,
   removeDir
 } from "./FileUtils";
+import { IBankroller, GameInstanceInfo } from "../intefaces/IBankroller";
 /*
  * Lib constructor
  */
 
-interface IBankroller {
-  id: string;
-}
-
-export default class Bankroller {
+export default class Bankroller implements IBankroller {
   private _started: boolean;
   private _loadedDirectories: Set<string>;
   private _eth: Eth;
   gamesMap: Map<string, DApp>;
+  id: string;
+
   constructor() {
     const { gasPrice: price, gasLimit: limit } = _config.network;
     this._eth = new Eth({
@@ -36,6 +35,7 @@ export default class Bankroller {
       gasParams: { price, limit }
     });
     this.gamesMap = new Map();
+    this.id = _config.network.contracts.erc20.address;
     global["DCLib"] = new GlobalGameLogicStore();
   }
 
@@ -53,7 +53,7 @@ export default class Bankroller {
   }
   async uploadGame(
     name: string,
-    files: { fileName: string; fileData: Buffer }[]
+    files: { fileName: string; fileData: Buffer | string }[]
   ) {
     const newDir = path.join(_config.dapps_dir, name);
     saveFilesToNewDir(newDir, files);
@@ -64,7 +64,7 @@ export default class Bankroller {
   getGames(): { name: string }[] {
     return Array.from(this.gamesMap.values()).map(dapp => dapp.getView);
   }
-  getGameInstances(name: string) {
+  getGameInstances(name: string): GameInstanceInfo[] {
     const dapp = this.gamesMap.get(name);
     if (!dapp) {
       throw new Error(`Game ${name} not found`);

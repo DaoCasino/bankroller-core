@@ -29,7 +29,7 @@ export const removeDir = (directoryPath: string): void => {
 
 export const saveFilesToNewDir = (
   directoryPath: string,
-  files: { fileName: string; fileData: Buffer }[]
+  files: { fileName: string; fileData: Buffer | string }[]
 ) => {
   fs.mkdirSync(directoryPath);
   try {
