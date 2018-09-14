@@ -6,7 +6,7 @@
   "scripts": {
     "postinstall": "bash ./postinstall.sh",
     "dev": "sh ./run_dev_env.sh",
-    "start": "dc-scripts start -p && npm run dev",
+    "start": "dc-scripts run -p && npm run dev",
     "start:ropsten": "DC_NETWORK=ropsten DATA_PATH=data2 DAPPS_PATH=data/dapps  DATA_SUBPATH=d3 npm run develop",
     "stop": "dc-scripts stop",
     "reset_db": "rm -rf ./data/DB && rm -rf ./data/messaging",
@@ -36,7 +36,7 @@
     "babel-eslint": "8.2.6",
     "babel-plugin-module-resolver": "^3.1.0",
     "babel-preset-env": "^1.6.1",
-    "dc-scripts": "github:daocasino/dc-scripts#develop",
+    "dc-scripts": "github:daocasino/dc-scripts",
     "eslint": "^4.16.0",
     "eslint-config-standard": "^11.0.0-beta.0",
     "eslint-plugin-babel": "5.1.0",
