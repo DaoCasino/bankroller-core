@@ -7,7 +7,7 @@ import {
   SignedResponse,
   OpenChannelResponse,
   CallParams
-} from "./Interfaces";
+} from "../intefaces/Interfaces";
 import RSA from "../Rsa";
 import _config from "../../config";
 

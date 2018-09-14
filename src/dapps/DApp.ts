@@ -3,7 +3,7 @@ import _config from "../../config";
 import { Eth } from "dc-ethereum-utils";
 import * as Utils from "dc-ethereum-utils";
 
-import { DAppParams, IDApp, UserId, GameInfo } from "./Interfaces";
+import { DAppParams, IDApp, UserId, GameInfo } from "../intefaces/Interfaces";
 
 import { DAppInstance } from "./DAppInstance";
 import { setInterval } from "timers";
