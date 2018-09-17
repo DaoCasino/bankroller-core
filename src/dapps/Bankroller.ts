@@ -6,7 +6,6 @@ import { DApp } from "./DApp";
 import GlobalGameLogicStore from "./GlobalGameLogicStore";
 import { Eth } from "dc-ethereum-utils";
 import * as Utils from "dc-ethereum-utils";
-
 import { IpfsTransportProvider } from "dc-messaging";
 import {
   getSubDirectoriee,
@@ -32,7 +31,8 @@ export default class Bankroller implements IBankroller {
       httpProviderUrl: _config.network.rpc_url,
       ERC20ContractInfo: _config.network.contracts.erc20,
       faucetServerUrl: _config.faucet.get_acc_url,
-      gasParams: { price, limit }
+      gasParams: { price, limit },
+      privateKey: _config.privateKey
     });
     this.gamesMap = new Map();
     this.id = _config.network.contracts.erc20.address;
