@@ -30,12 +30,14 @@ export default class Bankroller implements IBankroller {
     this._eth = new Eth({
       httpProviderUrl: _config.network.rpc_url,
       ERC20ContractInfo: _config.network.contracts.erc20,
-      faucetServerUrl: _config.faucet.get_acc_url,
+      faucetServerUrl: _config.faucetServerUrl,
       gasParams: { price, limit },
       privateKey: _config.privateKey
     });
     this.gamesMap = new Map();
+    this._loadedDirectories = new Set();
     this.id = _config.network.contracts.erc20.address;
+    this.tryLoadDApp = this.tryLoadDApp.bind(this);
     global["DCLib"] = new GlobalGameLogicStore();
   }
 
@@ -43,9 +45,10 @@ export default class Bankroller implements IBankroller {
     if (this._started) {
       throw new Error("Bankroller allready started");
     }
+
     await this._eth.initAccount();
     (await IpfsTransportProvider.create()).exposeSevice(
-      this._eth.account().address,
+      this._eth.account().address.toLowerCase(),
       this
     );
     this._started = true;
@@ -62,7 +65,7 @@ export default class Bankroller implements IBankroller {
     }
   }
   getGames(): { name: string }[] {
-    return Array.from(this.gamesMap.values()).map(dapp => dapp.getView);
+    return Array.from(this.gamesMap.values()).map(dapp => dapp.getView());
   }
   getGameInstances(name: string): GameInstanceInfo[] {
     const dapp = this.gamesMap.get(name);
