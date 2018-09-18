@@ -16,7 +16,7 @@ module.exports = {
   privateKey: process.env.privateKey || false,
   wallet_pass: "1234",
   loglevel: "light",
-
+  faucetServerUrl: "https://faucet.dao.casino/",
   dapps_dir: path.join(
     path.resolve(),
     process.env.DAPPS_PATH || data_path + "/dapps/"

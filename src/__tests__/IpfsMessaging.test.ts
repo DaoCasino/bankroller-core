@@ -68,17 +68,17 @@ const testRawIpfs = async () => {
 const test = async () => {
   const roomProvider1 = await IpfsTransportProvider.create();
   const roomProvider2 = await IpfsTransportProvider.createAdditional();
-  const peerWaitPromise = roomProvider1.waitForPeer(
-    roomProvider2.peerId,
-    room12
-  );
+  // const peerWaitPromise = roomProvider1.waitForPeer(
+  //   roomProvider2.peerId,
+  //   room12
+  // );
   //const serv1: IService1 = roomProvider2.getRemoteInterface<IService1>(room12);
-  const serv2: IService2 = roomProvider1.getRemoteInterface<IService2>(room12);
-
-  //roomProvider1.exposeSevice(room12, new IService1Impl());
   roomProvider2.exposeSevice(room12, new IService2Impl());
-  await peerWaitPromise;
-  await new Promise(resolve => setTimeout(resolve, 10000));
+  const promise = roomProvider1.getRemoteInterface<IService2>(room12);
+  const serv2: any = await promise;
+
+  // await new Promise(resolve => setTimeout(resolve, 10000));
+  console.log("sdjfl");
   const res1 = await serv2.Method2({ count: 1, name: "call serv 2" }, 30);
   console.log(res1);
 };
