@@ -23,7 +23,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "dc-messaging": "github:DaoCasino/dc-messaging",
+    "dc-messaging": "github:daocasino/dc-messaging#develop",
     "debug": "^3.1.0",
     "js-cryptico": "^1.0.2",
     "nedb": "^1.8.0",
@@ -36,7 +36,7 @@
     "babel-eslint": "8.2.6",
     "babel-plugin-module-resolver": "^3.1.0",
     "babel-preset-env": "^1.6.1",
-    "dc-scripts": "github:daocasino/dc-scripts",
+    "dc-scripts": "github:daocasino/dc-scripts#develop",
     "eslint": "^4.16.0",
     "eslint-config-standard": "^11.0.0-beta.0",
     "eslint-plugin-babel": "5.1.0",
