@@ -21,17 +21,16 @@ const ERC20 = {
 
 module.exports = {
   name    : 'sdk',
-  rpc_url : 'http://dc_protocol:8545/',
+  rpc_url : process.env.rpc_url || 'http://dc_protocol:8545/',
 
   signal  : [
-    '/dns4/signal2.dao.casino/tcp/443/wss/p2p-websocket-star/',
-    '/dns4/signal3.dao.casino/tcp/443/wss/p2p-websocket-star/',
+    process.env.signal || '/dns4/dc_signal:1407/tcp/9090/ws/p2p-websocket-star/',
   ],
 
   contracts : {
     erc20 : ERC20
   },
 
-  gasPrice : 40 * 1000000000,
-  gasLimit : 40 * 100000
+  gasPrice : process.env.gasPrice || 40 * 1000000000,
+  gasLimit : process.env.gasLimit ||  40 * 100000
 }
