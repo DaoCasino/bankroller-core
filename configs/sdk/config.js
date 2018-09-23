@@ -24,7 +24,7 @@ module.exports = {
   rpc_url : process.env.rpc_url || 'http://dc_protocol:8545/',
 
   signal  : [
-    process.env.signal || '/dns4/dc_signal:1407/tcp/9090/ws/p2p-websocket-star/',
+    process.env.signal || '/dns4/dc_signal/tcp/1407/ws/p2p-websocket-star/',
   ],
 
   contracts : {
