@@ -8,7 +8,7 @@ import {
   OpenChannelResponse,
   CallParams
 } from "../intefaces/Interfaces";
-import RSA from "../Rsa";
+import RSA from "../rsa";
 import _config from "../../config";
 
 import { sha3, debugLog, dec2bet } from "dc-ethereum-utils";
