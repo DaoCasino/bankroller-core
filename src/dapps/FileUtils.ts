@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import PayChannelLogic from "./PayChannelLogic";
+import { PayChannelLogic } from "dc-core";
 
 const MANIFEST_FILENAME = "dapp.manifest";
 

@@ -37,6 +37,9 @@
     "web3": "1.0.0-beta.36",
     "ws": "6.0.0",
     "dc-messaging": "1.0.0",
-    "dc-ethereum-utils": "1.0.0"
+    "dc-ethereum-utils": "1.0.0",
+    "dc-core": "^1.0.0",
+    "dc-logging": "^1.0.0",
+    "dc-configs": "^1.0.0"
   }
 }
