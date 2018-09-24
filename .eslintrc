@@ -17,6 +17,7 @@
     "no-debugger"                             : ["warn"],
     "no-unreachable"                          : ["warn"],
     "no-unused-vars"                          : ["warn"],
+    "no-new"                                  : ["off"],
     "no-return-await"                         : ["off"],
     "no-multi-spaces"                         : ["off"],
     "key-spacing"                             : ["off"],
