@@ -1,4 +1,4 @@
-import _config from "../../config";
+import { config } from "dc-configs";
 import fs from "fs";
 import path from "path";
 import { DApp } from "./DApp";
@@ -7,6 +7,7 @@ import GlobalGameLogicStore from "./GlobalGameLogicStore";
 import { Eth } from "dc-ethereum-utils";
 import * as Utils from "dc-ethereum-utils";
 import { IpfsTransportProvider } from "dc-messaging";
+import { Logger } from "dc-logging";
 import {
   getSubDirectoriee,
   loadLogic,
@@ -17,7 +18,7 @@ import { IBankroller, GameInstanceInfo } from "../intefaces/IBankroller";
 /*
  * Lib constructor
  */
-
+const logger = new Logger("Bankroller");
 export default class Bankroller implements IBankroller {
   private _started: boolean;
   private _loadedDirectories: Set<string>;
@@ -26,17 +27,23 @@ export default class Bankroller implements IBankroller {
   id: string;
 
   constructor() {
-    const { gasPrice: price, gasLimit: limit } = _config.network;
+    const {
+      gasPrice: price,
+      gasLimit: limit,
+      web3HttpProviderUrl: httpProviderUrl,
+      contracts,
+      privateKey,
+      faucetServerUrl
+    } = config;
     this._eth = new Eth({
-      httpProviderUrl: _config.network.rpc_url,
-      ERC20ContractInfo: _config.network.contracts.erc20,
-      faucetServerUrl: _config.faucetServerUrl,
+      httpProviderUrl,
+      ERC20ContractInfo: contracts.ERC20,
+      faucetServerUrl,
       gasParams: { price, limit },
-      privateKey: _config.privateKey
+      privateKey
     });
     this.gamesMap = new Map();
     this._loadedDirectories = new Set();
-    this.id = _config.network.contracts.erc20.address;
     this.tryLoadDApp = this.tryLoadDApp.bind(this);
     global["DCLib"] = new GlobalGameLogicStore();
   }
@@ -52,13 +59,13 @@ export default class Bankroller implements IBankroller {
       this
     );
     this._started = true;
-    getSubDirectoriee(_config.dapps_dir).forEach(this.tryLoadDApp);
+    getSubDirectoriee(config.DAppsPath).forEach(this.tryLoadDApp);
   }
   async uploadGame(
     name: string,
     files: { fileName: string; fileData: Buffer | string }[]
   ) {
-    const newDir = path.join(_config.dapps_dir, name);
+    const newDir = path.join(config.DAppsPath, name);
     saveFilesToNewDir(newDir, files);
     if (!(await this.tryLoadDApp(newDir))) {
       removeDir(newDir);
@@ -93,11 +100,10 @@ export default class Bankroller implements IBankroller {
         });
         await dapp.start();
         this.gamesMap.set(slug, dapp);
-        Utils.debugLog("", _config.loglevel);
-        Utils.debugLog("", _config.loglevel);
-        Utils.debugLog(["Load Dapp ", directoryPath], _config.loglevel);
-        Utils.debugLog(manifest, _config.loglevel);
-        Utils.debugLog("", _config.loglevel);
+
+        logger.debug(`Load Dapp ${directoryPath}`);
+        logger.debug(`manifest ${manifest}`);
+
         return dapp;
       }
     } catch (error) {

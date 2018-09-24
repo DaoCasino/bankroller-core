@@ -1,12 +1,21 @@
 import { ISharedRoom } from "dc-messaging";
-import _config from "../../config";
+
 import { Eth } from "dc-ethereum-utils";
 import * as Utils from "dc-ethereum-utils";
 
-import { DAppParams, IDApp, UserId, GameInfo } from "../intefaces/Interfaces";
-
-import { DAppInstance } from "./DAppInstance";
+import {
+  DAppInstance,
+  IDApp,
+  DAppParams,
+  UserId,
+  GameInfo,
+  IDAppInstance
+} from "dc-core";
 import { setInterval } from "timers";
+import { Logger } from "dc-logging";
+import { config } from "dc-configs";
+
+const logger = new Logger("DAppInstance");
 
 /*
  * DApp constructor
@@ -53,9 +62,9 @@ export class DApp implements IDApp {
       this.onNewUserConnect
     );
     let { contract } = this._params;
-    if (!contract || process.env.DC_NETWORK === "local") {
+    if (!contract) {
       contract = await Utils.localGameContract(
-        _config.network.contracts.paychannelContract
+        config.contracts.payChannelContract
       );
       // ??? this.contract_abi     = JSON.parse(contract.abi)
     }
@@ -99,7 +108,7 @@ export class DApp implements IDApp {
     const dappInstance = new DAppInstance({
       userId,
       num: 0,
-      rules: _config.rules,
+      rules: config.rules,
       payChannelContract: this._payChannelContract,
       logic: params.logic,
       roomProvider: params.roomProvider,
@@ -111,10 +120,8 @@ export class DApp implements IDApp {
     //TODO remove circular dependency
 
     this._instancesMap.set(userId, dappInstance);
-    Utils.debugLog(
-      "User " + userId + " connected to " + this._params.slug,
-      _config.loglevel
-    );
+    logger.debug(`User ${userId} connected to  ${this._params.slug}`);
+
     return { connectionId };
   }
 }
