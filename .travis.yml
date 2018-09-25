@@ -26,13 +26,10 @@ jobs:
   - stage: build docker image
     script:
       - echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-      - export REPO=$REPOSITORY
       - export TAG=`if [ "$TRAVIS_BRANCH" == "develop" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
-      - docker build -f Dockerfile -t $REPO:$COMMIT .
-      - docker tag $REPO:$COMMIT $REPO:$TAG
-      - docker push $REPO
-      - ssh -o StrictHostKeyChecking=no $USER@$HOST "docker pull $REPO:latest"
+      - docker build -f Dockerfile -t $REPOSITORY:$COMMIT .
+      - docker tag $REPOSITORY:$COMMIT $REPOSITORY:$TAG
+      - docker push $REPOSITORY
+      - ssh -o StrictHostKeyChecking=no $USER@$HOST "docker pull $REPOSITORY:latest"
       - ssh -o StrictHostKeyChecking=no $USER@$HOST "docker-compose --file $UPLOAD/docker-compose.yml down"
       - ssh -o StrictHostKeyChecking=no $USER@$HOST "docker-compose --file $UPLOAD/docker-compose.yml up -d"
-
-
