@@ -1,0 +1,38 @@
+sudo: required
+dist: trusty
+service:
+addons:
+  ssh_known_hosts:
+  - $HOST
+before_install:
+- openssl aes-256-cbc -k "$ENCRYPT_PASS" -in id_rsa.enc -out ~/.ssh/id_rsa -d
+- chmod 600 ~/.ssh/id_rsa
+- ssh-keygen -y -f ~/.ssh/id_rsa > ~/.ssh/id_rsa.pub
+- chmod 600 ~/.ssh/id_rsa.pub
+- sudo rm /usr/local/bin/docker-compose
+- curl -L https://github.com/docker/compose/releases/download/1.22.0/docker-compose-`uname
+  -s`-`uname -m` > docker-compose
+- chmod +x docker-compose
+- sudo mv docker-compose /usr/local/bin
+language: node_js
+node_js:
+- node
+env:
+- COMMIT=${TRAVIS_COMMIT::8}
+script:
+- echo "Test stage"
+jobs:
+  include:
+  - stage: build docker image
+    script:
+      - echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+      - export REPO=$REPOSITORY
+      - export TAG=`if [ "$TRAVIS_BRANCH" == "develop" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
+      - docker build -f Dockerfile -t $REPO:$COMMIT .
+      - docker tag $REPO:$COMMIT $REPO:$TAG
+      - docker push $REPO
+      - ssh -o StrictHostKeyChecking=no $USER@$HOST "docker pull $REPO:latest"
+      - ssh -o StrictHostKeyChecking=no $USER@$HOST "docker-compose --file $UPLOAD/docker-compose.yml down"
+      - ssh -o StrictHostKeyChecking=no $USER@$HOST "docker-compose --file $UPLOAD/docker-compose.yml up -d"
+
+
