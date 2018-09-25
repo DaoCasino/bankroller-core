@@ -101,13 +101,13 @@ export default class Bankroller implements IBankroller {
         await dapp.start();
         this.gamesMap.set(slug, dapp);
 
-        logger.debug(`Load Dapp ${directoryPath}`);
-        logger.debug(`manifest ${manifest}`);
+        logger.debug({ message: `Load Dapp ${directoryPath}` });
+        logger.debug({ message: `manifest ${manifest}` });
 
         return dapp;
       }
     } catch (error) {
-      console.error(error);
+      logger.error({ message: `Error loading DApp.`, error });
     }
     return null;
   }

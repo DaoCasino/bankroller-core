@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import rimraf from "rimraf";
 import { PayChannelLogic } from "dc-core";
 
 const MANIFEST_FILENAME = "dapp.manifest";
@@ -24,7 +25,7 @@ export const getSubDirectoriee = (directoryPath: string): string[] => {
 };
 
 export const removeDir = (directoryPath: string): void => {
-  fs.rmdirSync(directoryPath);
+  rimraf.sync(directoryPath);
 };
 
 export const saveFilesToNewDir = (
