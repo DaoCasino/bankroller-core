@@ -1,0 +1,7 @@
+version: '2'
+services:
+  bankroller-core:
+    image:
+      altvnv/bankroller-core:latest
+    volumes:
+      - ./data:/bankroller/data
