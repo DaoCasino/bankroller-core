@@ -1,13 +1,11 @@
 const fs   = require('fs')
 const path = require('path')
 
-const protocolContracts = path.join(__dirname, '../..', 'protocol/addresses.json')
-const paychannelPath    = path.join(__dirname, '../..', 'protocol/dapp.contract.json')
-
-if (!fs.existsSync(protocolContracts) || !fs.existsSync(paychannelPath)) {
+const protocolContracts = path.resolve('../../protocol/addresses.json')
+if (!fs.existsSync(protocolContracts)) {
   console.log('')
   console.log('')
-  console.log('Cant find contracts_adressess ', protocolContracts, 'or', paychannelPath)
+  console.log('Cant find contracts_adressess ', protocolContracts)
   console.log('')
   console.log('BANKROLLER NODE SHUT DOWN')
   console.log('')
@@ -15,16 +13,10 @@ if (!fs.existsSync(protocolContracts) || !fs.existsSync(paychannelPath)) {
 }
 
 const conf       = require(protocolContracts)
-const paychannel = require(paychannelPath)
 
 const ERC20 = Object.freeze({
   address : conf.ERC20,
-  abi     : require(path.join(__dirname, '../..', 'protocol/contracts/ERC20.json')).abi
-})
-
-const paychannelContract = Object.freeze({
-  address : paychannel.address,
-  abi     : paychannel.abi
+  abi     : require(path.resolve('../../protocol/contracts/ERC20.json')).abi
 })
 
 module.exports = {
@@ -36,8 +28,7 @@ module.exports = {
   ],
 
   contracts : {
-    erc20      : ERC20,
-    paychannel : paychannelContract
+    erc20 : ERC20,
   },
 
   gasPrice : process.env.gasPrice || 40 * 1000000000,
