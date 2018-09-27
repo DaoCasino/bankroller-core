@@ -1,0 +1,14 @@
+./node_modules
+**/node_modules
+package-lock.json
+yarn.lock
+
+data/messaging
+data_sdk/messaging
+data_ropsten/messaging
+data/DB
+data_sdk/DB
+data_ropsten/DB
+
+configs/local
+configs/sdk0
