@@ -1,23 +1,23 @@
-const path = require('path')
 const fs   = require('fs')
+const path = require('path')
 
-const filpath = path.resolve('../protocol/addresses.json')
-if (!fs.existsSync(filpath)) {
+const protocolContracts = path.resolve('../../protocol/addresses.json')
+if (!fs.existsSync(protocolContracts)) {
   console.log('')
   console.log('')
-  console.log('Cant find contracts_adressess ', filpath)
+  console.log('Cant find contracts_adressess ', protocolContracts)
   console.log('')
   console.log('BANKROLLER NODE SHUT DOWN')
   console.log('')
   process.exit()
 }
 
-const conf = require(filpath)
+const conf       = require(protocolContracts)
 
-const ERC20 = {
+const ERC20 = Object.freeze({
   address : conf.ERC20,
-  abi     : require(path.resolve('../protocol/contracts/ERC20.json')).abi
-}
+  abi     : require(path.resolve('../../protocol/contracts/ERC20.json')).abi
+})
 
 module.exports = {
   name    : 'sdk',
@@ -28,9 +28,9 @@ module.exports = {
   ],
 
   contracts : {
-    erc20 : ERC20
+    erc20 : ERC20,
   },
 
   gasPrice : process.env.gasPrice || 40 * 1000000000,
-  gasLimit : process.env.gasLimit ||  40 * 100000
+  gasLimit : process.env.gasLimit || 40 * 100000
 }

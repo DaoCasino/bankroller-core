@@ -1,35 +1,45 @@
-const path = require('path')
 const fs   = require('fs')
+const path = require('path')
 
-const filpath = path.resolve('../protocol/build/contracts.json')
-if (!fs.existsSync(filpath)) {
+const protocolContracts = path.resolve('../../protocol/addresses.json')
+const paychannelPath    = path.resolve('../../protocol/dapp.contract.json')
+
+if (!fs.existsSync(protocolContracts) || !fs.existsSync(paychannelPath)) {
   console.log('')
   console.log('')
-  console.log('Cant find contracts_adressess ', filpath)
+  console.log('Cant find contracts_adressess ', protocolContracts, 'or', paychannelPath)
   console.log('')
   console.log('BANKROLLER NODE SHUT DOWN')
   console.log('')
   process.exit()
 }
 
-const conf = require(filpath)
+const conf       = require(protocolContracts)
+const paychannel = require(paychannelPath)
 
-const ERC20 = {
-  address: conf.ERC20,
-  abi: require( path.resolve('../protocol/build/contracts/ERC20.json') ).abi
-}
+const ERC20 = Object.freeze({
+  address : conf.ERC20,
+  abi     : require(path.resolve('../../protocol/contracts/ERC20.json')).abi
+})
+
+const paychannelContract = Object.freeze({
+  address : paychannel.address,
+  abi     : paychannel.abi
+})
 
 module.exports = {
   name    : 'local',
-  rpc_url : 'http://localhost:9545/',
-  
-  signal  : '/ip4/127.0.0.1/tcp/9090/ws/p2p-websocket-star/',
-  
+  rpc_url : process.env.rpc_url || 'http://dc_protocol:8545/',
+
+  signal  : [
+    process.env.signal || '/dns4/dc_signal/tcp/1407/ws/p2p-websocket-star/',
+  ],
+
   contracts : {
-    paychannelContract: 'http://127.0.0.1:8181/?get=contract&name=Dice',
-    erc20 : ERC20
+    erc20      : ERC20,
+    paychannel : paychannelContract
   },
 
-  gasPrice : 40 * 1000000000,
-  gasLimit : 40 * 100000
+  gasPrice : process.env.gasPrice || 40 * 1000000000,
+  gasLimit : process.env.gasLimit || 40 * 100000
 }

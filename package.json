@@ -5,8 +5,8 @@
   "main": "server.js",
   "scripts": {
     "_postinstall": "bash ./postinstall.sh",
-    "start": "DC_NETWORK=local DATA_SUBPATH=d2 npm run develop",
-    "start_ropsten": "DC_NETWORK=ropsten DATA_PATH=data2 DAPPS_PATH=data/dapps  DATA_SUBPATH=d3 npm run develop",
+    "start": "sh ./run_sdk_env.sh",
+    "start:ropsten": "DC_NETWORK=ropsten DATA_PATH=data2 DAPPS_PATH=data/dapps  DATA_SUBPATH=d3 npm run develop",
     "develop": "nodemon --watch ./ --exec babel-node --inspect ./server.js",
     "devtest": "nodemon --watch ./ --exec babel-node ./test.js",
     "run": "DC_NETWORK=local babel-node server.js",
