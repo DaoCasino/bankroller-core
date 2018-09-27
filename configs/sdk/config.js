@@ -12,7 +12,7 @@ if (!fs.existsSync(protocolContracts)) {
   process.exit()
 }
 
-const conf       = require(protocolContracts)
+const conf = require(protocolContracts)
 
 const ERC20 = Object.freeze({
   address : conf.ERC20,
@@ -23,12 +23,8 @@ module.exports = {
   name    : 'sdk',
   rpc_url : process.env.rpc_url || 'http://dc_protocol:8545/',
 
-  signal  : [
-    process.env.signal || '/dns4/dc_signal/tcp/1407/ws/p2p-websocket-star/',
-  ],
-
   contracts : {
-    erc20 : ERC20,
+    erc20 : ERC20
   },
 
   gasPrice : process.env.gasPrice || 40 * 1000000000,

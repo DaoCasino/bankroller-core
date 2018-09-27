@@ -14,9 +14,11 @@ if (process.env.DC_NETWORK === 'sdk') {
 let data_path = process.env.DATA_PATH || './data'
 
 module.exports = {
-  privateKey : process.env.privateKey || false,
+  dappRoom    : process.env.DAPP_ROOM  || 'dapp_room_',
+  privateKey  : process.env.privateKey || process.env.PRIVATE_KEY || false, 
   wallet_pass : '1234',
-  loglevel: 'hight',
+  
+  loglevel: 'light',
 
   dapps_dir    : path.join(path.resolve(), ( process.env.DAPPS_PATH || (data_path + '/dapps/') )),
   network      : network
