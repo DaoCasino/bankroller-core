@@ -27,6 +27,6 @@ module.exports = {
     erc20 : ERC20
   },
 
-  gasPrice : process.env.gasPrice || 40 * 1000000000,
-  gasLimit : process.env.gasLimit || 40 * 100000
+  gasPrice : process.env.gasPrice * 1 || 40 * 1000000000,
+  gasLimit : process.env.gasLimit * 1 || 40 * 100000
 }
