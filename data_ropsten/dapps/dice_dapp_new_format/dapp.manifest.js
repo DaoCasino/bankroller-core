@@ -1,8 +1,8 @@
 export default {
-	// disabled : true,
+  disabled : true,
 
-  slug  : "dice_ex_v1_ropsten",
-  logic : "./dapp.logic.js",
+  slug  : 'dice_ex_v1_ropsten',
+  logic : './dapp.logic.js',
 
   contract : {
     address : '0x674f8b960d103ccbabc0b0201da0cd52b9f5d352',
