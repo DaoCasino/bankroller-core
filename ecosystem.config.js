@@ -1,31 +1,35 @@
-const instances = 3 
+const apps = []
+const privateKeys = [
+  '0x45D090A0CA46A6BD3DF07923FBEB6631B1C257112E0047C2140B0D2FA5039C89',
+  '0x071ae6cf5f4271d1b0a97121e1531514a6aabb056fe1fe221dd1288a9cc2a7c9',
+  '0xdfdbef93c044fde06ad3d3887417466bf38473caa33bb4516b61d7d912994092'
+]
 
-let base = {
-  name             : 'B_prod',
-  exec_interpreter : 'babel-node',
-  script           : './server.js',
-  
+const base = {
+  name             : 'B_stage',
+  script           : 'npm',
+  args             : 'run start:ropsten',
+
   max_memory_restart : '100M',
   autorestart        : true,
   restart_delay      : 3000,
-  min_uptime         : 7777,
-
-  env: {
-    DC_NETWORK   : 'ropsten',
-    DATA_SUBPATH : 'B_prod',
-    NODE_ENV     : 'production'
-  }
+  min_uptime         : 7777
 }
 
-let apps = []
+for (let key of privateKeys) {
+  apps.push({
+    name   : `B_stage_dice_${privateKeys.indexOf(key) + 1}`,
+    script : 'npm',
+    args   : 'run start:ropsten',
+    env: {
+      PRIVATE_KEY: key
+    },
 
-for (let i = 1; i <= instances; i++) {
-  apps.push(JSON.parse(JSON.stringify(Object.assign(base, {
-    name : 'B_prod_' + i,
-    env  : Object.assign(base.env, {
-      DATA_SUBPATH : 'B_prod_' + i
-    })
-  }))))
+    max_memory_restart : '100M',
+    autorestart        : true,
+    restart_delay      : 3000,
+    min_uptime         : 7777
+  })
 }
 
 module.exports = {
