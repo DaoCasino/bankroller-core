@@ -1,9 +1,8 @@
 import { config } from "dc-configs";
 import fs from "fs";
 import path from "path";
-import { DApp } from "./DApp";
+import { DApp, GlobalGameLogicStore } from "dc-core";
 
-import GlobalGameLogicStore from "./GlobalGameLogicStore";
 import { Eth } from "dc-ethereum-utils";
 import * as Utils from "dc-ethereum-utils";
 import { IpfsTransportProvider } from "dc-messaging";
@@ -54,7 +53,8 @@ export default class Bankroller implements IBankroller {
     }
 
     await this._eth.initAccount();
-    (await IpfsTransportProvider.create()).exposeSevice(
+    const transportProvider = await IpfsTransportProvider.create();
+    transportProvider.exposeSevice(
       this._eth.account().address.toLowerCase(),
       this
     );
@@ -86,19 +86,20 @@ export default class Bankroller implements IBankroller {
       throw new Error(`Directory ${directoryPath} allready loadeed`);
     }
     try {
-      const { logic, manifest } = loadLogic(directoryPath);
+      const { gameLogicFunction, manifest } = loadLogic(directoryPath);
       const roomProvider = await IpfsTransportProvider.create();
 
-      if (logic) {
+      if (gameLogicFunction) {
         const { slug, rules, contract } = manifest;
         const dapp = new DApp({
           slug,
           rules,
           contract,
           roomProvider,
+          gameLogicFunction,
           Eth: this._eth
         });
-        await dapp.start();
+        await dapp.startServer();
         this.gamesMap.set(slug, dapp);
 
         logger.debug({ message: `Load Dapp ${directoryPath}` });
@@ -107,7 +108,7 @@ export default class Bankroller implements IBankroller {
         return dapp;
       }
     } catch (error) {
-      logger.error({ message: `Error loading DApp.`, error });
+      console.error({ message: `Error loading DApp.`, error });
     }
     return null;
   }

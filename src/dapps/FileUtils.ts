@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import rimraf from "rimraf";
-import { PayChannelLogic } from "dc-core";
+import { PayChannelLogic, GameLogicFunction } from "dc-core";
 
 const MANIFEST_FILENAME = "dapp.manifest";
 
@@ -44,7 +44,10 @@ export const saveFilesToNewDir = (
 
 export const loadLogic = (
   directoryPath: string
-): { manifest: any; logic: (payChannel: PayChannelLogic) => void } => {
+): {
+  manifest: any;
+  gameLogicFunction: GameLogicFunction;
+} => {
   let manifestPath: string = `${directoryPath}/${MANIFEST_FILENAME}`;
   const manifestFoundPath = checkFileExists(manifestPath, [".js", "", ".json"]);
   if (!manifestFoundPath) {
@@ -60,7 +63,7 @@ export const loadLogic = (
     manifest.disabled ||
     manifest.enable === false
   ) {
-    return { manifest, logic: null };
+    return { manifest, gameLogicFunction: null };
   }
   let logicPath: string = path.join(directoryPath, manifest.logic);
   const logicFoundPath = checkFileExists(logicPath, [".js", "", ".json"]);
@@ -68,9 +71,9 @@ export const loadLogic = (
     throw new Error(`Manifest file not found ${logicFoundPath}`);
   }
   require(logicFoundPath);
-  const logic = global["DAppsLogic"][manifest.slug];
-  if (!logic) {
+  const gameLogicFunction = global["DAppsLogic"][manifest.slug];
+  if (!gameLogicFunction) {
     throw new Error(`Error loading logic from directory ${directoryPath}`);
   }
-  return { manifest: { ...manifest }, logic };
+  return { manifest: { ...manifest }, gameLogicFunction };
 };

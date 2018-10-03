@@ -11,6 +11,7 @@ interface IService1 {
 }
 interface IService2 {
   Method2: ({ count: number, name: string }, param2: number) => { result: any };
+  method3: () => string;
 }
 
 class IService1Impl implements IService1 {
@@ -32,6 +33,9 @@ class IService2Impl implements IService2 {
   plus: number;
   constructor() {
     this.plus = 2;
+  }
+  method3() {
+    return "m3";
   }
   Method2(
     params: { count: number; name: string },
@@ -81,6 +85,8 @@ const test = async () => {
   console.log("sdjfl");
   const res1 = await serv2.Method2({ count: 1, name: "call serv 2" }, 30);
   console.log(res1);
+  const res2 = await serv2.method3();
+  console.log(res2);
 };
 
 test();
