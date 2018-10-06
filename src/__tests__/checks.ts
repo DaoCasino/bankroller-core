@@ -1,5 +1,5 @@
-import { Eth } from "dc-ethereum-utils";
-import _config from "../../config";
+import { Eth } from 'dc-ethereum-utils';
+import _config from '../../config';
 
 const { gasPrice: price, gasLimit: limit } = _config.network;
 const eth = new Eth({
@@ -10,5 +10,5 @@ const eth = new Eth({
   privateKey: _config.privateKey
 });
 
-console.log("Eth init account");
+console.log('Eth init account');
 eth.initAccount();
