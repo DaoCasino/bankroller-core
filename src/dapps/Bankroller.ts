@@ -5,7 +5,7 @@ import { DApp, GlobalGameLogicStore } from "dc-core";
 
 import { Eth } from "dc-ethereum-utils";
 import * as Utils from "dc-ethereum-utils";
-import { IpfsTransportProvider } from "dc-messaging";
+import { IpfsTransportProvider, IMessagingProvider } from "dc-messaging";
 import { Logger } from "dc-logging";
 import {
   getSubDirectoriee,
@@ -47,19 +47,24 @@ export default class Bankroller implements IBankroller {
     global["DCLib"] = new GlobalGameLogicStore();
   }
 
-  async start() {
+  async start(transportProvider: IMessagingProvider) {
     if (this._started) {
       throw new Error("Bankroller allready started");
     }
 
     await this._eth.initAccount();
-    const transportProvider = await IpfsTransportProvider.create();
+
     transportProvider.exposeSevice(
       this._eth.account().address.toLowerCase(),
-      this
+      this,
+      true
     );
     this._started = true;
-    getSubDirectoriee(config.DAppsPath).forEach(this.tryLoadDApp);
+    const loadDirPromises = getSubDirectoriee(config.DAppsPath).map(
+      this.tryLoadDApp
+    );
+    await Promise.all(loadDirPromises);
+    return this;
   }
   async uploadGame(
     name: string,
@@ -82,6 +87,7 @@ export default class Bankroller implements IBankroller {
     return dapp.getInstancesView();
   }
   async tryLoadDApp(directoryPath: string): Promise<DApp | null> {
+    const now = Date.now();
     if (this._loadedDirectories.has(directoryPath)) {
       throw new Error(`Directory ${directoryPath} allready loadeed`);
     }
@@ -102,13 +108,12 @@ export default class Bankroller implements IBankroller {
         await dapp.startServer();
         this.gamesMap.set(slug, dapp);
 
-        logger.debug({ message: `Load Dapp ${directoryPath}` });
-        logger.debug({ message: `manifest ${manifest}` });
+        logger.debug(`Load Dapp ${directoryPath}, took ${Date.now() - now} ms`);
 
         return dapp;
       }
     } catch (error) {
-      console.error({ message: `Error loading DApp.`, error });
+      logger.error({ message: `Error loading DApp.`, error });
     }
     return null;
   }

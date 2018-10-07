@@ -2,6 +2,7 @@
 // import path  from 'path'
 
 import Bankroller from "./dapps/Bankroller";
+import { IpfsTransportProvider } from "dc-messaging";
 
 console.log("");
 console.log("");
@@ -28,12 +29,14 @@ console.log("");
 //   process.exit();
 // });
 
-const run = async () => {
+const startBankroller = async () => {
   try {
-    await new Bankroller().start();
+    const bankrollerTransportProvider = await IpfsTransportProvider.create();
+    await new Bankroller().start(bankrollerTransportProvider);
   } catch (error) {
     console.log(error);
     process.exit();
   }
 };
-run();
+
+startBankroller();
