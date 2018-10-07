@@ -1,10 +1,10 @@
-import { IpfsTransportProvider, createIpfsNode } from "dc-messaging";
-import Ipfs from "ipfs";
+import { IpfsTransportProvider, createIpfsNode } from 'dc-messaging';
+import Ipfs from 'ipfs';
 
-import IpfsRoom from "ipfs-pubsub-room";
+import IpfsRoom from 'ipfs-pubsub-room';
 
 const room12 =
-  "02a360faf69c98cbb776ee848ab7e539b0c1266689b6d84366465dab5dc1cc29";
+  '02a360faf69c98cbb776ee848ab7e539b0c1266689b6d84366465dab5dc1cc29';
 
 interface IService1 {
   Method1: ({ count: number, name: string }, param2: number) => { result: any };
@@ -23,7 +23,7 @@ class IService1Impl implements IService1 {
     param1: { count: number; name: string },
     param2: number
   ): { result: any } {
-    console.log("serv" + param1.name);
+    console.log('serv' + param1.name);
 
     return { result: param1.count + this.plus + param2 };
   }
@@ -35,13 +35,13 @@ class IService2Impl implements IService2 {
     this.plus = 2;
   }
   method3() {
-    return "m3";
+    return 'm3';
   }
   Method2(
     params: { count: number; name: string },
     param2: number
   ): { result: any } {
-    console.log("serv2" + params.name);
+    console.log('serv2' + params.name);
 
     return { result: params.count + this.plus + param2 };
   }
@@ -53,21 +53,21 @@ const testRawIpfs = async () => {
   const room2 = IpfsRoom(node2, room12, {});
 
   const room1 = IpfsRoom(node1, room12, {})
-    .on("error", error => {
+    .on('error', error => {
       console.error(error);
     })
-    .on("peer joined", id => {
+    .on('peer joined', id => {
       console.log(`peer joined ${id} to ${node1.id}`);
-      room2.sendTo(node1.id, "hi from room2");
+      room2.sendTo(node1.id, 'hi from room2');
     })
-    .on("message", msg => {
+    .on('message', msg => {
       console.log(msg.data.toString());
     });
 
-  room2.on("error", error => {
+  room2.on('error', error => {
     console.error(error);
   });
-  room1.broadcast("hi from room 1");
+  room1.broadcast('hi from room 1');
 };
 const test = async () => {
   const roomProvider1 = await IpfsTransportProvider.create();
@@ -82,8 +82,8 @@ const test = async () => {
   const serv2: any = await promise;
 
   // await new Promise(resolve => setTimeout(resolve, 10000));
-  console.log("sdjfl");
-  const res1 = await serv2.Method2({ count: 1, name: "call serv 2" }, 30);
+  console.log('sdjfl');
+  const res1 = await serv2.Method2({ count: 1, name: 'call serv 2' }, 30);
   console.log(res1);
   const res2 = await serv2.method3();
   console.log(res2);
