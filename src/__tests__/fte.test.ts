@@ -68,20 +68,20 @@ const test1 = async () => {
   game.on("info", data => showFunc("Client", data));
   await game.openChannel({
     playerAddress: Eth.account().address,
-    playerDeposit: Utils.bet2dec(3),
+    playerDeposit: 3,
     gameData: [0, 0]
   });
 
   const result1 = await game.callPeerGame({
-    userBet: Utils.bet2dec(1),
+    userBet: 1,
     gameData: [1]
   });
   const result2 = await game.callPeerGame({
-    userBet: Utils.bet2dec(1),
+    userBet: 1,
     gameData: [2]
   });
   const result3 = await game.callPeerGame({
-    userBet: Utils.bet2dec(1),
+    userBet: 1,
     gameData: [3]
   });
 };
