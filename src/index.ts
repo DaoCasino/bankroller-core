@@ -1,16 +1,20 @@
 // import fs    from 'fs'
 // import path  from 'path'
 
-import Bankroller from "./dapps/Bankroller";
+import Bankroller from './dapps/Bankroller';
+import { IpfsTransportProvider } from 'dc-messaging';
+import { Logger } from 'dc-logging';
 
-console.log("");
-console.log("");
-console.log("-------------------------------");
-console.log("BANKROLLER NODE START          ");
-console.log("process.env.DC_NETWORK: ", process.env.DC_NETWORK);
-console.log("-------------------------------");
-console.log("");
-console.log("");
+const logger = new Logger('Bankroller');
+
+logger.debug('');
+logger.debug('');
+logger.debug('-------------------------------');
+logger.debug('BANKROLLER NODE START          ');
+logger.debug('process.env.DC_NETWORK: ', process.env.DC_NETWORK);
+logger.debug('-------------------------------');
+logger.debug('');
+logger.debug('');
 
 // const rollbar_path = path.resolve('../../tools/rollbar/index.js')
 // if (fs.existsSync(rollbar_path)) {
@@ -28,12 +32,14 @@ console.log("");
 //   process.exit();
 // });
 
-const run = async () => {
+const startBankroller = async () => {
   try {
-    await new Bankroller().start();
+    const bankrollerTransportProvider = await IpfsTransportProvider.create();
+    await new Bankroller().start(bankrollerTransportProvider);
   } catch (error) {
-    console.log(error);
+    logger.debug(error);
     process.exit();
   }
 };
-run();
+
+startBankroller();

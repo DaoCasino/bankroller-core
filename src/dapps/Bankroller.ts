@@ -1,30 +1,28 @@
-import { config } from "dc-configs";
-import fs from "fs";
-import path from "path";
-import { DApp, GlobalGameLogicStore } from "dc-core";
-
-import { Eth } from "dc-ethereum-utils";
-import * as Utils from "dc-ethereum-utils";
-import { IpfsTransportProvider } from "dc-messaging";
-import { Logger } from "dc-logging";
+import { config } from 'dc-configs';
+import fs from 'fs';
+import path from 'path';
+import { DApp, GlobalGameLogicStore } from 'dc-core';
+import { Eth } from 'dc-ethereum-utils';
+import { IpfsTransportProvider, IMessagingProvider } from 'dc-messaging';
+import { Logger } from 'dc-logging';
 import {
   getSubDirectoriee,
   loadLogic,
   saveFilesToNewDir,
   removeDir
-} from "./FileUtils";
-import { IBankroller, GameInstanceInfo } from "../intefaces/IBankroller";
+} from './FileUtils';
+import { IBankroller, GameInstanceInfo } from '../intefaces/IBankroller';
 /*
  * Lib constructor
  */
-const logger = new Logger("Bankroller");
+const logger = new Logger('Bankroller');
 export default class Bankroller implements IBankroller {
   private _started: boolean;
   private _loadedDirectories: Set<string>;
   private _eth: Eth;
   gamesMap: Map<string, DApp>;
   id: string;
-
+  private _transportProvider: IMessagingProvider;
   constructor() {
     const {
       gasPrice: price,
@@ -44,23 +42,29 @@ export default class Bankroller implements IBankroller {
     this.gamesMap = new Map();
     this._loadedDirectories = new Set();
     this.tryLoadDApp = this.tryLoadDApp.bind(this);
-    global["DCLib"] = new GlobalGameLogicStore();
+    global['DCLib'] = new GlobalGameLogicStore();
   }
 
-  async start() {
+  async start(transportProvider: IMessagingProvider) {
     if (this._started) {
-      throw new Error("Bankroller allready started");
+      throw new Error('Bankroller allready started');
     }
-
+    this._transportProvider = transportProvider;
     await this._eth.initAccount();
-    const transportProvider = await IpfsTransportProvider.create();
+
     transportProvider.exposeSevice(
       this._eth.account().address.toLowerCase(),
-      this
+      this,
+      true
     );
     this._started = true;
-    getSubDirectoriee(config.DAppsPath).forEach(this.tryLoadDApp);
+    const loadDirPromises = getSubDirectoriee(config.DAppsPath).map(
+      this.tryLoadDApp
+    );
+    await Promise.all(loadDirPromises);
+    return this;
   }
+
   async uploadGame(
     name: string,
     files: { fileName: string; fileData: Buffer | string }[]
@@ -71,9 +75,11 @@ export default class Bankroller implements IBankroller {
       removeDir(newDir);
     }
   }
+
   getGames(): { name: string }[] {
     return Array.from(this.gamesMap.values()).map(dapp => dapp.getView());
   }
+
   getGameInstances(name: string): GameInstanceInfo[] {
     const dapp = this.gamesMap.get(name);
     if (!dapp) {
@@ -82,12 +88,13 @@ export default class Bankroller implements IBankroller {
     return dapp.getInstancesView();
   }
   async tryLoadDApp(directoryPath: string): Promise<DApp | null> {
+    const now = Date.now();
     if (this._loadedDirectories.has(directoryPath)) {
       throw new Error(`Directory ${directoryPath} allready loadeed`);
     }
     try {
       const { gameLogicFunction, manifest } = loadLogic(directoryPath);
-      const roomProvider = await IpfsTransportProvider.create();
+      const roomProvider = this._transportProvider;
 
       if (gameLogicFunction) {
         const { slug, rules, contract } = manifest;
@@ -102,13 +109,12 @@ export default class Bankroller implements IBankroller {
         await dapp.startServer();
         this.gamesMap.set(slug, dapp);
 
-        logger.debug({ message: `Load Dapp ${directoryPath}` });
-        logger.debug({ message: `manifest ${manifest}` });
+        logger.debug(`Load Dapp ${directoryPath}, took ${Date.now() - now} ms`);
 
         return dapp;
       }
     } catch (error) {
-      console.error({ message: `Error loading DApp.`, error });
+      logger.error({ message: `Error loading DApp.`, error });
     }
     return null;
   }

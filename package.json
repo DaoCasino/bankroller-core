@@ -14,11 +14,6 @@
     "clean": "rimraf lib",
     "typescript": "tsc --build"
   },
-  "husky": {
-    "hooks": {
-      "pre-push": "npm run lint"
-    }
-  },
   "keywords": [],
   "author": "",
   "license": "GPL-3.0",
@@ -42,5 +37,8 @@
     "rimraf": "2.6.2",
     "web3": "1.0.0-beta.36",
     "ws": "6.0.0"
+  },
+  "devDependencies": {
+    "husky": "1.1.1"
   }
 }
