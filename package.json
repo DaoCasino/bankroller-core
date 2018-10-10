@@ -4,15 +4,11 @@
   "description": "Core bankroller functionality",
   "main": "./lib/index",
   "scripts": {
-    "dev": "sh ./run_dev_env.sh",
-    "start": "dc-scripts start -p && npm run dev",
-    "start:ropsten": "DC_NETWORK=ropsten DATA_PATH=data2 DAPPS_PATH=data/dapps  DATA_SUBPATH=d3 npm run develop",
-    "stop": "dc-scripts stop",
-    "reset_db": "rm -rf ./data/DB && rm -rf ./data/messaging",
-    "test": "dc-scripts test",
-    "build": "npm-run-all typescript",
-    "clean": "rimraf lib",
-    "typescript": "tsc --build"
+    "build" : "tsc --build",
+    "start" : "nodemon --inspect ./lib/index.js --watch ../",
+    "clean" : "rimraf lib",
+    "reset" : "rm -rf ./data/DB && rm -rf ./data/messaging",
+    "test"  : " echo 'TODO: create test runner'"
   },
   "keywords": [],
   "author": "",
