@@ -3,7 +3,6 @@ import { config } from "dc-configs";
 import { Eth as Ethereum } from "dc-ethereum-utils";
 
 import Bankroller from "../dapps/Bankroller";
-import * as Utils from "dc-ethereum-utils";
 import { GlobalGameLogicStore, DApp } from "dc-core";
 import { Logger } from "dc-logging";
 
@@ -11,16 +10,16 @@ const logger = new Logger("test1");
 const directTransportProvider = new DirectTransportProvider();
 const startBankroller = async () => {
   try {
-    const bankrollerTransportProvider = directTransportProvider; //await IpfsTransportProvider.create();
+    const bankrollerTransportProvider = directTransportProvider; // await IpfsTransportProvider.create();
     return await new Bankroller().start(bankrollerTransportProvider);
   } catch (error) {
-    console.log(error);
+    logger.debug(error);
     process.exit();
   }
 };
 const startGame = async () => {
   try {
-    const gameTransportProvider = directTransportProvider; //await IpfsTransportProvider.createAdditional();
+    const gameTransportProvider = directTransportProvider; // await IpfsTransportProvider.createAdditional();
 
     const {
       gasPrice: price,
@@ -55,7 +54,7 @@ const startGame = async () => {
     const dappInstance = await dapp.startClient();
     return { game: dappInstance, Eth };
   } catch (error) {
-    console.log(error);
+    logger.debug(error);
     process.exit();
   }
 };
