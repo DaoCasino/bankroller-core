@@ -1,17 +1,17 @@
 // import fs    from 'fs'
 // import path  from 'path'
 
-import Bankroller from "./dapps/Bankroller";
-import { IpfsTransportProvider } from "dc-messaging";
+import Bankroller from './dapps/Bankroller';
+import { IpfsTransportProvider } from 'dc-messaging';
 
-console.log("");
-console.log("");
-console.log("-------------------------------");
-console.log("BANKROLLER NODE START          ");
-console.log("process.env.DC_NETWORK: ", process.env.DC_NETWORK);
-console.log("-------------------------------");
-console.log("");
-console.log("");
+console.log('');
+console.log('');
+console.log('-------------------------------');
+console.log('BANKROLLER NODE START          ');
+console.log('process.env.DC_NETWORK: ', process.env.DC_NETWORK);
+console.log('-------------------------------');
+console.log('');
+console.log('');
 
 // const rollbar_path = path.resolve('../../tools/rollbar/index.js')
 // if (fs.existsSync(rollbar_path)) {

@@ -1,23 +1,23 @@
-import { config } from "dc-configs";
-import fs from "fs";
-import path from "path";
-import { DApp, GlobalGameLogicStore } from "dc-core";
+import { config } from 'dc-configs';
+import fs from 'fs';
+import path from 'path';
+import { DApp, GlobalGameLogicStore } from 'dc-core';
 
-import { Eth } from "dc-ethereum-utils";
-import * as Utils from "dc-ethereum-utils";
-import { IpfsTransportProvider, IMessagingProvider } from "dc-messaging";
-import { Logger } from "dc-logging";
+import { Eth } from 'dc-ethereum-utils';
+import * as Utils from 'dc-ethereum-utils';
+import { IpfsTransportProvider, IMessagingProvider } from 'dc-messaging';
+import { Logger } from 'dc-logging';
 import {
   getSubDirectoriee,
   loadLogic,
   saveFilesToNewDir,
   removeDir
-} from "./FileUtils";
-import { IBankroller, GameInstanceInfo } from "../intefaces/IBankroller";
+} from './FileUtils';
+import { IBankroller, GameInstanceInfo } from '../intefaces/IBankroller';
 /*
  * Lib constructor
  */
-const logger = new Logger("Bankroller");
+const logger = new Logger('Bankroller');
 export default class Bankroller implements IBankroller {
   private _started: boolean;
   private _loadedDirectories: Set<string>;
@@ -44,12 +44,12 @@ export default class Bankroller implements IBankroller {
     this.gamesMap = new Map();
     this._loadedDirectories = new Set();
     this.tryLoadDApp = this.tryLoadDApp.bind(this);
-    global["DCLib"] = new GlobalGameLogicStore();
+    global['DCLib'] = new GlobalGameLogicStore();
   }
 
   async start(transportProvider: IMessagingProvider) {
     if (this._started) {
-      throw new Error("Bankroller allready started");
+      throw new Error('Bankroller allready started');
     }
 
     await this._eth.initAccount();
