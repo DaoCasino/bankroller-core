@@ -24,7 +24,7 @@ export default class Bankroller implements IBankroller {
   private _eth: Eth;
   gamesMap: Map<string, DApp>;
   id: string;
-
+  private _transportProvider: IMessagingProvider;
   constructor() {
     const {
       gasPrice: price,
@@ -51,7 +51,7 @@ export default class Bankroller implements IBankroller {
     if (this._started) {
       throw new Error("Bankroller allready started");
     }
-
+    this._transportProvider = transportProvider;
     await this._eth.initAccount();
 
     transportProvider.exposeSevice(
@@ -93,7 +93,7 @@ export default class Bankroller implements IBankroller {
     }
     try {
       const { gameLogicFunction, manifest } = loadLogic(directoryPath);
-      const roomProvider = await IpfsTransportProvider.create();
+      const roomProvider = this._transportProvider;
 
       if (gameLogicFunction) {
         const { slug, rules, contract } = manifest;
