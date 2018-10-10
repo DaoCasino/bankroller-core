@@ -7,7 +7,7 @@ import * as Utils from "dc-ethereum-utils";
 import { GlobalGameLogicStore, DApp } from "dc-core";
 import { Logger } from "dc-logging";
 const logger = new Logger("test1");
-
+///const directTransportProvider = new DirectTransportProvider()
 const startBankroller = async () => {
   try {
     const bankrollerTransportProvider = await IpfsTransportProvider.create();
