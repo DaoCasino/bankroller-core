@@ -1,12 +1,12 @@
-import { IpfsTransportProvider, DirectTransportProvider } from "dc-messaging";
-import { config } from "dc-configs";
-import { Eth as Ethereum } from "dc-ethereum-utils";
+import { IpfsTransportProvider, DirectTransportProvider } from 'dc-messaging';
+import { config } from 'dc-configs';
+import { Eth as Ethereum } from 'dc-ethereum-utils';
 
-import Bankroller from "../dapps/Bankroller";
-import { GlobalGameLogicStore, DApp } from "dc-core";
-import { Logger } from "dc-logging";
+import Bankroller from '../dapps/Bankroller';
+import { GlobalGameLogicStore, DApp } from 'dc-core';
+import { Logger } from 'dc-logging';
 
-const logger = new Logger("test1");
+const logger = new Logger('test1');
 const directTransportProvider = new DirectTransportProvider();
 const startBankroller = async () => {
   try {
@@ -34,9 +34,9 @@ const startGame = async () => {
       faucetServerUrl,
       gasParams: { price, limit },
       privateKey:
-        "0x6A5AE922FDE5C8EE877E9470F45B8030F60C19038E9116DB8B343782D9593602"
+        '0x6A5AE922FDE5C8EE877E9470F45B8030F60C19038E9116DB8B343782D9593602'
     });
-    const slug = "DCGame_FTE_v1";
+    const slug = 'DCGame_FTE_v1';
     // Game loaded to store during bankroller start
     const gameLogicFunction = new GlobalGameLogicStore().getGameLogic(slug);
     const dappParams = {
@@ -64,8 +64,8 @@ const test1 = async () => {
   const showFunc = (source, data) => {
     logger.debug(`${source} ${new Date().toString()} ${JSON.stringify(data)}`);
   };
-  game.onPeerEvent("info", data => showFunc("Bankroller", data));
-  game.on("info", data => showFunc("Client", data));
+  game.onPeerEvent('info', data => showFunc('Bankroller', data));
+  game.on('info', data => showFunc('Client', data));
   await game.openChannel({
     playerAddress: Eth.account().address,
     playerDeposit: 3,
