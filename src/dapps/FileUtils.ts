@@ -10,9 +10,9 @@ export const checkFileExists = (
   maybeExtension: string[]
 ): string | null => {
   for (let i = 0; i < maybeExtension.length; i++) {
-    const path = `${fileName}${maybeExtension[i]}`;
-    if (fs.existsSync(path)) {
-      return path;
+    const pathToFile = `${fileName}${maybeExtension[i]}`;
+    if (fs.existsSync(pathToFile)) {
+      return pathToFile;
     }
   }
   return null;
@@ -48,7 +48,7 @@ export const loadLogic = (
   manifest: any;
   gameLogicFunction: GameLogicFunction;
 } => {
-  let manifestPath: string = `${directoryPath}/${MANIFEST_FILENAME}`;
+  const manifestPath: string = `${directoryPath}/${MANIFEST_FILENAME}`;
   const manifestFoundPath = checkFileExists(manifestPath, ['.js', '', '.json']);
   if (!manifestFoundPath) {
     throw new Error(`Manifest file not found ${manifestPath}`);
@@ -65,13 +65,13 @@ export const loadLogic = (
   ) {
     return { manifest, gameLogicFunction: null };
   }
-  let logicPath: string = path.join(directoryPath, manifest.logic);
+  const logicPath: string = path.join(directoryPath, manifest.logic);
   const logicFoundPath = checkFileExists(logicPath, ['.js', '', '.json']);
   if (!logicFoundPath) {
     throw new Error(`Manifest file not found ${logicFoundPath}`);
   }
   require(logicFoundPath);
-  const gameLogicFunction = global['DAppsLogic'][manifest.slug];
+  const gameLogicFunction = (global as any).DAppsLogic[manifest.slug];
   if (!gameLogicFunction) {
     throw new Error(`Error loading logic from directory ${directoryPath}`);
   }

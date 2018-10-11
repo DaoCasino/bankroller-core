@@ -10,5 +10,4 @@ const eth = new Eth({
   privateKey: _config.privateKey
 });
 
-console.log('Eth init account');
 eth.initAccount();
