@@ -25,13 +25,12 @@ const startGame = async () => {
       gasPrice: price,
       gasLimit: limit,
       web3HttpProviderUrl: httpProviderUrl,
-      contracts,
-      faucetServerUrl
+      contracts
     } = config;
     const Eth = new Ethereum({
       httpProviderUrl,
       ERC20ContractInfo: contracts.ERC20,
-      faucetServerUrl,
+
       gasParams: { price, limit },
       privateKey:
         '0x6A5AE922FDE5C8EE877E9470F45B8030F60C19038E9116DB8B343782D9593602'
@@ -41,7 +40,7 @@ const startGame = async () => {
     const gameLogicFunction = new GlobalGameLogicStore().getGameLogic(slug);
     const dappParams = {
       slug,
-      contract: contracts.payChannelContract,
+      contract: contracts.Dice,
       rules: {
         depositX: 2
       },
