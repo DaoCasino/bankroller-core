@@ -30,13 +30,11 @@ export default class Bankroller implements IBankroller {
       gasLimit: limit,
       web3HttpProviderUrl: httpProviderUrl,
       contracts,
-      privateKey,
-      faucetServerUrl
+      privateKey
     } = config;
     this._eth = new Eth({
       httpProviderUrl,
       ERC20ContractInfo: contracts.ERC20,
-      faucetServerUrl,
       gasParams: { price, limit },
       privateKey
     });
