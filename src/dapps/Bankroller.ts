@@ -16,6 +16,7 @@ import { IBankroller, GameInstanceInfo } from '../intefaces/IBankroller';
  * Lib constructor
  */
 const logger = new Logger('Bankroller');
+const addressPrefix = 'Bankroller';
 export default class Bankroller implements IBankroller {
   private _started: boolean;
   private _loadedDirectories: Set<string>;
@@ -42,7 +43,7 @@ export default class Bankroller implements IBankroller {
     this.gamesMap = new Map();
     this._loadedDirectories = new Set();
     this.tryLoadDApp = this.tryLoadDApp.bind(this);
-    global['DCLib'] = new GlobalGameLogicStore();
+    (global as any).DCLib = new GlobalGameLogicStore();
   }
 
   async start(transportProvider: IMessagingProvider) {
@@ -53,7 +54,7 @@ export default class Bankroller implements IBankroller {
     await this._eth.initAccount();
 
     transportProvider.exposeSevice(
-      this._eth.account().address.toLowerCase(),
+      `${addressPrefix}_${this._eth.account().address.toLowerCase()}`,
       this,
       true
     );
