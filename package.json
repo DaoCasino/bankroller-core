@@ -5,7 +5,7 @@
   "main": "./lib/index",
   "scripts": {
     "build" : "tsc --build",
-    "start" : "nodemon --inspect ./lib/index.js --watch ../",
+    "start" : "nodemon --inspect ./lib/index.js --delay 2 --watch ../ --ignore ../dc-protocol",
     "clean" : "rimraf lib",
     "reset" : "rm -rf ./data/DB && rm -rf ./data/messaging",
     "test"  : " echo 'TODO: create test runner'"
