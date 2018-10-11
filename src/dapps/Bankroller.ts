@@ -42,7 +42,7 @@ export default class Bankroller implements IBankroller {
     this.gamesMap = new Map();
     this._loadedDirectories = new Set();
     this.tryLoadDApp = this.tryLoadDApp.bind(this);
-    global['DCLib'] = new GlobalGameLogicStore();
+    (global as any).DCLib = new GlobalGameLogicStore();
   }
 
   async start(transportProvider: IMessagingProvider) {
