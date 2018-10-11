@@ -66,11 +66,15 @@ export default class Bankroller implements IBankroller {
     return this;
   }
 
-  async uploadGame(
-    name: string,
-    files: { fileName: string; fileData: Buffer | string }[]
-  ) {
-    const newDir = path.join(config.DAppsPath, name);
+  async uploadGame({
+    name,
+    files
+  }: {
+    name: string;
+    files: { fileName: string; fileData: Buffer | string }[];
+  }) {
+    const DAppsPath = config.DAppsPath;
+    const newDir = path.join(DAppsPath, name);
     saveFilesToNewDir(newDir, files);
     if (!(await this.tryLoadDApp(newDir))) {
       removeDir(newDir);
