@@ -5,6 +5,7 @@ import { Eth as Ethereum } from 'dc-ethereum-utils';
 import Bankroller from '../dapps/Bankroller';
 import { GlobalGameLogicStore, DApp } from 'dc-core';
 import { Logger } from 'dc-logging';
+import { loadLogic } from '../dapps/FileUtils';
 
 const logger = new Logger('test1');
 const directTransportProvider = new DirectTransportProvider();
@@ -17,9 +18,9 @@ const startBankroller = async () => {
     process.exit();
   }
 };
-const startGame = async () => {
+const startGame = async gameTransportProvider => {
   try {
-    const gameTransportProvider = directTransportProvider; // await IpfsTransportProvider.createAdditional();
+    // const gameTransportProvider = directTransportProvider; // await IpfsTransportProvider.createAdditional();
 
     const {
       gasPrice: price,
@@ -57,9 +58,14 @@ const startGame = async () => {
     process.exit();
   }
 };
+
 const test1 = async () => {
   await startBankroller();
-  const { game, Eth } = await startGame();
+  await playGame(directTransportProvider);
+};
+
+const playGame = async gameTransportProvider => {
+  const { game, Eth } = await startGame(gameTransportProvider);
   const showFunc = (source, data) => {
     logger.debug(`${source} ${new Date().toString()} ${JSON.stringify(data)}`);
   };
@@ -84,4 +90,12 @@ const test1 = async () => {
     gameData: [3]
   });
 };
-test1();
+const testRemote = async () => {
+  const gameTransportProvider = await IpfsTransportProvider.create();
+  (global as any).DCLib = new GlobalGameLogicStore();
+  loadLogic(config.DAppsPath + '/FTE1');
+  await playGame(gameTransportProvider);
+};
+
+// test1();
+testRemote();
