@@ -1,15 +1,14 @@
 
-let contractAddress = '0xf4dac7a329bcabc02c62d438d1f2dd226680b6f6'
-if(process.env.DC_NETWORK === 'local') {
-  try {
-    contractAddress = require('../../../../dc-protocol/v_0.1/build/addresses.json').Game
-  } catch(e){
-    contractAddress = '0x8273e4B8ED6c78e252a9fCa5563Adfcc75C91b2A'
-  }
+let contractAddress
+try {
+  contractAddress = require('../../../../dc-protocol/v_0.1/build/addresses.json').Game
+} catch(e){
+  contractAddress = '0x8273e4B8ED6c78e252a9fCa5563Adfcc75C91b2A'
 }
 
+
 module.exports = {
-  slug: "DCGame_FTE_v1",
+  slug: "Game_EX_v1",
 
   // if you want to change filename  - change it too in /scripts/config/paths
   logic: "./dapp.logic.js",
