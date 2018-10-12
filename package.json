@@ -14,7 +14,8 @@
     "typescript": "tsc --build",
     "clean": "rimraf lib",
     "reset": "rm -rf ./data/DB && rm -rf ./data/messaging",
-    "test": "sh run.sh src/__tests__/fte.test.ts"
+    "test:l" : "sh run.sh local   src/__tests__/fte.test.ts",
+    "test"   : "sh run.sh ropsten src/__tests__/fte.test.ts"
   },
   "keywords": [],
   "author": "",

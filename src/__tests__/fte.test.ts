@@ -23,6 +23,11 @@ const startGame = async () => {
   try {
     const gameTransportProvider = directTransportProvider // await IpfsTransportProvider.createAdditional()
 
+    let privkey = '0x6A5AE922FDE5C8EE877E9470F45B8030F60C19038E9116DB8B343782D9593602'
+    if (process.env.DC_NETWORK === 'local') {
+      privkey = '0xae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f'
+    }
+
     const {
       gasPrice: price,
       gasLimit: limit,
@@ -33,11 +38,12 @@ const startGame = async () => {
       httpProviderUrl,
       ERC20ContractInfo: contracts.ERC20,
       gasParams: { price, limit },
-      privateKey:
-        '0x6A5AE922FDE5C8EE877E9470F45B8030F60C19038E9116DB8B343782D9593602',
+      privateKey: privkey,
     })
+    
 
     const dappManifest = require( config.DAppsPath + '/FTE1/dapp.manifest.js' )
+
     // Game loaded to store during bankroller start
     const gameLogicFunction = new GlobalGameLogicStore().getGameLogic(dappManifest.slug)
     const dappParams = {
