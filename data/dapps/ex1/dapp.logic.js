@@ -1,5 +1,4 @@
 /* global DCLib */
-
 DCLib.defineDAppLogic('Game_EX_v1', function (payChannel) {
   const MAX_RAND_NUM = 3
 
@@ -12,10 +11,10 @@ DCLib.defineDAppLogic('Game_EX_v1', function (payChannel) {
     }
 
     // convert 1BET to 100000000
-    userBet = DCLib.Utils.bet2dec(userBet)
+    // userBet = DCLib.Utils.bet2dec(userBet)
     // generate random number
-    console.log(random_hash, userBet, MAX_RAND_NUM)
-    const randomNum = DCLib.numFromHash(random_hash, 1, MAX_RAND_NUM)
+    // console.log(random_hash, userBet, MAX_RAND_NUM)
+    const randomNum = 2 // DCLib.numFromHash(random_hash, 1, MAX_RAND_NUM)
 
     let profit = -userBet
     // if user win
@@ -23,10 +22,10 @@ DCLib.defineDAppLogic('Game_EX_v1', function (payChannel) {
       profit = userBet * 2 - userBet
     }
     // add result to paychannel
-    payChannel.addTX(profit)
+    // payChannel.addTX(profit)
 
     // console log current paychannel state
-    payChannel.printLog()
+    // payChannel.printLog()
 
     // push all data to our log
     // just FOR DEBUG
@@ -34,17 +33,17 @@ DCLib.defineDAppLogic('Game_EX_v1', function (payChannel) {
       // !IMPORTANT Time can be different on client and bankroller sides
       // not use time in your primary game logic
       timestamp   : new Date().getTime(),
-
       user_bet    : userBet,
       profit      : profit,
       user_num    : userNum,
-      balance     : payChannel.getBalance(),
       random_hash : random_hash,
       random_num  : randomNum
     }
     history.push(rollItem)
 
-    return rollItem
+    console.log(rollItem)
+
+    return [profit, -profit]
   }
 
   return {

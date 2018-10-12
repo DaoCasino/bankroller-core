@@ -94,5 +94,9 @@ const test1 = async () => {
     userBet: 1,
     gameData: [3],
   })
+
+  logger.info('Start close channel')
+  
+
 }
 test1()
