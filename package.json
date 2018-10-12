@@ -5,7 +5,10 @@
   "main": "./lib/index",
   "scripts": {
     "tsmon": "nodemon --delay 2 --inspect --watch ../ --ignore ../dc-protocol -r ts-node/register --",
-    "start": "sh run.sh src/index.ts",
+    
+    "start:l" : "sh run.sh local   src/index.ts",
+    "start"   : "sh run.sh ropsten src/index.ts",
+    
     "build": "yarn typescript",
     "check:build": "nodemon --inspect ./lib/index.js --delay 2 --watch ../ --ignore ../dc-protocol",
     "typescript": "tsc --build",
