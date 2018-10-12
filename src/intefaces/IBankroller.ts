@@ -13,6 +13,6 @@ export interface IBankroller {
       name: string;
       files: { fileName: string; fileData: Buffer | string }[];
     }
-  ) => Promise<any>;
+  ) => Promise<{ status: string }>;
   getGameInstances: (name: string) => GameInstanceInfo[];
 }

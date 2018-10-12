@@ -70,13 +70,14 @@ export default class Bankroller implements IBankroller {
   }: {
     name: string;
     files: { fileName: string; fileData: Buffer | string }[];
-  }) {
+  }): Promise<{ status: string }> {
     const DAppsPath = config.DAppsPath;
     const newDir = path.join(DAppsPath, name);
     saveFilesToNewDir(newDir, files);
     if (!(await this.tryLoadDApp(newDir))) {
       removeDir(newDir);
     }
+    return { status: 'ok' };
   }
 
   getGames(): { name: string }[] {
