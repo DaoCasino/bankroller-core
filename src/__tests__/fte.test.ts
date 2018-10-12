@@ -71,17 +71,19 @@ const test1 = async () => {
     gameData: [0, 0],
   })
 
-  const result1 = await game.callPeerGame({
-    userBet: 1,
-    gameData: [1],
-  })
-  const result2 = await game.callPeerGame({
-    userBet: 1,
-    gameData: [2],
-  })
-  const result3 = await game.callPeerGame({
-    userBet: 1,
-    gameData: [3],
-  })
+  game.closeChannel()
+
+  // const result1 = await game.callPeerGame({
+  //   userBet: 1,
+  //   gameData: [1],
+  // })
+  // const result2 = await game.callPeerGame({
+  //   userBet: 1,
+  //   gameData: [2],
+  // })
+  // const result3 = await game.callPeerGame({
+  //   userBet: 1,
+  //   gameData: [3],
+  // })
 }
 test1()
