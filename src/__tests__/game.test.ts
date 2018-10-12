@@ -2,8 +2,8 @@ import { IpfsTransportProvider, DirectTransportProvider } from 'dc-messaging'
 import { config } from 'dc-configs'
 import { Eth as Ethereum } from 'dc-ethereum-utils'
 
-import Bankroller from '../dapps/Bankroller'
 import { GlobalGameLogicStore, DApp } from 'dc-core'
+import Bankroller from '../dapps/Bankroller'
 import { Logger } from 'dc-logging'
 import { loadLogic } from '../dapps/FileUtils'
 
@@ -23,6 +23,17 @@ const startGame = async () => {
   try {
     const gameTransportProvider = directTransportProvider // await IpfsTransportProvider.createAdditional()
 
+    // ropsten env
+    let manifestFile = config.DAppsPath + '/FTE1/dapp.manifest.js'
+    let privkey = '0x6A5AE922FDE5C8EE877E9470F45B8030F60C19038E9116DB8B343782D9593602'
+    // local env
+    if (process.env.DC_NETWORK === 'local') {
+      manifestFile = config.DAppsPath + '/ex1/dapp.manifest.js'
+      privkey = '0xae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f'
+    }
+
+    const dappManifest = require( manifestFile )
+
     const {
       gasPrice: price,
       gasLimit: limit,
@@ -33,11 +44,9 @@ const startGame = async () => {
       httpProviderUrl,
       ERC20ContractInfo: contracts.ERC20,
       gasParams: { price, limit },
-      privateKey:
-        '0x6A5AE922FDE5C8EE877E9470F45B8030F60C19038E9116DB8B343782D9593602',
+      privateKey: privkey,
     })
 
-    const dappManifest = require( config.DAppsPath + '/FTE1/dapp.manifest.js' )
     // Game loaded to store during bankroller start
     const gameLogicFunction = new GlobalGameLogicStore().getGameLogic(dappManifest.slug)
     const dappParams = {
@@ -49,7 +58,7 @@ const startGame = async () => {
       Eth
     }
     await Eth.initAccount()
-    const dapp = new DApp(dappParams)
+    const dapp         = new DApp(dappParams)
     const dappInstance = await dapp.startClient()
     return { game: dappInstance, Eth }
   } catch (error) {
@@ -70,6 +79,8 @@ const test1 = async () => {
     playerDeposit: 3,
     gameData: [0, 0],
   })
+
+  logger.info('Channel opened!')
 
   const result1 = await game.callPeerGame({
     userBet: 1,

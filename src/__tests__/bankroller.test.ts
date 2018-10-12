@@ -1,1 +1,1 @@
-import Bankroller from '../dapps/Bankroller';
+import Bankroller from '../dapps/Bankroller'
