@@ -28,7 +28,7 @@
     "ipfs-repo": "0.23.1",
     "js-cryptico": "^1.0.2",
     "nedb": "^1.8.0",
-    "node-fetch": "2.1.2",
+    "axios": "^0.18.0",
     "number-to-bn": "1.7.0",
     "rimraf": "2.6.2",
     "web3": "1.0.0-beta.36",
