@@ -97,6 +97,6 @@ const test1 = async () => {
 
   logger.info('Start close channel')
   
-
+  game.closeChannel()
 }
 test1()
