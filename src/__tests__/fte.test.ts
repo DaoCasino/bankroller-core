@@ -21,7 +21,6 @@ const startBankroller = async () => {
 const startGame = async gameTransportProvider => {
   try {
     // const gameTransportProvider = directTransportProvider; // await IpfsTransportProvider.createAdditional();
-
     const {
       gasPrice: price,
       gasLimit: limit,
