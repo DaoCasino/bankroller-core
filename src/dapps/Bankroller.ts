@@ -55,7 +55,7 @@ export default class Bankroller implements IBankroller {
     }
     this._transportProvider = transportProvider
     await this._eth.initAccount()
-
+     
     transportProvider.exposeSevice(
       this._eth.getAccount().address.toLowerCase(),
       this,
