@@ -1,57 +1,53 @@
-/*global DCLib*/
+/* global DCLib */
+DCLib.defineDAppLogic('Game_EX_v1', function (payChannel) {
+  const MAX_RAND_NUM = 3
 
-DCLib.defineDAppLogic("DCGame_FTE_v1", function(payChannel) {
-  const MIN_VALUE = 1;
-  const MAX_VALUE = 3;
+  let history = []
 
-  let history = [];
-
-  let clickBox = function(userBet, valPlayerArr, randomHash) {
-    const valPlayer = valPlayerArr[0];
-    if (valPlayer < MIN_VALUE || valPlayer > MAX_VALUE) {
-      console.warn(
-        "Invalid usernum, min: " + MIN_VALUE + " , max " + MAX_VALUE + ""
-      );
-      return;
+  var Roll = function (userBet, userNum, random_hash) {
+    if (userNum < 1 || userNum > MAX_RAND_NUM) {
+      console.warn('Invalid usernum, min:1 , max ' + MAX_RAND_NUM + '')
+      return
     }
 
     // convert 1BET to 100000000
-    userBet = DCLib.Utils.bet2dec(userBet);
+    // userBet = DCLib.Utils.bet2dec(userBet)
     // generate random number
-    const randomNum = DCLib.numFromHash(randomHash, MIN_VALUE, MAX_VALUE);
+    // console.log(random_hash, userBet, MAX_RAND_NUM)
+    const randomNum = 2 // DCLib.numFromHash(random_hash, 1, MAX_RAND_NUM)
 
-    let profit = -userBet;
+    let profit = -userBet
     // if user win
-    if (valPlayer == randomNum) {
-      profit = userBet;
+    if (userNum * 1 === randomNum * 1) {
+      profit = userBet * 2 - userBet
     }
     // add result to paychannel
-    payChannel.addTX(profit);
+    // payChannel.addTX(profit)
 
     // console log current paychannel state
-    payChannel.printLog();
+    // payChannel.printLog()
 
     // push all data to our log
     // just FOR DEBUG
-    const obj = {
+    const rollItem = {
       // !IMPORTANT Time can be different on client and bankroller sides
       // not use time in your primary game logic
-      // timestamp: new Date().getTime(),
+      timestamp   : new Date().getTime(),
+      user_bet    : userBet,
+      profit      : profit,
+      user_num    : userNum,
+      random_hash : random_hash,
+      random_num  : randomNum
+    }
+    history.push(rollItem)
 
-      userBet: userBet,
-      profit: profit,
-      valPlayer: valPlayer,
-      balance: payChannel.getBalance(),
-      randomHash: randomHash,
-      randomNum: randomNum
-    };
-    history.push(obj);
+    console.log(rollItem)
 
-    return obj;
-  };
+    return [profit, -profit]
+  }
 
   return {
-    Game: clickBox,
+    Game: Roll,
     history: history
-  };
-});
+  }
+})
