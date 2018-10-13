@@ -1,35 +1,35 @@
 /*global DCLib*/
 
 DCLib.defineDAppLogic("DCGame_FTE_v1", function(payChannel) {
-  const MIN_VALUE = 1;
-  const MAX_VALUE = 3;
+  const MIN_VALUE = 1
+  const MAX_VALUE = 3
 
-  let history = [];
+  let history = []
 
   let clickBox = function(userBet, valPlayerArr, randomHash) {
-    const valPlayer = valPlayerArr[0];
+    const valPlayer = valPlayerArr[0]
     if (valPlayer < MIN_VALUE || valPlayer > MAX_VALUE) {
       console.warn(
         "Invalid usernum, min: " + MIN_VALUE + " , max " + MAX_VALUE + ""
-      );
-      return;
+      )
+      return
     }
 
     // convert 1BET to 100000000
-    userBet = DCLib.Utils.bet2dec(userBet);
+    userBet = DCLib.Utils.bet2dec(userBet)
     // generate random number
-    const randomNum = DCLib.numFromHash(randomHash, MIN_VALUE, MAX_VALUE);
+    const randomNum = DCLib.numFromHash(randomHash, MIN_VALUE, MAX_VALUE)
 
-    let profit = -userBet;
+    let profit = -userBet
     // if user win
     if (valPlayer == randomNum) {
-      profit = userBet;
+      profit = userBet
     }
     // add result to paychannel
-    payChannel.addTX(profit);
+    payChannel.addTX(profit)
 
     // console log current paychannel state
-    payChannel.printLog();
+    payChannel.printLog()
 
     // push all data to our log
     // just FOR DEBUG
@@ -44,14 +44,14 @@ DCLib.defineDAppLogic("DCGame_FTE_v1", function(payChannel) {
       balance: payChannel.getBalance(),
       randomHash: randomHash,
       randomNum: randomNum
-    };
-    history.push(obj);
+    }
+    history.push(obj)
 
-    return obj;
-  };
+    return obj
+  }
 
   return {
     Game: clickBox,
     history: history
-  };
-});
+  }
+})
