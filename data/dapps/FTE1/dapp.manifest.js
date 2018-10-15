@@ -7,7 +7,7 @@ module.exports = {
   about: "./README.md",
 
   contract: {
-    address: "0xf4dac7a329bcabc02c62d438d1f2dd226680b6f6",
+    address: '0xf4dac7a329bcabc02c62d438d1f2dd226680b6f6',
     abi: [
       {
         constant: true,
