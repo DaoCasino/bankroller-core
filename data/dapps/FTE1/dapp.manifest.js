@@ -1,5 +1,5 @@
 module.exports = {
-  slug: "DCGame_FTE_v1_11",
+  slug: "DCGame_FTE_v1",
 
   // if you want to change filename  - change it too in /scripts/config/paths
   logic: "./dapp.logic.js",
@@ -7,7 +7,7 @@ module.exports = {
   about: "./README.md",
 
   contract: {
-    address: '0xf4dac7a329bcabc02c62d438d1f2dd226680b6f6',
+    address: "0xf4dac7a329bcabc02c62d438d1f2dd226680b6f6",
     abi: [
       {
         constant: true,

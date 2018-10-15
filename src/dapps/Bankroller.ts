@@ -25,7 +25,7 @@ export default class Bankroller implements IBankroller {
   private _eth: Eth
   private _apiRoomAddress
   private _platformId
-  private _blockchain
+  private _blockchainNetwork
   gamesMap: Map<string, DApp>
   id: string
   private _transportProvider: IMessagingProvider
@@ -37,10 +37,10 @@ export default class Bankroller implements IBankroller {
       web3HttpProviderUrl: httpProviderUrl,
       contracts,
       privateKey,
-      blockchain
+      blockchainNetwork
     } = config
     this._platformId = platformId
-    this._blockchain = blockchain
+    this._blockchainNetwork = blockchainNetwork
     this._eth = new Eth({
       privateKey,
       httpProviderUrl,
@@ -54,7 +54,7 @@ export default class Bankroller implements IBankroller {
     ;(global as any).DCLib = new GlobalGameLogicStore()
   }
   getApiRoomAddress(ethAddress: string) {
-    return `${this._platformId}_${this._blockchain}_${ethAddress}`
+    return `${this._platformId}_${this._blockchainNetwork}_${ethAddress}`
   }
   async start(transportProvider: IMessagingProvider) {
     if (this._started) {
@@ -118,6 +118,7 @@ export default class Bankroller implements IBankroller {
         const { slug, rules, contract } = manifest
         const dapp = new DApp({
           platformId: this._platformId,
+          blockchainNetwork: this._blockchainNetwork,
           slug,
           rules,
           contract,

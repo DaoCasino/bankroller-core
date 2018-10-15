@@ -41,7 +41,8 @@ const startGame = async () => {
       gasLimit: limit,
       web3HttpProviderUrl: httpProviderUrl,
       contracts,
-      platformId
+      platformId,
+      blockchainNetwork
     } = config
     const Eth = new Ethereum({
       httpProviderUrl,
@@ -57,6 +58,7 @@ const startGame = async () => {
     const dappParams = {
       slug: dappManifest.slug,
       platformId,
+      blockchainNetwork,
       contract: dappManifest.contract,
       rules: dappManifest.rules,
       roomProvider: gameTransportProvider,
