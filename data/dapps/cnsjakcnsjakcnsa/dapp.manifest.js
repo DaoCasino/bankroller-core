@@ -1,5 +1,5 @@
 module.exports = {
-  slug: "DCGame_FTE_v1",
+  slug: "DCGame_FTE_v111",
 
   // if you want to change filename  - change it too in /scripts/config/paths
   logic: "./dapp.logic.js",
@@ -319,4 +319,4 @@ module.exports = {
   rules: {
     depositX: 2
   }
-}
+};

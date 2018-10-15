@@ -9,8 +9,10 @@ export interface IBankroller {
   id: string
   getGames: () => { name: string }[]
   uploadGame: (
-    name: string,
-    files: { fileName: string; fileData: Buffer | string }[]
-  ) => Promise<any>
+    params: {
+      name: string
+      files: { fileName: string; fileData: Buffer | string }[]
+    }
+  ) => Promise<{ status: string }>
   getGameInstances: (name: string) => GameInstanceInfo[]
 }
