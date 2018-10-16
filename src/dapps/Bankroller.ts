@@ -56,24 +56,23 @@ export default class Bankroller implements IBankroller {
   getApiRoomAddress(ethAddress: string) {
     return `${this._platformId}_${this._blockchain}_${ethAddress}`
   }
-  async start(transportProvider: IMessagingProvider) {
+  async start(transportProvider: IMessagingProvider): Promise<any> {
     if (this._started) {
       throw new Error("Bankroller allready started")
     }
     this._transportProvider = transportProvider
     await this._eth.initAccount()
     const ethAddress = this._eth.getAccount().address.toLowerCase()
-    await this._eth.ERC20ApproveSafe(ethAddress, SERVER_APPROVE_AMOUNT)
-    logger.debug(`ERC20 approved for ${ethAddress}`)
-
     this._apiRoomAddress = this.getApiRoomAddress(ethAddress)
-
     transportProvider.exposeSevice(this._apiRoomAddress, this, true)
     this._started = true
-    const loadDirPromises = getSubDirectoriee(config.DAppsPath).map(
-      this.tryLoadDApp
-    )
-    await Promise.all(loadDirPromises)
+    const loadDirPromises = getSubDirectoriee(config.DAppsPath)
+      .map(this.tryLoadDApp)
+
+    for (const initDApp of Object.values(loadDirPromises)) {
+      await initDApp
+    }
+
     logger.info(`Bankroller started. Api address: ${this._apiRoomAddress}`)
     return this
   }
@@ -120,6 +119,10 @@ export default class Bankroller implements IBankroller {
           gameLogicFunction,
           Eth: this._eth
         })
+
+        await this._eth.ERC20ApproveSafe(contract.address, SERVER_APPROVE_AMOUNT)
+        logger.debug(`ERC20 approved for ${contract.address}`)
+
         await dapp.startServer()
         this.gamesMap.set(slug, dapp)
 
