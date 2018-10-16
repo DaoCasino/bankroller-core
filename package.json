@@ -9,6 +9,7 @@
     "start:l" : "sh run.sh local   src/index.ts",
     "start"   : "sh run.sh ropsten src/index.ts",
     
+    "build:ts": "yarn typescript",
     "build": "yarn typescript",
     "check:build": "nodemon --inspect ./lib/index.js --delay 2 --watch ../ --ignore ../dc-protocol",
     "typescript": "tsc --build",
