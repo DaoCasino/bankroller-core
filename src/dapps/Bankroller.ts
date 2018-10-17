@@ -16,7 +16,7 @@ import { IBankroller, GameInstanceInfo } from "../intefaces/IBankroller"
 /*
  * Lib constructor
  */
-const SERVER_APPROVE_AMOUNT = 100000000
+
 const logger = new Logger("Bankroller")
 
 export default class Bankroller implements IBankroller {
@@ -63,17 +63,18 @@ export default class Bankroller implements IBankroller {
     this._transportProvider = transportProvider
     await this._eth.initAccount()
     const ethAddress = this._eth.getAccount().address.toLowerCase()
-    await this._eth.ERC20ApproveSafe(ethAddress, SERVER_APPROVE_AMOUNT)
+
     logger.debug(`ERC20 approved for ${ethAddress}`)
 
     this._apiRoomAddress = this.getApiRoomAddress(ethAddress)
 
     transportProvider.exposeSevice(this._apiRoomAddress, this, true)
     this._started = true
-    const loadDirPromises = getSubDirectoriee(config.DAppsPath).map(
-      this.tryLoadDApp
-    )
-    await Promise.all(loadDirPromises)
+
+    getSubDirectoriee(config.DAppsPath).forEach(async subDirectory => {
+      await this.tryLoadDApp(subDirectory)
+    })
+
     logger.info(`Bankroller started. Api address: ${this._apiRoomAddress}`)
     return this
   }
