@@ -83,12 +83,7 @@ const test1 = async () => {
   game.onPeerEvent("info", data => showFunc("Bankroller", data))
   game.on("info", data => showFunc("Client", data))
 
-  await game.connect({
-    peerAddress: Eth.getAccount().address,
-    deposit: 3,
-    gameData: [0, 0]
-  })
-
+  await game.connect({ playerDeposit: 3, gameData: [0, 0] })
   logger.info("Channel opened!")
 
   // const result1 = await game.callPeerGame({
@@ -106,6 +101,7 @@ const test1 = async () => {
 
   // logger.info("Start close channel")
 
-  // game.closeChannel()
+  await game.disconnect()
+  logger.info("Channel closed!")
 }
 test1()
