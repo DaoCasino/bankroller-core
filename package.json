@@ -1,22 +1,20 @@
 {
   "name": "bankroller-core",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Core bankroller functionality",
   "main": "./lib/index",
   "scripts": {
     "tsmon": "nodemon --delay 2 --inspect --watch ../ --ignore ../dc-protocol -r ts-node/register --",
-    
-    "start:l" : "sh run.sh local   src/index.ts",
-    "start"   : "sh run.sh ropsten src/index.ts",
-    
+    "start:l": "sh run.sh local   src/index.ts",
+    "start": "sh run.sh ropsten src/index.ts",
     "build:ts": "yarn typescript",
     "build": "yarn typescript",
     "check:build": "nodemon --inspect ./lib/index.js --delay 2 --watch ../ --ignore ../dc-protocol",
     "typescript": "tsc --build",
     "clean": "rimraf lib",
     "reset": "rm -rf ./data/DB && rm -rf ./data/messaging",
-    "test:l" : "sh run.sh local   src/__tests__/game.test.ts",
-    "test"   : "sh run.sh ropsten src/__tests__/game.test.ts"
+    "test:l": "sh run.sh local   src/__tests__/game.test.ts",
+    "test": "sh run.sh ropsten src/__tests__/game.test.ts"
   },
   "keywords": [],
   "author": "",
@@ -26,28 +24,27 @@
     "@types/web3": "1.0.3",
     "axios": "^0.18.0",
     "bn.js": "4.11.8",
-    "dc-configs": "^1.0.0",
-    "dc-core": "^1.0.0",
-    "dc-ethereum-utils": "1.0.0",
-    "dc-logging": "^1.0.0",
-    "dc-messaging": "1.0.0",
+    "chai": "^4.1.2",
+    "dc-configs": "^1.0.1",
+    "dc-core": "^1.0.1",
+    "dc-ethereum-utils": "^1.0.1",
+    "dc-logging": "^1.0.1",
+    "dc-messaging": "^1.0.1",
     "debug": "^3.1.0",
     "ipfs": "0.31.7",
     "ipfs-pubsub-room": "1.4.0",
     "ipfs-repo": "0.23.1",
     "js-cryptico": "^1.0.2",
+    "mocha": "^3.2.0",
     "nedb": "^1.8.0",
     "number-to-bn": "1.7.0",
     "rimraf": "2.6.2",
     "web3": "1.0.0-beta.36",
-    "ws": "6.0.0",
-    "chai": "^4.1.2",
-    "mocha": "^3.2.0"
+    "ws": "6.0.0"
   },
   "devDependencies": {
     "husky": "1.1.1",
     "ts-node": "7.0.1",
     "typescript": "3.1.2"
-
   }
 }
