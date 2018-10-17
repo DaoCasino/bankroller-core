@@ -8,8 +8,8 @@ import { Logger } from "dc-logging"
 import { loadLogic } from "../dapps/FileUtils"
 
 const logger = new Logger("test1")
-
 const directTransportProvider = new DirectTransportProvider()
+
 const startBankroller = async () => {
   try {
     const bankrollerTransportProvider = directTransportProvider // await IpfsTransportProvider.create()
@@ -19,6 +19,7 @@ const startBankroller = async () => {
     process.exit()
   }
 }
+
 const startGame = async () => {
   try {
     const gameTransportProvider = directTransportProvider // await IpfsTransportProvider.createAdditional()
@@ -74,6 +75,7 @@ const startGame = async () => {
     process.exit()
   }
 }
+
 const test1 = async () => {
   await startBankroller()
   const { game, Eth } = await startGame()
@@ -82,29 +84,26 @@ const test1 = async () => {
   }
   game.onPeerEvent("info", data => showFunc("Bankroller", data))
   game.on("info", data => showFunc("Client", data))
-  await game.openChannel({
-    playerAddress: Eth.getAccount().address,
-    playerDeposit: 3,
-    gameData: [0, 0]
-  })
 
+  await game.connect({ playerDeposit: 3, gameData: [0, 0] })
   logger.info("Channel opened!")
 
-  const result1 = await game.callPeerGame({
-    userBet: 1,
-    gameData: [1]
-  })
-  const result2 = await game.callPeerGame({
-    userBet: 1,
-    gameData: [2]
-  })
-  const result3 = await game.callPeerGame({
-    userBet: 1,
-    gameData: [3]
-  })
+  // const result1 = await game.callPeerGame({
+  //   userBet: 1,
+  //   gameData: [1]
+  // })
+  // const result2 = await game.callPeerGame({
+  //   userBet: 1,
+  //   gameData: [2]
+  // })
+  // const result3 = await game.callPeerGame({
+  //   userBet: 1,
+  //   gameData: [3]
+  // })
 
-  logger.info("Start close channel")
+  // logger.info("Start close channel")
 
-  game.closeChannel()
+  await game.disconnect()
+  logger.info("Channel closed!")
 }
 test1()
