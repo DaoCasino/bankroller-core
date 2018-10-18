@@ -1,0 +1,1 @@
+docker build -f ./packages/bankroller-core/Dockerfile .
