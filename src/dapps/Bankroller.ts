@@ -13,6 +13,9 @@ import {
 } from "./FileUtils"
 
 import { IBankroller, GameInstanceInfo } from "../intefaces/IBankroller"
+
+import { PingService } from "./PingService"
+
 /*
  * Lib constructor
  */
@@ -68,6 +71,12 @@ export default class Bankroller implements IBankroller {
 
     this._apiRoomAddress = this.getApiRoomAddress(ethAddress)
     transportProvider.exposeSevice(this._apiRoomAddress, this, true)
+
+    const pingService = new PingService().start(transportProvider, {
+      platformId: this._platformId,
+      apiRoomAddress: this._apiRoomAddress,
+    })
+    // transportProvider.exposeSevice(this.getPlatformIdHash(), PingService, true)
     this._started = true
 
     const loadDirPromises = getSubDirectoriee(config.DAppsPath)

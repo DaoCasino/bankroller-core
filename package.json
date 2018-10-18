@@ -5,18 +5,17 @@
   "main": "./lib/index",
   "scripts": {
     "tsmon": "nodemon --delay 2 --inspect --watch ../ --ignore ../dc-protocol -r ts-node/register --",
-    
-    "start:l" : "sh run.sh local   src/index.ts",
-    "start"   : "sh run.sh ropsten src/index.ts",
-    
+    "start:l": "sh run.sh local yasrc/index.ts",
+    "start": "sh run.sh ropsten src/index.ts",
     "build:ts": "yarn typescript",
     "build": "yarn typescript",
     "check:build": "nodemon --inspect ./lib/index.js --delay 2 --watch ../ --ignore ../dc-protocol",
     "typescript": "tsc --build",
     "clean": "rimraf lib",
     "reset": "rm -rf ./data/DB && rm -rf ./data/messaging",
-    "test:l" : "sh run.sh local   src/__tests__/game.test.ts",
-    "test"   : "sh run.sh ropsten src/__tests__/game.test.ts"
+    "test:l": "sh run.sh local   src/__tests__/game.test.ts",
+    "test": "sh run.sh ropsten src/__tests__/game.test.ts",
+    "test:ping": "mocha --timeout 99999999 -r ts-node/register src/__tests__/PingService.test.ts"
   },
   "keywords": [],
   "author": "",
@@ -26,6 +25,7 @@
     "@types/web3": "1.0.3",
     "axios": "^0.18.0",
     "bn.js": "4.11.8",
+    "crypto": "1.0.1",
     "dc-configs": "^1.0.0",
     "dc-core": "^1.0.0",
     "dc-ethereum-utils": "1.0.0",
@@ -48,6 +48,5 @@
     "husky": "1.1.1",
     "ts-node": "7.0.1",
     "typescript": "3.1.2"
-
   }
 }
