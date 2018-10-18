@@ -43,11 +43,5 @@
     "ws": "6.0.0",
     "chai": "^4.1.2",
     "mocha": "^3.2.0"
-  },
-  "devDependencies": {
-    "husky": "1.1.1",
-    "ts-node": "7.0.1",
-    "typescript": "3.1.2"
-
   }
 }
