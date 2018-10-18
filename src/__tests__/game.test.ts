@@ -5,24 +5,24 @@ import { Eth as Ethereum } from "dc-ethereum-utils"
 import { GlobalGameLogicStore, DApp } from "dc-core"
 import Bankroller from "../dapps/Bankroller"
 import { Logger } from "dc-logging"
-import { loadLogic } from "../dapps/FileUtils"
 
-const logger = new Logger("test1")
+const log = new Logger("test1")
 const directTransportProvider = new DirectTransportProvider()
 
 const startBankroller = async () => {
   try {
-    const bankrollerTransportProvider = directTransportProvider // await IpfsTransportProvider.create()
+    const bankrollerTransportProvider = await IpfsTransportProvider.create() // directTransportProvider // await IpfsTransportProvider.create()
     return await new Bankroller().start(bankrollerTransportProvider)
   } catch (error) {
-    logger.debug(error)
-    process.exit()
+    log.debug(error)
+    process.exitCode = 1
+    process.kill(process.pid, 'SIGTERM')
   }
 }
 
 const startGame = async () => {
   try {
-    const gameTransportProvider = directTransportProvider // await IpfsTransportProvider.createAdditional()
+    const gameTransportProvider = await IpfsTransportProvider.createAdditional() // directTransportProvider // await IpfsTransportProvider.createAdditional()
 
     // ropsten env
     let manifestFile = config.DAppsPath + "/FTE1/dapp.manifest.js"
@@ -71,8 +71,10 @@ const startGame = async () => {
     const dappInstance = await dapp.startClient()
     return { game: dappInstance, Eth }
   } catch (error) {
-    logger.debug(error)
-    process.exit()
+    log.debug(error)
+
+    process.exitCode = 1
+    process.kill(process.pid, 'SIGTERM')
   }
 }
 
@@ -80,13 +82,13 @@ const test1 = async () => {
   await startBankroller()
   const { game, Eth } = await startGame()
   const showFunc = (source, data) => {
-    logger.debug(`${source} ${new Date().toString()} ${JSON.stringify(data)}`)
+    log.debug(`${source} ${new Date().toString()} ${JSON.stringify(data)}`)
   }
   game.onPeerEvent("info", data => showFunc("Bankroller", data))
   game.on("info", data => showFunc("Client", data))
 
   await game.connect({ playerDeposit: 3, gameData: [0, 0] })
-  logger.info("Channel opened!")
+  log.info("Channel opened!")
 
   // const result1 = await game.callPeerGame({
   //   userBet: 1,
@@ -103,7 +105,7 @@ const test1 = async () => {
 
   // logger.info("Start close channel")
 
-  await game.disconnect()
-  logger.info("Channel closed!")
+  // await game.disconnect()
+  // logger.info("Channel closed!")
 }
 test1()

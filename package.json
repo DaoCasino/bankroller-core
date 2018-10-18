@@ -5,10 +5,10 @@
   "main": "./lib/index",
   "scripts": {
     "tsmon": "nodemon --delay 2 --inspect --watch ../ --ignore ../dc-protocol -r ts-node/register --",
-    
+
     "start:l" : "sh run.sh local   src/index.ts",
     "start"   : "sh run.sh ropsten src/index.ts",
-    
+
     "build:ts": "yarn typescript",
     "build": "yarn typescript",
     "check:build": "nodemon --inspect ./lib/index.js --delay 2 --watch ../ --ignore ../dc-protocol",
@@ -16,6 +16,7 @@
     "clean": "rimraf lib",
     "reset": "rm -rf ./data/DB && rm -rf ./data/messaging",
     "test:l" : "sh run.sh local   src/__tests__/game.test.ts",
+    "test:p" : "sh run.sh local   src/__tests__/testProductionGame.test.ts",
     "test"   : "sh run.sh ropsten src/__tests__/game.test.ts"
   },
   "keywords": [],
