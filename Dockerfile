@@ -3,11 +3,17 @@ FROM mhart/alpine-node:8
 # MAINTAINER Alex Step <alex.step@dao.casino>
 
 RUN apk add --no-cache make gcc g++ python git bash && \
-npm i -g yarn && \
-yarn global add nodemon babel-cli --ignore-engines --ignore-optional --ignore-platform --link-duplicates
+    npm i -g yarn && \
+    npm i -g ganache-cli@6.1.8 && \
+    npm i -g truffle@beta && \
+    yarn global add lerna && \
+    npm i -g nodemon babel-cli typescript
 
 COPY ./ /bankroller
 WORKDIR /bankroller
 
-# RUN npm i
-RUN yarn --ignore-engines --ignore-optional --ignore-platform --link-duplicates
+RUN npm install ts-node
+
+ENV DC_NETWORK=ropsten
+
+ENTRYPOINT sh run.sh ${DC_NETWORK} src/index.ts
