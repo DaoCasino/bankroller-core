@@ -22,6 +22,7 @@ const startBankroller = async () => {
 
 const startGame = async () => {
   try {
+    // debugger
     const gameTransportProvider = directTransportProvider // await IpfsTransportProvider.createAdditional()
 
     // ropsten env
@@ -78,7 +79,9 @@ const startGame = async () => {
 
 const test1 = async () => {
   await startBankroller()
+
   const { game, Eth } = await startGame()
+
   const showFunc = (source, data) => {
     log.debug(`${source} ${new Date().toString()} ${JSON.stringify(data)}`)
   }
@@ -88,18 +91,18 @@ const test1 = async () => {
   await game.connect({ playerDeposit: 3, gameData: [0, 0] })
   log.info("Channel opened!")
 
+  const rndOpts = [[0,3],[0,5]]
   const result1 = await game.play({
     userBet: 1,
-    gameData: [1]
-    // rnd:[[0,3],[0,5]]
+    gameData: [1], rndOpts
   })
   const result2 = await game.play({
     userBet: 1,
-    gameData: [2]
+    gameData: [2], rndOpts:[[10,30],[100,500]]
   })
   const result3 = await game.play({
     userBet: 1,
-    gameData: [3]
+    gameData: [3], rndOpts:[[1,3],[10,50]]
   })
 
   // log.info("Start close channel")
