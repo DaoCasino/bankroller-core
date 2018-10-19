@@ -69,13 +69,9 @@ export default class Bankroller implements IBankroller {
     transportProvider.exposeSevice(this._apiRoomAddress, this, true)
     this._started = true
 
-    const loadDirPromises = getSubDirectoriee(config.DAppsPath)
-      .map(this.tryLoadDApp)
-
-    for (const initDApp of Object.values(loadDirPromises)) {
-      await initDApp
-    }
-
+    getSubDirectoriee(config.DAppsPath).forEach(async subDirectory => {
+      await this.tryLoadDApp(subDirectory)
+    })
 
     logger.info(`Bankroller started. Api address: ${this._apiRoomAddress}`)
     return this
@@ -130,7 +126,10 @@ export default class Bankroller implements IBankroller {
           Eth: this._eth
         })
 
-        await this._eth.ERC20ApproveSafe(contract.address, SERVER_APPROVE_AMOUNT)
+        await this._eth.ERC20ApproveSafe(
+          contract.address,
+          SERVER_APPROVE_AMOUNT
+        )
         logger.debug(`ERC20 approved for ${contract.address}`)
 
         await dapp.startServer()
@@ -141,7 +140,7 @@ export default class Bankroller implements IBankroller {
         return dapp
       }
     } catch (error) {
-      logger.error({ message: `Error loading DApp.`, error })
+      console.log(error)
     }
     return null
   }

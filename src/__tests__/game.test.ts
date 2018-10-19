@@ -89,20 +89,21 @@ const test1 = async () => {
   await game.connect({ playerDeposit: 3, gameData: [0, 0] })
   log.info("Channel opened!")
 
-  // const result1 = await game.callPeerGame({
-  //   userBet: 1,
-  //   gameData: [1]
-  // })
-  // const result2 = await game.callPeerGame({
-  //   userBet: 1,
-  //   gameData: [2]
-  // })
-  // const result3 = await game.callPeerGame({
-  //   userBet: 1,
-  //   gameData: [3]
-  // })
+  const result1 = await game.play({
+    userBet: 1,
+    gameData: [1]
+    // rnd:[[0,3],[0,5]]
+  })
+  const result2 = await game.play({
+    userBet: 1,
+    gameData: [2]
+  })
+  const result3 = await game.play({
+    userBet: 1,
+    gameData: [3]
+  })
 
-  // logger.info("Start close channel")
+  // log.info("Start close channel")
 
   // await game.disconnect()
   // logger.info("Channel closed!")

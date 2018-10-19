@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import rimraf from 'rimraf'
-import { PayChannelLogic, GameLogicFunction } from 'dc-core'
+import { IGameLogic } from 'dc-core'
 
 const MANIFEST_FILENAME = 'dapp.manifest'
 
@@ -46,7 +46,7 @@ export const loadLogic = (
   directoryPath: string
 ): {
   manifest: any
-  gameLogicFunction: GameLogicFunction
+  gameLogicFunction: ()=>IGameLogic
 } => {
   const manifestPath: string = `${directoryPath}/${MANIFEST_FILENAME}`
   const manifestFoundPath = checkFileExists(manifestPath, ['.js', '', '.json'])
