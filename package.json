@@ -4,7 +4,7 @@
   "description": "Core bankroller functionality",
   "main": "./lib/index",
   "scripts": {
-    "tsmon": "nodemon --delay 2 --inspect --watch ../ --ignore ../dc-protocol -r ts-node/register --",
+    "tsmon": "nodemon --delay 2 --inspect --watch ../ --ignore ../dc-protocol --",
     
     "start:l" : "sh run.sh local   src/index.ts",
     "start"   : "sh run.sh ropsten src/index.ts",
