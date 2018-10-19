@@ -6,7 +6,7 @@ import crypto from "crypto"
 
 // const logger = new Logger("PingService")
 
-const createHash = (data) => {
+export const createHash = (data) => {
     return crypto.createHash("md5").update(data).digest("hex")
 }
 
