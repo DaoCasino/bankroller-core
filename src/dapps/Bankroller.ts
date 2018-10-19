@@ -19,8 +19,6 @@ import { IBankroller, GameInstanceInfo } from "../intefaces/IBankroller"
 
 const logger = new Logger("Bankroller")
 
-const SERVER_APPROVE_AMOUNT = 100000000
-
 export default class Bankroller implements IBankroller {
   private _started: boolean
   private _loadedDirectories: Set<string>
