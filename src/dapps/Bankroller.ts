@@ -6,7 +6,7 @@ import { IpfsTransportProvider, IMessagingProvider } from "dc-messaging"
 import { Eth } from "dc-ethereum-utils"
 import { Logger } from "dc-logging"
 import {
-  getSubDirectoriee,
+  getSubDirectories,
   loadLogic,
   saveFilesToNewDir,
   removeDir
@@ -70,9 +70,10 @@ export default class Bankroller implements IBankroller {
     transportProvider.exposeSevice(this._apiRoomAddress, this, true)
     this._started = true
 
-    getSubDirectoriee(config.DAppsPath).forEach(async subDirectory => {
-      await this.tryLoadDApp(subDirectory)
-    })
+    const subDirectories = getSubDirectories(config.DAppsPath)
+    for (let i = 0; i < subDirectories.length; i++) {
+      await this.tryLoadDApp(subDirectories[i])
+    }
 
     logger.info(`Bankroller started. Api address: ${this._apiRoomAddress}`)
     return this
@@ -126,12 +127,6 @@ export default class Bankroller implements IBankroller {
           gameLogicFunction,
           Eth: this._eth
         })
-
-        await this._eth.ERC20ApproveSafe(
-          contract.address,
-          SERVER_APPROVE_AMOUNT
-        )
-        logger.debug(`ERC20 approved for ${contract.address}`)
 
         await dapp.startServer()
         this.gamesMap.set(slug, dapp)
