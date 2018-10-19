@@ -71,7 +71,7 @@ export default class Bankroller implements IBankroller {
   }
   getPlatformIdHash(): string {
     return this._platformIdHash
-  }
+  }fg
   async start(transportProvider: IMessagingProvider): Promise<any> {
     if (this._started) {
       throw new Error("Bankroller allready started")
