@@ -1,5 +1,5 @@
 export interface IPingServiceParams  {
-    platformId: string,
+    platformIdHash: string,
     apiRoomAddress: string,
     timeout: number
 }
