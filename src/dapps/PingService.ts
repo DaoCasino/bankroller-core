@@ -9,7 +9,7 @@ const log = new Logger("PingService")
 export class PingService extends EventEmitter implements IPingService {
     private _transportProvider: IMessagingProvider
     private _platformIdHash: string
-    private _apiRoomAdress: string
+    private _apiRoomAddress: string
     private _started: boolean
     private _pingInterval: number
     public static EVENT_NAME: string = "platformPong"
@@ -20,7 +20,7 @@ export class PingService extends EventEmitter implements IPingService {
         }
         this._transportProvider = transportProvider
         this._platformIdHash = platformIdHash
-        this._apiRoomAdress = apiRoomAddress
+        this._apiRoomAddress = apiRoomAddress
 
         transportProvider.exposeSevice(this._platformIdHash, this, true)
 
@@ -42,7 +42,7 @@ export class PingService extends EventEmitter implements IPingService {
 
     requestPing(): IPingResponce {
         const responce: IPingResponce = {
-            apiRoomAdress: this._apiRoomAdress
+            apiRoomAddress: this._apiRoomAddress
         }
         return responce
     }

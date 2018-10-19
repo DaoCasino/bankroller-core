@@ -46,7 +46,7 @@ class ClientService extends EventEmitter {
     acceptPing(data: IPingResponce) {
         // console.log(data)
         log.debug(data)
-        expect(data.apiRoomAdress).to.be.a('string')
+        expect(data.apiRoomAddress).to.be.a('string')
     }
 
     isStarted() {

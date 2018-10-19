@@ -5,7 +5,7 @@ export interface IPingServiceParams  {
 }
 
 export interface IPingResponce {
-    apiRoomAdress: string
+    apiRoomAddress: string
 }
 export interface IPingService {
     requestPing: () => IPingResponce
