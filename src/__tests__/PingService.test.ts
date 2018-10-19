@@ -21,7 +21,7 @@ class ClientService extends EventEmitter {
     private _started: boolean
     private _peer: IPingService
 
-    async start(transportProvider: IMessagingProvider, platformIdHash: string, peer: IPingService) {
+    start(transportProvider: IMessagingProvider, platformIdHash: string, peer: IPingService) {
         if (this._started) {
             throw new Error("ClientPingService allready started")
         }
@@ -29,8 +29,17 @@ class ClientService extends EventEmitter {
         transportProvider.exposeSevice(platformIdHash, this, true)
         this._started = true
 
+        const acceptPing = (event:string, data: IPingResponce) => {
+            // console.log(data)
+            log.debug({ event, data })
+            expect(data.apiRoomAddress).to.be.a('string')
+        }
         this._peer = peer
-        this.onPeerEvent(PingService.EVENT_NAME, this.acceptPing)
+        this.onPeerEvent(PingService.EVENT_JOIN, data => acceptPing(PingService.EVENT_JOIN, data))
+        this.onPeerEvent(PingService.EVENT_EXIT, data => acceptPing(PingService.EVENT_EXIT, data))
+        this.onPeerEvent(PingService.EVENT_PONG, data => acceptPing(PingService.EVENT_PONG, data))
+
+        this._peer.emit(PingService.EVENT_PING, 'client ping')
 
         return this
     }
@@ -40,14 +49,10 @@ class ClientService extends EventEmitter {
     }
 
     eventNames(): string[] {
-        return [PingService.EVENT_NAME]
+        return [PingService.EVENT_JOIN, PingService.EVENT_EXIT, PingService.EVENT_PONG]
     }
 
-    acceptPing(data: IPingResponce) {
-        // console.log(data)
-        log.debug(data)
-        expect(data.apiRoomAddress).to.be.a('string')
-    }
+
 
     isStarted() {
         return this._started
@@ -65,8 +70,7 @@ describe('PingService test', () => {
             const provider = await IpfsTransportProvider.createAdditional()
             const params: IPingServiceParams = {
                 platformIdHash,
-                apiRoomAddress: address,
-                timeout
+                apiRoomAddress: address
             }
             const service: IPingService = new PingService().start(provider, params)
             /* tslint:disable-next-line  */

@@ -11,10 +11,12 @@ export class PingService extends EventEmitter implements IPingService {
     private _platformIdHash: string
     private _apiRoomAddress: string
     private _started: boolean
-    private _pingInterval: number
-    public static EVENT_NAME: string = "platformPong"
+    public static EVENT_PING: string = "bankrollerPing"
+    public static EVENT_PONG: string = "bankrollerPong"
+    public static EVENT_JOIN: string = "bankrollerJoin"
+    public static EVENT_EXIT: string = "bankrollerExit"
 
-    start(transportProvider: IMessagingProvider, { platformIdHash, apiRoomAddress, timeout }: IPingServiceParams) {
+    start(transportProvider: IMessagingProvider, { platformIdHash, apiRoomAddress }: IPingServiceParams) {
         if (this._started) {
             throw new Error("PingService allready started")
         }
@@ -26,10 +28,17 @@ export class PingService extends EventEmitter implements IPingService {
 
         const self = this
 
-        const ping = setInterval(() => {
+        /* const ping = setInterval(() => {
             const request = self.requestPing()
             self.emit(PingService.EVENT_NAME, request)
-        }, timeout)
+        }, timeout) */
+
+        const pingResponce = this.ping()
+        this.on(PingService.EVENT_PING, () => {
+            log.debug('client ping request')
+            this.emit(PingService.EVENT_PONG, pingResponce)
+        })
+        this.emit(PingService.EVENT_JOIN, pingResponce)
 
         this._started = true
 
@@ -37,17 +46,24 @@ export class PingService extends EventEmitter implements IPingService {
     }
 
     eventNames() {
-        return [PingService.EVENT_NAME]
+        return [
+            PingService.EVENT_PING,
+            PingService.EVENT_PONG,
+            PingService.EVENT_JOIN,
+            PingService.EVENT_EXIT
+        ]
     }
 
-    requestPing(): IPingResponce {
-        const responce: IPingResponce = {
-            apiRoomAddress: this._apiRoomAddress
-        }
-        return responce
+    ping(): IPingResponce {
+        return { apiRoomAddress: this._apiRoomAddress }
     }
 
     isStarted(): boolean {
         return this._started
+    }
+
+    stop(): void {
+        this._started = false
+        this.emit(PingService.EVENT_EXIT, this.ping())
     }
 }
