@@ -61,6 +61,7 @@ class ClientService extends EventEmitter {
 
 describe('PingService test', () => {
      const pingService = []
+     const pingProvider = []
      const timeout = 400
      let clientService
      const platformIdHash= randomString()
@@ -87,6 +88,20 @@ describe('PingService test', () => {
         expect(service.isStarted()).to.be.true
         clientService = service
 
-        await sleep(4000) // magic
+        await sleep(1000) // magic
+    })
+
+    it('Stop PingService', async () => {
+        for (const service of pingService) {
+            service.stop()
+            /* tslint:disable-next-line */
+            expect(service.isStarted()).to.be.false
+        }
+
+        for(const provider of pingProvider) {
+            provider.shop()
+        }
+
+        await sleep(1000) // magic
     })
  })
