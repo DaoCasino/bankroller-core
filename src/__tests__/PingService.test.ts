@@ -1,9 +1,10 @@
 import { IpfsTransportProvider, IMessagingProvider } from 'dc-messaging'
 import { IPingServiceParams, IPingService, IPingResponce } from "../intefaces/IPingService"
-import { PingService, createHash } from "../dapps/PingService"
+import { PingService } from "../dapps/PingService"
 import { describe, it } from "mocha"
 import { expect } from "chai"
 import { EventEmitter } from "events"
+import { Logger } from "dc-logging"
 
 const randomString = () => Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
 
@@ -13,17 +14,18 @@ function sleep(ms) {
     })
 }
 
+const log = new Logger("PingService test")
+
 class ClientService extends EventEmitter {
 
     private _started: boolean
     private _peer: IPingService
 
-    async start(transportProvider: IMessagingProvider, platformId: string, peer: IPingService) {
+    async start(transportProvider: IMessagingProvider, platformIdHash: string, peer: IPingService) {
         if (this._started) {
             throw new Error("ClientPingService allready started")
         }
 
-        const platformIdHash = createHash(platformId)
         transportProvider.exposeSevice(platformIdHash, this, true)
         this._started = true
 
@@ -43,6 +45,7 @@ class ClientService extends EventEmitter {
 
     acceptPing(data: IPingResponce) {
         // console.log(data)
+        log.debug(data)
         expect(data.apiRoomAdress).to.be.a('string')
     }
 
@@ -55,13 +58,13 @@ describe('PingService test', () => {
      const pingService = []
      const timeout = 400
      let clientService
-     const platformId = randomString()
+     const platformIdHash= randomString()
      const apiRoomAddress = [randomString(), randomString()]
      it(`Start ${apiRoomAddress.length} ipfs node with PingService`, async () => {
         for (const address of apiRoomAddress) {
             const provider = await IpfsTransportProvider.createAdditional()
             const params: IPingServiceParams = {
-                platformId,
+                platformIdHash,
                 apiRoomAddress: address,
                 timeout
             }
@@ -74,8 +77,8 @@ describe('PingService test', () => {
 
     it(`Start ipfs node with ClientService`, async () => {
         const provider = await IpfsTransportProvider.createAdditional()
-        const peer:IPingService = await provider.getRemoteInterface<IPingService>(createHash(platformId))
-        const service = await new ClientService().start(provider, platformId, peer)
+        const peer:IPingService = await provider.getRemoteInterface<IPingService>(platformIdHash)
+        const service = await new ClientService().start(provider, platformIdHash, peer)
         /* tslint:disable-next-line */
         expect(service.isStarted()).to.be.true
         clientService = service

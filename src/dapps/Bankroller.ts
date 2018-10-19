@@ -12,6 +12,8 @@ import {
   removeDir
 } from "./FileUtils"
 
+import crypto from "crypto"
+
 import { IBankroller, GameInstanceInfo } from "../intefaces/IBankroller"
 
 import { PingService } from "./PingService"
@@ -24,12 +26,17 @@ const logger = new Logger("Bankroller")
 
 const SERVER_APPROVE_AMOUNT = 100000000
 
+export const createHash = (data) => {
+  return crypto.createHash("md5").update(data).digest("hex")
+}
+
 export default class Bankroller implements IBankroller {
   private _started: boolean
   private _loadedDirectories: Set<string>
   private _eth: Eth
   private _apiRoomAddress
   private _platformId
+  private _platformIdHash
   private _blockchainNetwork
   gamesMap: Map<string, DApp>
   id: string
@@ -45,6 +52,7 @@ export default class Bankroller implements IBankroller {
       blockchainNetwork
     } = config
     this._platformId = platformId
+    this._platformIdHash = createHash(platformId)
     this._blockchainNetwork = blockchainNetwork
     this._eth = new Eth({
       privateKey,
@@ -61,6 +69,9 @@ export default class Bankroller implements IBankroller {
   getApiRoomAddress(ethAddress: string) {
     return `${this._platformId}_${this._blockchainNetwork}_${ethAddress}`
   }
+  getPlatformIdHash(): string {
+    return this._platformIdHash
+  }
   async start(transportProvider: IMessagingProvider): Promise<any> {
     if (this._started) {
       throw new Error("Bankroller allready started")
@@ -73,7 +84,7 @@ export default class Bankroller implements IBankroller {
     transportProvider.exposeSevice(this._apiRoomAddress, this, true)
 
     const pingService = new PingService().start(transportProvider, {
-      platformId: this._platformId,
+      platformIdHash: this._platformIdHash,
       apiRoomAddress: this._apiRoomAddress,
       timeout: 1000
     })
