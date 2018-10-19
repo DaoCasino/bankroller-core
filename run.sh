@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [ $1 == 'ropsten' ]; then
-export ACCOUNT_PRIVATE_KEY=0x1a0dfb11c9372ebb5c525e665d174e7c463941b6ab6b4ff13234b14ffb381420b
+export ACCOUNT_PRIVATE_KEY=0x4cf22d44fa06be425b26a2e1d2cd05866831b27d1354a648bf92b8a1d91cc3e5
 export DC_NETWORK=ropsten
 export DAPPS_PATH=./data/dapps/
 fi
