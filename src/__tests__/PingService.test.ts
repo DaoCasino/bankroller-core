@@ -1,43 +1,49 @@
 import { IpfsTransportProvider, IMessagingProvider } from 'dc-messaging'
-import { IPingServiceParams, IPingService } from "../intefaces/IPingService"
+import { IPingServiceParams, IPingService, IPingResponce } from "../intefaces/IPingService"
 import { PingService, createHash } from "../dapps/PingService"
-import { Logger } from 'dc-logging'
 import { describe, it } from "mocha"
 import { expect } from "chai"
-import { inherits } from "util"
-
 import { EventEmitter } from "events"
 
+const randomString = () => Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
 
-
-// const PLATFORM_ID_HASH = '9bb9e6e47a95a8ffa633241d4298f6ff'
-/* const logger = new Logger('Ping test')
+function sleep(ms) {
+    return new Promise(resolve => {
+        setTimeout(resolve, ms)
+    })
+}
 
 class ClientService extends EventEmitter {
 
     private _started: boolean
+    private _peer: IPingService
 
-    start(transportProvider: IMessagingProvider, platformId: string) {
+    async start(transportProvider: IMessagingProvider, platformId: string, peer: IPingService) {
         if (this._started) {
             throw new Error("ClientPingService allready started")
         }
 
         const platformIdHash = createHash(platformId)
-
-        logger.debug('-- client ping')
         transportProvider.exposeSevice(platformIdHash, this, true)
-        logger.debug('---')
         this._started = true
+
+        this._peer = peer
+        this.onPeerEvent(PingService.EVENT_NAME, this.acceptPing)
 
         return this
     }
 
-    eventNames(): string[] {
-        return ["platformPong"]
+    onPeerEvent(event: string, func: (data: any) => void) {
+        this._peer.on(event, func)
     }
 
-    platformPong() {
-        logger.debug("!!!! PlatformPong client")
+    eventNames(): string[] {
+        return [PingService.EVENT_NAME]
+    }
+
+    acceptPing(data: IPingResponce) {
+        // console.log(data)
+        expect(data.apiRoomAdress).to.be.a('string')
     }
 
     isStarted() {
@@ -46,39 +52,34 @@ class ClientService extends EventEmitter {
 }
 
 describe('PingService test', () => {
-    it(`Create 2 ipfs rooms and start services in ${PLATFORM_ID_HASH}`, async () => {
-        const provider = await IpfsTransportProvider.createAdditional()
-
-        const clientService = new ClientService().start(provider, PLATFORM_ID_HASH)
-        /* tslint:disable-next-line 
-        expect(clientService.isStarted()).to.be.true
-
-        const pingService:IPingService = await provider.getRemoteInterface<IPingService>(PLATFORM_ID_HASH)
-        const responce = await pingService.requestPing()
-
-        logger.debug(responce)
-    })
-})
- */
-
-const randomString = () => Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
-
- describe('PingService test', () => {
      const pingService = []
+     const timeout = 400
+     let clientService
      const platformId = randomString()
      const apiRoomAddress = [randomString(), randomString()]
      it(`Start ${apiRoomAddress.length} ipfs node with PingService`, async () => {
-        const provider = await IpfsTransportProvider.createAdditional()
-
-        for (const i of apiRoomAddress) {
+        for (const address of apiRoomAddress) {
+            const provider = await IpfsTransportProvider.createAdditional()
             const params: IPingServiceParams = {
                 platformId,
-                apiRoomAddress: apiRoomAddress[i]
+                apiRoomAddress: address,
+                timeout
             }
-            const service = new PingService().start(provider, params)
+            const service: IPingService = new PingService().start(provider, params)
             /* tslint:disable-next-line  */
             expect(service.isStarted()).to.be.true
             pingService.push(service)
         }
+    })
+
+    it(`Start ipfs node with ClientService`, async () => {
+        const provider = await IpfsTransportProvider.createAdditional()
+        const peer:IPingService = await provider.getRemoteInterface<IPingService>(createHash(platformId))
+        const service = await new ClientService().start(provider, platformId, peer)
+        /* tslint:disable-next-line */
+        expect(service.isStarted()).to.be.true
+        clientService = service
+
+        await sleep(4000) // magic
     })
  })

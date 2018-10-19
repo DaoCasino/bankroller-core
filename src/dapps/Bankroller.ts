@@ -75,6 +75,7 @@ export default class Bankroller implements IBankroller {
     const pingService = new PingService().start(transportProvider, {
       platformId: this._platformId,
       apiRoomAddress: this._apiRoomAddress,
+      timeout: 1000
     })
     // transportProvider.exposeSevice(this.getPlatformIdHash(), PingService, true)
     this._started = true

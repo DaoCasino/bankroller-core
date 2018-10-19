@@ -1,6 +1,7 @@
 export interface IPingServiceParams  {
     platformId: string,
-    apiRoomAddress: string
+    apiRoomAddress: string,
+    timeout: number
 }
 
 export interface IPingResponce {
@@ -8,4 +9,6 @@ export interface IPingResponce {
 }
 export interface IPingService {
     requestPing: () => IPingResponce
+    isStarted: () => boolean
+    on: (event: string, listener: (data: any) => void) => void
 }
