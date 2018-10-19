@@ -10,5 +10,5 @@ export interface IPingService {
     ping: () => IPingResponce
     isStarted: () => boolean
     on: (event: string, listener: (data: any) => void) => void
-    emit: (event: string, data: any)
+    emit: (event: string, data: any) => void
 }
