@@ -40,6 +40,7 @@ const startBankroller = async () => {
       .start(bankrollerTransportProvider)
   } catch (error) {
     logger.debug(error)
+    process.exitCode = 1
     process.kill(process.pid, 'SIGTERM')
   }
 }
