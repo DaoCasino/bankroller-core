@@ -90,16 +90,15 @@ const test1 = async () => {
 
   const result1 = await game.play({
     userBet: 1,
-    gameData: [1]
-    // rnd:[[0,3],[0,5]]
+    gameData: [1], rndOpts:[[0,3],[0,5]]
   })
   const result2 = await game.play({
     userBet: 1,
-    gameData: [2]
+    gameData: [2], rndOpts:[[10,30],[100,500]]
   })
   const result3 = await game.play({
     userBet: 1,
-    gameData: [3]
+    gameData: [3], rndOpts:[[1,3],[10,50]]
   })
 
   // log.info("Start close channel")
