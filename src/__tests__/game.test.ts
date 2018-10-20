@@ -88,21 +88,24 @@ const test1 = async () => {
   game.onPeerEvent("info", data => showFunc("Bankroller", data))
   game.on("info", data => showFunc("Client", data))
 
-  await game.connect({ playerDeposit: 3, gameData: [0, 0] })
+  await game.connect({ playerDeposit: 5.37, gameData: [0, 0] })
   log.info("Channel opened!")
 
-  const rndOpts = [[0,3],[0,5]]
+  const rndOpts = [[0, 3], [0, 5]]
   const result1 = await game.play({
     userBet: 1,
-    gameData: [1], rndOpts
+    gameData: [1],
+    rndOpts
   })
   const result2 = await game.play({
     userBet: 1,
-    gameData: [2], rndOpts:[[10,30],[100,500]]
+    gameData: [2],
+    rndOpts: [[10, 30], [100, 500]]
   })
   const result3 = await game.play({
     userBet: 1,
-    gameData: [3], rndOpts:[[1,3],[10,50]]
+    gameData: [3],
+    rndOpts: [[1, 3], [10, 50]]
   })
 
   // log.info("Start close channel")
