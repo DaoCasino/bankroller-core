@@ -92,14 +92,18 @@ const test1 = async () => {
   log.info("Channel opened!")
 
   const rndOpts = [[0,3],[0,5]]
+
+  log.info("play 1")
   const result1 = await game.play({
     userBet: 1,
     gameData: [1], rndOpts
   })
+  log.info("play 2")
   const result2 = await game.play({
     userBet: 1,
     gameData: [2], rndOpts:[[10,30],[100,500]]
   })
+  log.info("play 3")
   const result3 = await game.play({
     userBet: 1,
     gameData: [3], rndOpts:[[1,3],[10,50]]
@@ -107,7 +111,7 @@ const test1 = async () => {
 
   // log.info("Start close channel")
 
-  await game.disconnect()
-  log.info("Channel closed!")
+  // await game.disconnect()
+  // log.info("Channel closed!")
 }
 test1()
