@@ -9,6 +9,7 @@
     "start:local" : "sh run.sh local src/index.ts",
     "start:rinkeby" : "sh run.sh rinkeby src/index.ts",
     "start:ropsten" : "sh run.sh ropsten src/index.ts",
+    "start:rinkeby" : "sh run.sh rinkeby src/index.ts",
 
     "build:ts": "yarn typescript",
     "build": "yarn typescript",
