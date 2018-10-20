@@ -11,6 +11,7 @@ import {
   saveFilesToNewDir,
   removeDir
 } from "./FileUtils"
+import { EventEmitter } from "events"
 
 import { IBankroller, GameInstanceInfo } from "../intefaces/IBankroller"
 /*
@@ -19,7 +20,7 @@ import { IBankroller, GameInstanceInfo } from "../intefaces/IBankroller"
 
 const logger = new Logger("Bankroller")
 
-export default class Bankroller implements IBankroller {
+export default class Bankroller extends EventEmitter implements IBankroller {
   private _started: boolean
   private _loadedDirectories: Set<string>
   private _eth: Eth
@@ -30,6 +31,7 @@ export default class Bankroller implements IBankroller {
   id: string
   private _transportProvider: IMessagingProvider
   constructor() {
+    super()
     const {
       platformId,
       gasPrice: price,
