@@ -18,7 +18,7 @@ import { IBankroller, GameInstanceInfo } from "../intefaces/IBankroller"
  * Lib constructor
  */
 
-const logger = new Logger("Bankroller")
+const logger = new Logger("Bankroller:")
 
 export default class Bankroller extends EventEmitter implements IBankroller {
   private _started: boolean
