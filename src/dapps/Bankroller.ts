@@ -38,11 +38,13 @@ export default class Bankroller implements IBankroller {
       gasLimit: limit,
       web3HttpProviderUrl: httpProviderUrl,
       contracts,
+      walletName,
       blockchainNetwork
     } = config
     this._platformId = platformId
     this._blockchainNetwork = blockchainNetwork
     this._eth = new Eth({
+      walletName,
       httpProviderUrl,
       ERC20ContractInfo: contracts.ERC20,
       gasParams: { price, limit }

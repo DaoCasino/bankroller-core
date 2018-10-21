@@ -43,9 +43,11 @@ const startGame = async () => {
       web3HttpProviderUrl: httpProviderUrl,
       contracts,
       platformId,
+      walletName,
       blockchainNetwork
     } = config
     const Eth = new Ethereum({
+      walletName,
       httpProviderUrl,
       ERC20ContractInfo: contracts.ERC20,
       gasParams: { price, limit }

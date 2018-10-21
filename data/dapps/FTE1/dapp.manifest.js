@@ -1,5 +1,6 @@
 module.exports = {
   slug: "DCGame_FTE_v1",
+  disabled: true,
 
   // if you want to change filename  - change it too in /scripts/config/paths
   logic: "./dapp.logic.js",
