@@ -135,6 +135,8 @@ export default class Bankroller extends EventEmitter implements IBankroller {
           Eth: this._eth
         })
 
+        logger.debug(contract.address)
+
         await dapp.startServer()
         this.gamesMap.set(slug, dapp)
 

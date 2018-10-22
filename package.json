@@ -29,9 +29,6 @@
     "dc-core": "^0.2.0",
     "dc-ethereum-utils": "0.2.0",
     "dc-logging": "^0.2.0",
-    "dc-messaging": "0.2.0",
-    "rimraf": "2.6.2",
-    "chai": "^4.1.2",
-    "mocha": "^3.2.0"
+    "dc-messaging": "0.2.0"
   }
 }
