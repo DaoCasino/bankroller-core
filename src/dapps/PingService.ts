@@ -47,17 +47,17 @@ export class PingService extends EventEmitter implements IPingService {
     })
 
     this.on("connected", ({ id, address }) => {
-      // log.debug(`Peer connected: ${this._transportProvider.getPeerId()} <- ${id}`)
-      process.nextTick(() => {
-        log.debug(address)
-        this._transportProvider.emitRemote(
-          this._platformIdHash,
-          id,
-          PingService.EVENT_JOIN,
-          pingResponce
-        )
-      })
-      // this.emit(PingService.EVENT_JOIN, pingResponce)
+      log.debug(`Peer connected: ${this._transportProvider.getPeerId()} <- ${id}`)
+      // setTimeout(() => {
+      //   this._transportProvider.emitRemote(
+      //     address,
+      //     id,
+      //     PingService.EVENT_JOIN,
+      //     pingResponce
+      //     )
+      // }, 1000)
+
+      this.emit(PingService.EVENT_JOIN, pingResponce)
     })
 
     this._started = true
@@ -71,7 +71,7 @@ export class PingService extends EventEmitter implements IPingService {
       PingService.EVENT_PONG,
       PingService.EVENT_JOIN,
       PingService.EVENT_EXIT,
-      "connected"
+      // "connected"
     ]
   }
 
