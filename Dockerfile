@@ -27,4 +27,4 @@ WORKDIR /dc-monorepo/packages/bankroller-core
 
 ENV DC_NETWORK=ropsten
 
-ENTRYPOINT sh run.sh ${DC_NETWORK} lib/index.js
+ENTRYPOINT sh docker_run.sh ${DC_NETWORK} lib/index.js

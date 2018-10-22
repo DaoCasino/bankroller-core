@@ -18,4 +18,4 @@ export DC_NETWORK=rinkeby
 export DAPPS_PATH=./data/dapps/
 fi
 
-yarn run tsmon $2
+yarn run tsmon:docker $2

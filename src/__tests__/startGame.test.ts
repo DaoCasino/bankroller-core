@@ -32,13 +32,14 @@ const startGame = async () => {
     web3HttpProviderUrl: httpProviderUrl,
     contracts,
     platformId,
+    walletName,
     blockchainNetwork
   } = config
   const Eth = new Ethereum({
+    walletName,
     httpProviderUrl,
     ERC20ContractInfo: contracts.ERC20,
-    gasParams: { price, limit },
-    privateKey: privkey
+    gasParams: { price, limit }
   })
 
   // Game loaded to store during bankroller start
@@ -55,7 +56,7 @@ const startGame = async () => {
     gameLogicFunction,
     Eth
   }
-  await Eth.initAccount()
+  await Eth.initAccount(privkey)
   const dapp = new DApp(dappParams)
   const dappInstance = await dapp.startClient()
   return { game: dappInstance, Eth }
