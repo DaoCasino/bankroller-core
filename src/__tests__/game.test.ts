@@ -22,7 +22,8 @@ const startBankroller = async () => {
 
 const startGame = async () => {
   try {
-    const gameTransportProvider = await IpfsTransportProvider.createAdditional() // directTransportProvider // await IpfsTransportProvider.createAdditional()
+    // debugger
+    const gameTransportProvider = directTransportProvider // await IpfsTransportProvider.createAdditional()
 
     // ropsten env
     let manifestFile = config.DAppsPath + "/FTE1/dapp.manifest.js"
@@ -81,7 +82,9 @@ const startGame = async () => {
 
 const test1 = async () => {
   await startBankroller()
+
   const { game, Eth } = await startGame()
+
   const showFunc = (source, data) => {
     log.debug(`${source} ${new Date().toString()} ${JSON.stringify(data)}`)
   }
@@ -91,23 +94,27 @@ const test1 = async () => {
   await game.connect({ playerDeposit: 3, gameData: [0, 0] })
   log.info("Channel opened!")
 
+  const rndOpts = [[0,3],[0,5]]
+
   const result1 = await game.play({
     userBet: 1,
-    gameData: [1]
-    // rnd:[[0,3],[0,5]]
+    gameData: [1], rndOpts
   })
+  log.info("play 1 res", result1)
   const result2 = await game.play({
     userBet: 1,
-    gameData: [2]
+    gameData: [2], rndOpts:[[10,30],[100,500]]
   })
+  log.info("play 2 res", result2)
   const result3 = await game.play({
     userBet: 1,
-    gameData: [3]
+    gameData: [3], rndOpts:[[1,3],[10,50]]
   })
+  // log.info("play 3 res", result3)
 
   // log.info("Start close channel")
 
   // await game.disconnect()
-  // logger.info("Channel closed!")
+  // log.info("Channel closed!")
 }
 test1()
