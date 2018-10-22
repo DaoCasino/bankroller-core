@@ -5,6 +5,7 @@
   "main": "./lib/index",
   "scripts": {
     "tsmon": "nodemon --delay 2 --inspect --watch ../ --ignore ../dc-protocol -r ts-node/register --",
+    "tsmon:docker": "nodemon --delay 2 --inspect --watch ../ --ignore ../dc-protocol --",
 
     "start:local" : "sh run.sh local src/index.ts",
     "start:rinkeby" : "sh run.sh rinkeby src/index.ts",
