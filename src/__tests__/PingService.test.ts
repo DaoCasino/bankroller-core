@@ -15,6 +15,7 @@ function sleep(ms) {
 }
 
 const log = new Logger("PingService test")
+const apiRoomAddress = [randomString(), randomString()]
 
 class ClientService extends EventEmitter {
 
@@ -33,16 +34,22 @@ class ClientService extends EventEmitter {
             // console.log(data)
             log.debug({ event, data })
             expect(data.apiRoomAddress).to.be.a('string')
+            /* tslint:disable-next-line  */
+            expect(apiRoomAddress.includes(data.apiRoomAddress)).to.be.true
         }
         this._peer = peer
-        this.onPeerEvent(PingService.EVENT_JOIN, data => acceptPing(PingService.EVENT_JOIN, data))
+        // this.onPeerEvent(PingService.EVENT_JOIN, data => acceptPing(PingService.EVENT_JOIN, data))
         this.onPeerEvent(PingService.EVENT_EXIT, data => acceptPing(PingService.EVENT_EXIT, data))
         this.onPeerEvent(PingService.EVENT_PONG, data => acceptPing(PingService.EVENT_PONG, data))
-
         this._peer.emit(PingService.EVENT_PING, 'client ping')
+
+        this.onPeerEvent(PingService.EVENT_JOIN, () => {
+            console.log('sdfsdfsdf-sdf!!!!23sdfsdf')
+        })
 
         return this
     }
+
 
     onPeerEvent(event: string, func: (data: any) => void) {
         this._peer.on(event, func)
@@ -65,7 +72,6 @@ describe('PingService test', () => {
      const timeout = 400
      let clientService
      const platformIdHash= randomString()
-     const apiRoomAddress = [randomString(), randomString()]
      it(`Start ${apiRoomAddress.length} ipfs node with PingService`, async () => {
         for (const address of apiRoomAddress) {
             const provider = await IpfsTransportProvider.createAdditional()
@@ -77,6 +83,7 @@ describe('PingService test', () => {
             /* tslint:disable-next-line  */
             expect(service.isStarted()).to.be.true
             pingService.push(service)
+            pingProvider.push(provider)
         }
     })
 
@@ -98,10 +105,32 @@ describe('PingService test', () => {
             expect(service.isStarted()).to.be.false
         }
 
-        for(const provider of pingProvider) {
-            provider.shop()
+        for (let i = 0; i < apiRoomAddress.length; i++) {
+            const provider:IpfsTransportProvider = pingProvider[i]
+            // const isStoped = await provider.stop(apiRoomAddress[i])
+            /* tslint:disable-next-line */
+            // expect(isStoped).to.be.true
         }
 
         await sleep(1000) // magic
+    })
+
+    it('Test join PingService', async () => {
+        for (const address of apiRoomAddress) {
+            const provider = await IpfsTransportProvider.createAdditional()
+            const params: IPingServiceParams = {
+                platformIdHash,
+                apiRoomAddress: address
+            }
+
+            const service: IPingService = new PingService().start(provider, params)
+            /* tslint:disable-next-line  */
+            expect(service.isStarted()).to.be.true
+
+            await sleep(1000) // magic
+
+            service.stop()
+            // provider.stop(address)
+        }
     })
  })

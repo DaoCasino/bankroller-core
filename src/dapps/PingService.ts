@@ -7,7 +7,7 @@ import crypto from "crypto"
 const log = new Logger("PingService")
 
 export class PingService extends EventEmitter implements IPingService {
-    private _transportProvider: IMessagingProvider
+    private _transportProvider: IpfsTransportProvider
     private _platformIdHash: string
     private _apiRoomAddress: string
     private _started: boolean
@@ -20,7 +20,7 @@ export class PingService extends EventEmitter implements IPingService {
         if (this._started) {
             throw new Error("PingService allready started")
         }
-        this._transportProvider = transportProvider
+        this._transportProvider = transportProvider as IpfsTransportProvider
         this._platformIdHash = platformIdHash
         this._apiRoomAddress = apiRoomAddress
 
@@ -38,7 +38,12 @@ export class PingService extends EventEmitter implements IPingService {
             log.debug('client ping request')
             this.emit(PingService.EVENT_PONG, pingResponce)
         })
-        this.emit(PingService.EVENT_JOIN, pingResponce)
+
+        this.on('connected', ({ id, address }) => {
+            // log.debug(`Peer connected: ${this._transportProvider.getPeerId()} <- ${id}`)
+            this._transportProvider.emitRemote(this._platformIdHash, id, PingService.EVENT_JOIN, pingResponce)
+            // this.emit(PingService.EVENT_JOIN, pingResponce)
+        })
 
         this._started = true
 
@@ -50,7 +55,8 @@ export class PingService extends EventEmitter implements IPingService {
             PingService.EVENT_PING,
             PingService.EVENT_PONG,
             PingService.EVENT_JOIN,
-            PingService.EVENT_EXIT
+            PingService.EVENT_EXIT,
+            'connected'
         ]
     }
 
