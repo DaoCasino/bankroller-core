@@ -18,4 +18,10 @@ export DC_NETWORK=rinkeby
 export DAPPS_PATH=./data/dapps/
 fi
 
+if [ $1 == 'rinkeby' ]; then
+export ACCOUNT_PRIVATE_KEY=0x45D090A0CA46A6BD3DF07923FBEB6631B1C257112E0047C2140B0D2FA5039C89
+export DC_NETWORK=rinkeby
+export DAPPS_PATH=./data/dapps/
+fi
+
 yarn run tsmon $2

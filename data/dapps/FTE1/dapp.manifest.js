@@ -5,7 +5,6 @@ module.exports = {
   logic: "./dapp.logic.js",
 
   about: "./README.md",
-  disabled: true,
   contract: {
     address: "0x868944cd75d4b70b6fb59254e998d5f757d7de0c",
     abi: [
