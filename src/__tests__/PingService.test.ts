@@ -89,6 +89,11 @@ describe("PingService test", () => {
     )
     const service = await new RemoteClient().start(peer)
     clientService = service
+
+    setTimeout(() => {
+      const remoteProvider = pingProvider[0]
+      remoteProvider.emitRemote(platformIdHash, provider.getPeerId(), PingService.EVENT_JOIN, { apiRoomAddress: 'test'}) 
+    }, 1000)
   })
 
   // it("Stop PingService", async () => {

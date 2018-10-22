@@ -58,6 +58,10 @@ export class PingService extends EventEmitter implements IPingService {
       // }, 1000)
 
       this.emit(PingService.EVENT_JOIN, pingResponce)
+
+      // setTimeout(() => {
+      //   this._transportProvider.emitRemote(address, id, PingService.EVENT_JOIN, pingResponce)
+      // }, 1000)
     })
 
     this._started = true
