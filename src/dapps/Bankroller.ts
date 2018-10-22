@@ -38,13 +38,13 @@ export default class Bankroller extends EventEmitter implements IBankroller {
       gasLimit: limit,
       web3HttpProviderUrl: httpProviderUrl,
       contracts,
-      privateKey,
+      walletName,
       blockchainNetwork
     } = config
     this._platformId = platformId
     this._blockchainNetwork = blockchainNetwork
     this._eth = new Eth({
-      privateKey,
+      walletName,
       httpProviderUrl,
       ERC20ContractInfo: contracts.ERC20,
       gasParams: { price, limit }
@@ -62,8 +62,9 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     if (this._started) {
       throw new Error("Bankroller allready started")
     }
+    const { privateKey } = config
     this._transportProvider = transportProvider
-    await this._eth.initAccount()
+    await this._eth.initAccount(privateKey)
     const ethAddress = this._eth.getAccount().address.toLowerCase()
 
     this._apiRoomAddress = this.getApiRoomAddress(ethAddress)
@@ -134,6 +135,8 @@ export default class Bankroller extends EventEmitter implements IBankroller {
           Eth: this._eth
         })
 
+        logger.debug(contract.address)
+
         await dapp.startServer()
         this.gamesMap.set(slug, dapp)
 
@@ -142,7 +145,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
         return dapp
       }
     } catch (error) {
-      logger.error({ message: `Error loading DApp.`, error })
+      console.log(error)
     }
     return null
   }
