@@ -116,19 +116,26 @@ export default class Bankroller extends EventEmitter implements IBankroller {
       const roomProvider = this._transportProvider
 
       if (gameLogicFunction) {
-        const { disabled, slug, rules, contract, getContract } = manifest
+        const {
+          disabled,
+          slug,
+          rules,
+          contract: manifestVontract,
+          getContract
+        } = manifest
 
         if (manifest.disabled) {
           logger.debug(`DApp ${slug} disabled - skip`)
           return null
         }
-
+        const contract =
+          manifestVontract || getContract(this._blockchainNetwork)
         const dapp = new DApp({
           platformId: this._platformId,
           blockchainNetwork: this._blockchainNetwork,
           slug,
           rules,
-          contract: contract || getContract(this._blockchainNetwork),
+          contract,
           roomProvider,
           gameLogicFunction,
           Eth: this._eth
