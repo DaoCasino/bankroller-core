@@ -6,22 +6,21 @@ import { IpfsTransportProvider, IMessagingProvider } from "dc-messaging"
 import { Eth } from "dc-ethereum-utils"
 import { Logger } from "dc-logging"
 import {
-  getSubDirectoriee,
+  getSubDirectories,
   loadLogic,
   saveFilesToNewDir,
   removeDir
 } from "./FileUtils"
+import { EventEmitter } from "events"
 
 import { IBankroller, GameInstanceInfo } from "../intefaces/IBankroller"
 /*
  * Lib constructor
  */
 
-const logger = new Logger("Bankroller")
+const logger = new Logger("Bankroller:")
 
-const SERVER_APPROVE_AMOUNT = 100000000
-
-export default class Bankroller implements IBankroller {
+export default class Bankroller extends EventEmitter implements IBankroller {
   private _started: boolean
   private _loadedDirectories: Set<string>
   private _eth: Eth
@@ -32,6 +31,7 @@ export default class Bankroller implements IBankroller {
   id: string
   private _transportProvider: IMessagingProvider
   constructor() {
+    super()
     const {
       platformId,
       gasPrice: price,
@@ -70,13 +70,10 @@ export default class Bankroller implements IBankroller {
     transportProvider.exposeSevice(this._apiRoomAddress, this, true)
     this._started = true
 
-    const loadDirPromises = getSubDirectoriee(config.DAppsPath)
-      .map(this.tryLoadDApp)
-
-    for (const initDApp of Object.values(loadDirPromises)) {
-      await initDApp
+    const subDirectories = getSubDirectories(config.DAppsPath)
+    for (let i = 0; i < subDirectories.length; i++) {
+      await this.tryLoadDApp(subDirectories[i])
     }
-
 
     logger.info(`Bankroller started. Api address: ${this._apiRoomAddress}`)
     return this
@@ -119,7 +116,12 @@ export default class Bankroller implements IBankroller {
       const roomProvider = this._transportProvider
 
       if (gameLogicFunction) {
-        const { slug, rules, contract } = manifest
+        const { disabled, slug, rules, contract } = manifest
+        if (manifest.disabled) {
+          logger.debug(`DApp ${slug} disabled - skip`)
+          return null
+        }
+
         const dapp = new DApp({
           platformId: this._platformId,
           blockchainNetwork: this._blockchainNetwork,
@@ -130,9 +132,6 @@ export default class Bankroller implements IBankroller {
           gameLogicFunction,
           Eth: this._eth
         })
-
-        await this._eth.ERC20ApproveSafe(contract.address, SERVER_APPROVE_AMOUNT)
-        logger.debug(`ERC20 approved for ${contract.address}`)
 
         await dapp.startServer()
         this.gamesMap.set(slug, dapp)

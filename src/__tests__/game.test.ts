@@ -7,7 +7,7 @@ import Bankroller from "../dapps/Bankroller"
 import { Logger } from "dc-logging"
 import { loadLogic } from "../dapps/FileUtils"
 
-const logger = new Logger("test1")
+const log = new Logger("test1")
 const directTransportProvider = new DirectTransportProvider()
 
 const startBankroller = async () => {
@@ -15,13 +15,14 @@ const startBankroller = async () => {
     const bankrollerTransportProvider = directTransportProvider // await IpfsTransportProvider.create()
     return await new Bankroller().start(bankrollerTransportProvider)
   } catch (error) {
-    logger.debug(error)
+    log.debug(error)
     process.exit()
   }
 }
 
 const startGame = async () => {
   try {
+    // debugger
     const gameTransportProvider = directTransportProvider // await IpfsTransportProvider.createAdditional()
 
     // ropsten env
@@ -71,39 +72,46 @@ const startGame = async () => {
     const dappInstance = await dapp.startClient()
     return { game: dappInstance, Eth }
   } catch (error) {
-    logger.debug(error)
+    log.debug(error)
     process.exit()
   }
 }
 
 const test1 = async () => {
   await startBankroller()
+
   const { game, Eth } = await startGame()
+
   const showFunc = (source, data) => {
-    logger.debug(`${source} ${new Date().toString()} ${JSON.stringify(data)}`)
+    log.debug(`${source} ${new Date().toString()} ${JSON.stringify(data)}`)
   }
   game.onPeerEvent("info", data => showFunc("Bankroller", data))
   game.on("info", data => showFunc("Client", data))
 
   await game.connect({ playerDeposit: 3, gameData: [0, 0] })
-  logger.info("Channel opened!")
+  log.info("Channel opened!")
 
-  // const result1 = await game.callPeerGame({
-  //   userBet: 1,
-  //   gameData: [1]
-  // })
-  // const result2 = await game.callPeerGame({
-  //   userBet: 1,
-  //   gameData: [2]
-  // })
-  // const result3 = await game.callPeerGame({
-  //   userBet: 1,
-  //   gameData: [3]
-  // })
+  const rndOpts = [[0,3],[0,5]]
 
-  // logger.info("Start close channel")
+  const result1 = await game.play({
+    userBet: 1,
+    gameData: [1], rndOpts
+  })
+  log.info("play 1 res", result1)
+  const result2 = await game.play({
+    userBet: 1,
+    gameData: [2], rndOpts:[[10,30],[100,500]]
+  })
+  log.info("play 2 res", result2)
+  const result3 = await game.play({
+    userBet: 1,
+    gameData: [3], rndOpts:[[1,3],[10,50]]
+  })
+  log.info("play 3 res", result3)
 
-  await game.disconnect()
-  logger.info("Channel closed!")
+  // log.info("Start close channel")
+
+  // await game.disconnect()
+  // log.info("Channel closed!")
 }
 test1()

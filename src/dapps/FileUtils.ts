@@ -1,9 +1,9 @@
-import fs from 'fs'
-import path from 'path'
-import rimraf from 'rimraf'
-import { PayChannelLogic, GameLogicFunction } from 'dc-core'
+import fs from "fs"
+import path from "path"
+import rimraf from "rimraf"
+import { IGameLogic } from "dc-core"
 
-const MANIFEST_FILENAME = 'dapp.manifest'
+const MANIFEST_FILENAME = "dapp.manifest"
 
 export const checkFileExists = (
   fileName: string,
@@ -18,7 +18,7 @@ export const checkFileExists = (
   return null
 }
 
-export const getSubDirectoriee = (directoryPath: string): string[] => {
+export const getSubDirectories = (directoryPath: string): string[] => {
   return fs
     .readdirSync(directoryPath)
     .map(subDir => path.join(directoryPath, subDir))
@@ -46,19 +46,19 @@ export const loadLogic = (
   directoryPath: string
 ): {
   manifest: any
-  gameLogicFunction: GameLogicFunction
+  gameLogicFunction: () => IGameLogic
 } => {
   const manifestPath: string = `${directoryPath}/${MANIFEST_FILENAME}`
-  const manifestFoundPath = checkFileExists(manifestPath, ['.js', '', '.json'])
+  const manifestFoundPath = checkFileExists(manifestPath, [".js", "", ".json"])
   if (!manifestFoundPath) {
     throw new Error(`Manifest file not found ${manifestPath}`)
   }
-  const manifest = manifestFoundPath.endsWith('.js')
+  const manifest = manifestFoundPath.endsWith(".js")
     ? require(manifestFoundPath)
     : JSON.parse(fs.readFileSync(manifestFoundPath).toString())
 
   if (
-    typeof manifest !== 'object' ||
+    typeof manifest !== "object" ||
     manifest.disable ||
     manifest.disabled ||
     manifest.enable === false
@@ -66,7 +66,7 @@ export const loadLogic = (
     return { manifest, gameLogicFunction: null }
   }
   const logicPath: string = path.join(directoryPath, manifest.logic)
-  const logicFoundPath = checkFileExists(logicPath, ['.js', '', '.json'])
+  const logicFoundPath = checkFileExists(logicPath, [".js", "", ".json"])
   if (!logicFoundPath) {
     throw new Error(`Manifest file not found ${logicFoundPath}`)
   }

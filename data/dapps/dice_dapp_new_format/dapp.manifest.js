@@ -1,5 +1,5 @@
 module.exports = {
-  disabled: false,
+  disabled: true,
 
   slug: "dice_ex_v1",
   logic: "./dapp.logic.js",
