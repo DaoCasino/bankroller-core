@@ -4,9 +4,12 @@
   "description": "Core bankroller functionality",
   "main": "./lib/index",
   "scripts": {
-    "tsmon": "nodemon --delay 2 --inspect --watch ../ --ignore ../dc-protocol -r ts-node/register --",
-    "start:l": "sh run.sh local yasrc/index.ts",
-    "start": "sh run.sh ropsten src/index.ts",
+    "tsmon": "nodemon --delay 2 --inspect --watch ../ --ignore ../dc-protocol --",
+
+    "start:local" : "sh run.sh local src/index.ts",
+    "start:rinkeby" : "sh run.sh rinkeby src/index.ts",
+    "start:ropsten" : "sh run.sh ropsten src/index.ts",
+
     "build:ts": "yarn typescript",
     "build": "yarn typescript",
     "check:build": "nodemon --inspect ./lib/index.js --delay 2 --watch ../ --ignore ../dc-protocol",
