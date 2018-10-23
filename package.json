@@ -3,6 +3,9 @@
   "version": "0.3.0",
   "description": "Core bankroller functionality",
   "main": "./lib/index",
+  "bin": {
+    "bankroller-core": "bin/deamon"
+  },
   "scripts": {
     "tsmon": "nodemon --delay 2 --inspect --watch ../ --ignore ../dc-protocol -r ts-node/register --",
     "tsmon:docker": "nodemon --delay 2 --inspect --watch ../ --ignore ../dc-protocol --",
@@ -23,6 +26,7 @@
   "author": "",
   "license": "GPL-3.0",
   "dependencies": {
+    "commander": "^2.19.0",
     "chai": "^4.1.2",
     "dc-configs": "^0.3.0",
     "dc-core": "^0.3.0",
