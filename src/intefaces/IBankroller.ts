@@ -5,6 +5,10 @@ export interface GameInstanceInfo {
   bankrollerBalance: number
   profit: number
 }
+
+// export interface BankrollerStart {
+
+// }
 export interface IBankroller {
   id: string
   getGames: () => { name: string }[]
