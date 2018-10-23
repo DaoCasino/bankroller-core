@@ -17,6 +17,7 @@ import { IBankroller, GameInstanceInfo } from "../intefaces/IBankroller"
 /*
  * Lib constructor
  */
+const WALLET_PWD = "1234"
 
 const logger = new Logger("Bankroller:")
 
@@ -65,6 +66,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     const { privateKey } = config
     this._transportProvider = transportProvider
     await this._eth.initAccount(privateKey)
+    await this._eth.saveWallet(WALLET_PWD, privateKey)
     const ethAddress = this._eth.getAccount().address.toLowerCase()
 
     this._apiRoomAddress = this.getApiRoomAddress(ethAddress)
