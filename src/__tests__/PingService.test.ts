@@ -63,7 +63,10 @@ describe("PingService test", () => {
   const pingService = []
   const pingProvider = []
   const timeout = 400
+
   let clientService
+  let clientProvider
+
   const platformIdHash = randomString()
   it(`Start ${apiRoomAddress.length} ipfs node with PingService`, async () => {
     for (const address of apiRoomAddress) {
@@ -87,11 +90,14 @@ describe("PingService test", () => {
     )
     const service = await new RemoteClient().start(peer)
     clientService = service
+    clientProvider = provider
 
     setTimeout(() => {
       const remoteProvider = pingProvider[0]
       remoteProvider.emitRemote(platformIdHash, provider.getPeerId(), PingService.EVENT_JOIN, { apiRoomAddress: 'test'})
-    }, 1000)
+    }, 400)
+
+    log.debug('Client Started with PeerID - ', provider.getPeerId())
 
     await sleep(1000)
   })
@@ -110,5 +116,11 @@ describe("PingService test", () => {
     }
 
     await sleep(1000) // magic
+  })
+
+  it('Client leave room', async () => {
+    const isStoped = await clientProvider.stop(platformIdHash)
+    /* tslint:disable-next-line */
+    expect(isStoped).to.be.true
   })
 })
