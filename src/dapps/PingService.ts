@@ -1,17 +1,16 @@
 import { EventEmitter } from "events"
 import {
   IPingService,
-  IPingServiceParams,
-  IPingResponce
+  PingServiceParams,
+  PingResponce
 } from "../intefaces/IPingService"
-import { IpfsTransportProvider, IMessagingProvider } from "dc-messaging"
+import { IMessagingProvider } from "dc-messaging"
 import { Logger } from "dc-logging"
-import crypto from "crypto"
 
 const log = new Logger("PingService")
 
 export class PingService extends EventEmitter implements IPingService {
-  private _transportProvider: IpfsTransportProvider
+  private _transportProvider: IMessagingProvider
   private _platformIdHash: string
   private _apiRoomAddress: string
   private _started: boolean
@@ -22,47 +21,28 @@ export class PingService extends EventEmitter implements IPingService {
 
   start(
     transportProvider: IMessagingProvider,
-    { platformIdHash, apiRoomAddress }: IPingServiceParams
+    { platformIdHash, apiRoomAddress }: PingServiceParams
   ) {
     if (this._started) {
       throw new Error("PingService allready started")
     }
-    this._transportProvider = transportProvider as IpfsTransportProvider
+    this._transportProvider = transportProvider
     this._platformIdHash = platformIdHash
     this._apiRoomAddress = apiRoomAddress
 
     transportProvider.exposeSevice(this._platformIdHash, this, true)
 
-    const self = this
-
-    /* const ping = setInterval(() => {
-            const request = self.requestPing()
-            self.emit(PingService.EVENT_NAME, request)
-        }, timeout) */
-
     const pingResponce = this.ping()
     this.on(PingService.EVENT_PING, () => {
-      log.debug("client ping request")
+      log.debug(`Ping request, emit PONG - ${this._apiRoomAddress}`)
       this.emit(PingService.EVENT_PONG, pingResponce)
     })
 
     this.on("connected", ({ id, address }) => {
-      log.debug(`Peer connected: ${this._transportProvider.getPeerId()} <- ${id}`)
-      // setTimeout(() => {
-      //   this._transportProvider.emitRemote(
-      //     address,
-      //     id,
-      //     PingService.EVENT_JOIN,
-      //     pingResponce
-      //     )
-      // }, 1000)
-
+      log.debug(`Peer connected, emit JOIN - ${this._apiRoomAddress}`)
       this.emit(PingService.EVENT_JOIN, pingResponce)
-
-      // setTimeout(() => {
-      //   this._transportProvider.emitRemote(address, id, PingService.EVENT_JOIN, pingResponce)
-      // }, 1000)
     })
+
 
     this._started = true
 
@@ -74,12 +54,11 @@ export class PingService extends EventEmitter implements IPingService {
       PingService.EVENT_PING,
       PingService.EVENT_PONG,
       PingService.EVENT_JOIN,
-      PingService.EVENT_EXIT,
-      // "connected"
+      PingService.EVENT_EXIT
     ]
   }
 
-  ping(): IPingResponce {
+  ping(): PingResponce {
     return { apiRoomAddress: this._apiRoomAddress }
   }
 
@@ -89,6 +68,7 @@ export class PingService extends EventEmitter implements IPingService {
 
   stop(): void {
     this._started = false
+    log.debug(`Service stop, emit EXIT - ${this._apiRoomAddress}`)
     this.emit(PingService.EVENT_EXIT, this.ping())
   }
 }

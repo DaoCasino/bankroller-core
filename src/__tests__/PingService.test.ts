@@ -1,13 +1,12 @@
-import { IpfsTransportProvider, IMessagingProvider } from "dc-messaging"
+import { IpfsTransportProvider } from "dc-messaging"
 import {
-  IPingServiceParams,
+  PingServiceParams,
   IPingService,
-  IPingResponce
+  PingResponce
 } from "../intefaces/IPingService"
 import { PingService } from "../dapps/PingService"
 import { describe, it } from "mocha"
 import { expect } from "chai"
-import { EventEmitter } from "events"
 import { Logger } from "dc-logging"
 
 const randomString = () =>
@@ -31,7 +30,7 @@ class RemoteClient {
   private pingService: IPingService
 
   start(pingService: IPingService) {
-    const acceptPing = (event: string, data: IPingResponce) => {
+    const acceptPing = (event: string, data: PingResponce) => {
       log.debug({ event, data })
 
       expect(data.apiRoomAddress).to.be.a("string")
@@ -42,7 +41,6 @@ class RemoteClient {
     this.pingService = pingService
 
     this.on(PingService.EVENT_JOIN, data => {
-      log.debug("Join")
       acceptPing(PingService.EVENT_JOIN, data)
     })
     this.on(PingService.EVENT_EXIT, data =>
@@ -51,8 +49,8 @@ class RemoteClient {
     this.on(PingService.EVENT_PONG, data =>
       acceptPing(PingService.EVENT_PONG, data)
     )
-    /// this._peer.emit(PingService.EVENT_PING, "client ping")
 
+    pingService.emit(PingService.EVENT_PING, null)
     return this
   }
 
@@ -70,7 +68,7 @@ describe("PingService test", () => {
   it(`Start ${apiRoomAddress.length} ipfs node with PingService`, async () => {
     for (const address of apiRoomAddress) {
       const provider = await IpfsTransportProvider.createAdditional()
-      const params: IPingServiceParams = {
+      const params: PingServiceParams = {
         platformIdHash,
         apiRoomAddress: address
       }
@@ -92,43 +90,25 @@ describe("PingService test", () => {
 
     setTimeout(() => {
       const remoteProvider = pingProvider[0]
-      remoteProvider.emitRemote(platformIdHash, provider.getPeerId(), PingService.EVENT_JOIN, { apiRoomAddress: 'test'}) 
+      remoteProvider.emitRemote(platformIdHash, provider.getPeerId(), PingService.EVENT_JOIN, { apiRoomAddress: 'test'})
     }, 1000)
+
+    await sleep(1000)
   })
 
-  // it("Stop PingService", async () => {
-  //   for (const service of pingService) {
-  //     service.stop()
-  //     /* tslint:disable-next-line */
-  //     expect(service.isStarted()).to.be.false
-  //   }
+  it("Stop PingService", async () => {
+    for (const service of pingService) {
+      service.stop()
+      /* tslint:disable-next-line */
+      expect(service.isStarted()).to.be.false
+    }
 
-  //   for (let i = 0; i < apiRoomAddress.length; i++) {
-  //     const provider: IpfsTransportProvider = pingProvider[i]
-  //     const isStoped = await provider.stop(apiRoomAddress[i])
-  //     /* tslint:disable-next-line */
-  //     expect(isStoped).to.be.true
-  //   }
+    for (const provider of pingProvider) {
+      const isStoped = await provider.stop(platformIdHash)
+      /* tslint:disable-next-line */
+      expect(isStoped).to.be.true
+    }
 
-  //   await sleep(1000) // magic
-  // })
-
-  // it("Test join PingService", async () => {
-  //   for (const address of apiRoomAddress) {
-  //     const provider = await IpfsTransportProvider.createAdditional()
-  //     const params: IPingServiceParams = {
-  //       platformIdHash,
-  //       apiRoomAddress: address
-  //     }
-
-  //     const service: IPingService = new PingService().start(provider, params)
-  //     /* tslint:disable-next-line  */
-  //     expect(service.isStarted()).to.be.true
-
-  //     await sleep(1000) // magic
-
-  //     service.stop()
-  //     // provider.stop(address)
-  //   }
-  // })
+    await sleep(1000) // magic
+  })
 })

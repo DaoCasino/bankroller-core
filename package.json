@@ -20,7 +20,8 @@
     "reset": "rm -rf ./data/DB && rm -rf ./data/messaging",
     "test:l" : "sh run.sh local   src/__tests__/game.test.ts",
     "test:p" : "sh run.sh local   src/__tests__/testProductionGame.test.ts",
-    "test"   : "sh run.sh ropsten src/__tests__/game.test.ts"
+    "test"   : "sh run.sh ropsten src/__tests__/game.test.ts",
+    "test:ping": "mocha --timeout 99999999 -r ts-node/register src/__tests__/PingService.test.ts"
   },
   "keywords": [],
   "author": "",
