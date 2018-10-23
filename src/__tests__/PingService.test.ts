@@ -1,92 +1,114 @@
-import { IpfsTransportProvider, IMessagingProvider } from 'dc-messaging'
-import { IPingServiceParams, IPingService, IPingResponce } from "../intefaces/IPingService"
+import { IpfsTransportProvider } from "dc-messaging"
+import {
+  PingServiceParams,
+  IPingService,
+  PingResponce
+} from "../intefaces/IPingService"
 import { PingService } from "../dapps/PingService"
 import { describe, it } from "mocha"
 import { expect } from "chai"
-import { EventEmitter } from "events"
 import { Logger } from "dc-logging"
 
-const randomString = () => Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+const randomString = () =>
+  Math.random()
+    .toString(36)
+    .substring(2, 15) +
+  Math.random()
+    .toString(36)
+    .substring(2, 15)
 
 function sleep(ms) {
-    return new Promise(resolve => {
-        setTimeout(resolve, ms)
-    })
+  return new Promise(resolve => {
+    setTimeout(resolve, ms)
+  })
 }
 
 const log = new Logger("PingService test")
+const apiRoomAddress = [randomString(), randomString()]
 
-class ClientService extends EventEmitter {
+class RemoteClient {
+  private pingService: IPingService
 
-    private _started: boolean
-    private _peer: IPingService
+  start(pingService: IPingService) {
+    const acceptPing = (event: string, data: PingResponce) => {
+      log.debug({ event, data })
 
-    start(transportProvider: IMessagingProvider, platformIdHash: string, peer: IPingService) {
-        if (this._started) {
-            throw new Error("ClientPingService allready started")
-        }
-
-        transportProvider.exposeSevice(platformIdHash, this, true)
-        this._started = true
-
-        const acceptPing = (event:string, data: IPingResponce) => {
-            // console.log(data)
-            log.debug({ event, data })
-            expect(data.apiRoomAddress).to.be.a('string')
-        }
-        this._peer = peer
-        this.onPeerEvent(PingService.EVENT_JOIN, data => acceptPing(PingService.EVENT_JOIN, data))
-        this.onPeerEvent(PingService.EVENT_EXIT, data => acceptPing(PingService.EVENT_EXIT, data))
-        this.onPeerEvent(PingService.EVENT_PONG, data => acceptPing(PingService.EVENT_PONG, data))
-
-        this._peer.emit(PingService.EVENT_PING, 'client ping')
-
-        return this
+      expect(data.apiRoomAddress).to.be.a("string")
+      /* tslint:disable-next-line  */
+      expect(apiRoomAddress.includes(data.apiRoomAddress)).to.be.true
     }
 
-    onPeerEvent(event: string, func: (data: any) => void) {
-        this._peer.on(event, func)
-    }
+    this.pingService = pingService
 
-    eventNames(): string[] {
-        return [PingService.EVENT_JOIN, PingService.EVENT_EXIT, PingService.EVENT_PONG]
-    }
+    this.on(PingService.EVENT_JOIN, data => {
+      acceptPing(PingService.EVENT_JOIN, data)
+    })
+    this.on(PingService.EVENT_EXIT, data =>
+      acceptPing(PingService.EVENT_EXIT, data)
+    )
+    this.on(PingService.EVENT_PONG, data =>
+      acceptPing(PingService.EVENT_PONG, data)
+    )
 
+    pingService.emit(PingService.EVENT_PING, null)
+    return this
+  }
 
-
-    isStarted() {
-        return this._started
-    }
+  on(event: string, func: (data: any) => void) {
+    this.pingService.on(event, func)
+  }
 }
 
-describe('PingService test', () => {
-     const pingService = []
-     const timeout = 400
-     let clientService
-     const platformIdHash= randomString()
-     const apiRoomAddress = [randomString(), randomString()]
-     it(`Start ${apiRoomAddress.length} ipfs node with PingService`, async () => {
-        for (const address of apiRoomAddress) {
-            const provider = await IpfsTransportProvider.createAdditional()
-            const params: IPingServiceParams = {
-                platformIdHash,
-                apiRoomAddress: address
-            }
-            const service: IPingService = new PingService().start(provider, params)
-            /* tslint:disable-next-line  */
-            expect(service.isStarted()).to.be.true
-            pingService.push(service)
-        }
-    })
+describe("PingService test", () => {
+  const pingService = []
+  const pingProvider = []
+  const timeout = 400
+  let clientService
+  const platformIdHash = randomString()
+  it(`Start ${apiRoomAddress.length} ipfs node with PingService`, async () => {
+    for (const address of apiRoomAddress) {
+      const provider = await IpfsTransportProvider.createAdditional()
+      const params: PingServiceParams = {
+        platformIdHash,
+        apiRoomAddress: address
+      }
+      const service: IPingService = new PingService().start(provider, params)
+      /* tslint:disable-next-line  */
+      expect(service.isStarted()).to.be.true
+      pingService.push(service)
+      pingProvider.push(provider)
+    }
+  })
 
-    it(`Start ipfs node with ClientService`, async () => {
-        const provider = await IpfsTransportProvider.createAdditional()
-        const peer:IPingService = await provider.getRemoteInterface<IPingService>(platformIdHash)
-        const service = await new ClientService().start(provider, platformIdHash, peer)
-        /* tslint:disable-next-line */
-        expect(service.isStarted()).to.be.true
-        clientService = service
+  it(`Start ipfs node with ClientService`, async () => {
+    const provider = await IpfsTransportProvider.createAdditional()
+    const peer: IPingService = await provider.getRemoteInterface<IPingService>(
+      platformIdHash
+    )
+    const service = await new RemoteClient().start(peer)
+    clientService = service
 
-        await sleep(4000) // magic
-    })
- })
+    setTimeout(() => {
+      const remoteProvider = pingProvider[0]
+      remoteProvider.emitRemote(platformIdHash, provider.getPeerId(), PingService.EVENT_JOIN, { apiRoomAddress: 'test'})
+    }, 1000)
+
+    await sleep(1000)
+  })
+
+  it("Stop PingService", async () => {
+    for (const service of pingService) {
+      service.stop()
+      /* tslint:disable-next-line */
+      expect(service.isStarted()).to.be.false
+    }
+
+    for (const provider of pingProvider) {
+      const isStoped = await provider.stop(platformIdHash)
+      /* tslint:disable-next-line */
+      expect(isStoped).to.be.true
+    }
+
+    await sleep(1000) // magic
+  })
+})

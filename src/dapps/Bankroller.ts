@@ -6,11 +6,12 @@ import { IpfsTransportProvider, IMessagingProvider } from "dc-messaging"
 import { Eth } from "dc-ethereum-utils"
 import { Logger } from "dc-logging"
 import {
-  getSubDirectoriee,
+  getSubDirectories,
   loadLogic,
   saveFilesToNewDir,
   removeDir
 } from "./FileUtils"
+import { EventEmitter } from "events"
 
 import crypto from "crypto"
 
@@ -22,7 +23,8 @@ import { PingService } from "./PingService"
  * Lib constructor
  */
 
-const logger = new Logger("Bankroller")
+const logger = new Logger("Bankroller:")
+
 
 const SERVER_APPROVE_AMOUNT = 100000000
 
@@ -30,7 +32,7 @@ export const createHash = (data) => {
   return crypto.createHash("md5").update(data).digest("hex")
 }
 
-export default class Bankroller implements IBankroller {
+export default class Bankroller extends EventEmitter implements IBankroller {
   private _started: boolean
   private _loadedDirectories: Set<string>
   private _eth: Eth
@@ -42,20 +44,21 @@ export default class Bankroller implements IBankroller {
   id: string
   private _transportProvider: IMessagingProvider
   constructor() {
+    super()
     const {
       platformId,
       gasPrice: price,
       gasLimit: limit,
       web3HttpProviderUrl: httpProviderUrl,
       contracts,
-      privateKey,
+      walletName,
       blockchainNetwork
     } = config
     this._platformId = platformId
     this._platformIdHash = createHash(platformId)
     this._blockchainNetwork = blockchainNetwork
     this._eth = new Eth({
-      privateKey,
+      walletName,
       httpProviderUrl,
       ERC20ContractInfo: contracts.ERC20,
       gasParams: { price, limit }
@@ -76,8 +79,9 @@ export default class Bankroller implements IBankroller {
     if (this._started) {
       throw new Error("Bankroller allready started")
     }
+    const { privateKey } = config
     this._transportProvider = transportProvider
-    await this._eth.initAccount()
+    await this._eth.initAccount(privateKey)
     const ethAddress = this._eth.getAccount().address.toLowerCase()
 
     this._apiRoomAddress = this.getApiRoomAddress(ethAddress)
@@ -90,9 +94,10 @@ export default class Bankroller implements IBankroller {
     // transportProvider.exposeSevice(this.getPlatformIdHash(), PingService, true)
     this._started = true
 
-    getSubDirectoriee(config.DAppsPath).forEach(async subDirectory => {
-      await this.tryLoadDApp(subDirectory)
-    })
+    const subDirectories = getSubDirectories(config.DAppsPath)
+    for (let i = 0; i < subDirectories.length; i++) {
+      await this.tryLoadDApp(subDirectories[i])
+    }
 
     logger.info(`Bankroller started. Api address: ${this._apiRoomAddress}`)
     return this
@@ -135,7 +140,20 @@ export default class Bankroller implements IBankroller {
       const roomProvider = this._transportProvider
 
       if (gameLogicFunction) {
-        const { slug, rules, contract } = manifest
+        const {
+          disabled,
+          slug,
+          rules,
+          contract: manifestVontract,
+          getContract
+        } = manifest
+
+        if (manifest.disabled) {
+          logger.debug(`DApp ${slug} disabled - skip`)
+          return null
+        }
+        const contract =
+          manifestVontract || getContract(this._blockchainNetwork)
         const dapp = new DApp({
           platformId: this._platformId,
           blockchainNetwork: this._blockchainNetwork,
@@ -147,12 +165,6 @@ export default class Bankroller implements IBankroller {
           Eth: this._eth
         })
 
-        await this._eth.ERC20ApproveSafe(
-          contract.address,
-          SERVER_APPROVE_AMOUNT
-        )
-        logger.debug(`ERC20 approved for ${contract.address}`)
-
         await dapp.startServer()
         this.gamesMap.set(slug, dapp)
 
@@ -161,7 +173,7 @@ export default class Bankroller implements IBankroller {
         return dapp
       }
     } catch (error) {
-      logger.error({ message: `Error loading DApp.`, error })
+      console.log(error)
     }
     return null
   }
