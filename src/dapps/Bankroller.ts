@@ -20,18 +20,13 @@ import { IBankroller, GameInstanceInfo } from "../intefaces/IBankroller"
 import { PingService } from "./PingService"
 import { IPingService } from "../intefaces/IPingService"
 
-/*
- * Lib constructor
- */
-const WALLET_PWD = "1234"
-
 const logger = new Logger("Bankroller:")
 
-
-const SERVER_APPROVE_AMOUNT = 100000000
-
-export const createHash = (data) => {
-  return crypto.createHash("md5").update(data).digest("hex")
+export const createHash = data => {
+  return crypto
+    .createHash("md5")
+    .update(data)
+    .digest("hex")
 }
 
 export default class Bankroller extends EventEmitter implements IBankroller {
@@ -84,8 +79,9 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     }
     const { privateKey } = config
     this._transportProvider = transportProvider
+
     await this._eth.initAccount(privateKey)
-    await this._eth.saveWallet(WALLET_PWD, privateKey)
+    await this._eth.saveWallet(privateKey)
     const ethAddress = this._eth.getAccount().address.toLowerCase()
 
     this._apiRoomAddress = this.getApiRoomAddress(ethAddress)
@@ -109,15 +105,17 @@ export default class Bankroller extends EventEmitter implements IBankroller {
       const status = await this.stop()
       process.exit(status ? 0 : 1)
     }
-    process.on('SIGTERM', stopBankroller)
-    process.on('SIGINT', stopBankroller)
+    process.on("SIGTERM", stopBankroller)
+    process.on("SIGINT", stopBankroller)
 
     return this
   }
 
-  async stop (): Promise<boolean> {
+  async stop(): Promise<boolean> {
     this._pingService.stop()
-    const status = await this._transportProvider.stopService(this._apiRoomAddress)
+    const status = await this._transportProvider.stopService(
+      this._apiRoomAddress
+    )
     logger.info(`Bankroller stoped. Api address: ${this._apiRoomAddress}`)
     return status
   }
