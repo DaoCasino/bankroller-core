@@ -1,28 +1,18 @@
 
 let contractAddress
 try {
-  switch(process.env.DC_NETWORK) {
-    case 'ropsten':
-      contractAddress = '0x8273e4B8ED6c78e252a9fCa5563Adfcc75C91b2A'
-      break
-    case 'rinkeby':
-      contractAddress = '0x868944cd75d4b70b6fb59254e998d5f757d7de0c'
-      break
-    default:
-      contractAddress = require('../../../../dc-protocol/v_0.1/build/addresses.json').Game
-  }
-} catch (error) {
-  throw error
+  contractAddress = require('../../../../dc-protocol/v_0.1/build/addresses.json').Game
+} catch(e){
+  contractAddress = '0x8273e4B8ED6c78e252a9fCa5563Adfcc75C91b2A'
 }
 
 
 module.exports = {
   slug: "Game_EX_v1",
-  disabled:false,
+  disabled: true,
+
   // if you want to change filename  - change it too in /scripts/config/paths
   logic: "./dapp.logic.js",
-
-  about: "./README.md",
 
   rules: {
     depositX: 2

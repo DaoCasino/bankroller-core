@@ -5,18 +5,18 @@ import { Eth as Ethereum } from "dc-ethereum-utils"
 import { GlobalGameLogicStore, DApp } from "dc-core"
 import Bankroller from "../dapps/Bankroller"
 import { Logger } from "dc-logging"
-import { loadLogic } from "../dapps/FileUtils"
 
 const log = new Logger("test1")
 const directTransportProvider = new DirectTransportProvider()
 
 const startBankroller = async () => {
   try {
-    const bankrollerTransportProvider = directTransportProvider // await IpfsTransportProvider.create()
+    const bankrollerTransportProvider = await IpfsTransportProvider.create() // directTransportProvider // await IpfsTransportProvider.create()
     return await new Bankroller().start(bankrollerTransportProvider)
   } catch (error) {
     log.debug(error)
-    process.exit()
+    process.exitCode = 1
+    process.kill(process.pid, 'SIGTERM')
   }
 }
 
@@ -44,13 +44,14 @@ const startGame = async () => {
       web3HttpProviderUrl: httpProviderUrl,
       contracts,
       platformId,
+      walletName,
       blockchainNetwork
     } = config
     const Eth = new Ethereum({
+      walletName,
       httpProviderUrl,
       ERC20ContractInfo: contracts.ERC20,
-      gasParams: { price, limit },
-      privateKey: privkey
+      gasParams: { price, limit }
     })
 
     // Game loaded to store during bankroller start
@@ -67,13 +68,15 @@ const startGame = async () => {
       gameLogicFunction,
       Eth
     }
-    await Eth.initAccount()
+    await Eth.initAccount(privkey)
     const dapp = new DApp(dappParams)
     const dappInstance = await dapp.startClient()
     return { game: dappInstance, Eth }
   } catch (error) {
     log.debug(error)
-    process.exit()
+
+    process.exitCode = 1
+    process.kill(process.pid, 'SIGTERM')
   }
 }
 
@@ -88,29 +91,30 @@ const test1 = async () => {
   game.onPeerEvent("info", data => showFunc("Bankroller", data))
   game.on("info", data => showFunc("Client", data))
 
-  await game.connect({ playerDeposit: 5.37, gameData: [0, 0] })
+  await game.connect({ playerDeposit: 3, gameData: [0, 0] })
   log.info("Channel opened!")
 
-  const rndOpts = [[0, 3], [0, 5]]
+  const rndOpts = [[0,3],[0,5]]
+
   const result1 = await game.play({
     userBet: 1,
-    gameData: [1],
-    rndOpts
+    gameData: [1], rndOpts
   })
+  log.info("play 1 res", result1)
   const result2 = await game.play({
     userBet: 1,
-    gameData: [2],
-    rndOpts: [[10, 30], [100, 500]]
+    gameData: [2], rndOpts:[[10,30],[100,500]]
   })
+  log.info("play 2 res", result2)
   const result3 = await game.play({
     userBet: 1,
-    gameData: [3],
-    rndOpts: [[1, 3], [10, 50]]
+    gameData: [3], rndOpts:[[1,3],[10,50]]
   })
+  // log.info("play 3 res", result3)
 
   // log.info("Start close channel")
 
-  await game.disconnect()
-  log.info("Channel closed!")
+  // await game.disconnect()
+  // log.info("Channel closed!")
 }
 test1()
