@@ -18,6 +18,7 @@ import crypto from "crypto"
 import { IBankroller, GameInstanceInfo } from "../intefaces/IBankroller"
 
 import { PingService } from "./PingService"
+import { IPingService } from "../intefaces/IPingService"
 
 /*
  * Lib constructor
@@ -43,6 +44,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
   gamesMap: Map<string, DApp>
   id: string
   private _transportProvider: IMessagingProvider
+  private _pingService: IPingService
   constructor() {
     super()
     const {
@@ -87,7 +89,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     this._apiRoomAddress = this.getApiRoomAddress(ethAddress)
     transportProvider.exposeSevice(this._apiRoomAddress, this, true)
 
-    const pingService = new PingService().start(transportProvider, {
+    this._pingService = new PingService().start(transportProvider, {
       platformIdHash: this._platformIdHash,
       apiRoomAddress: this._apiRoomAddress
     })
@@ -100,7 +102,22 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     }
 
     logger.info(`Bankroller started. Api address: ${this._apiRoomAddress}`)
+
+    const stopBankroller = async () => {
+      const status = await this.stop()
+      process.exit(status ? 0 : 1)
+    }
+    process.on('SIGTERM', stopBankroller)
+    process.on('SIGINT', stopBankroller)
+
     return this
+  }
+
+  async stop (): Promise<boolean> {
+    this._pingService.stop()
+    const status = await this._transportProvider.stopService(this._apiRoomAddress)
+    logger.info(`Bankroller stoped. Api address: ${this._apiRoomAddress}`)
+    return status
   }
 
   async uploadGame({
@@ -173,7 +190,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
         return dapp
       }
     } catch (error) {
-      console.log(error)
+      logger.debug(error)
     }
     return null
   }
