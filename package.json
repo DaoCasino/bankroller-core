@@ -1,17 +1,17 @@
 {
   "name": "bankroller-core",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Core bankroller functionality",
   "main": "./lib/index",
+  "bin": {
+    "bankroller-core": "bin/deamon"
+  },
   "scripts": {
     "tsmon": "nodemon --delay 2 --inspect --watch ../ --ignore ../dc-protocol -r ts-node/register --",
     "tsmon:docker": "nodemon --delay 2 --inspect --watch ../ --ignore ../dc-protocol --",
-
-    "start:local" : "sh run.sh local src/index.ts",
-    "start:rinkeby" : "sh run.sh rinkeby src/index.ts",
+    "start:local": "sh run.sh local src/index.ts",
+    "start:rinkeby": "sh run.sh rinkeby src/index.ts",
     "start:ropsten": "sh run.sh ropsten src/index.ts",
-
-
     "build:ts": "yarn typescript",
     "build": "yarn typescript",
     "check:build": "nodemon --inspect ./lib/index.js --delay 2 --watch ../ --ignore ../dc-protocol",
@@ -20,19 +20,22 @@
     "reset": "rm -rf ./data/DB && rm -rf ./data/messaging",
     "test:l" : "sh run.sh local   src/__tests__/game.test.ts",
     "test:p" : "sh run.sh local   src/__tests__/testProductionGame.test.ts",
-    "test"   : "sh run.sh ropsten src/__tests__/game.test.ts"
+    "test"   : "sh run.sh ropsten src/__tests__/game.test.ts",
+    "test:ping": "mocha --timeout 99999999 -r ts-node/register src/__tests__/PingService.test.ts"
   },
   "keywords": [],
   "author": "",
   "license": "GPL-3.0",
   "dependencies": {
-    "dc-configs": "^0.2.0",
-    "dc-core": "^0.2.0",
-    "dc-ethereum-utils": "0.2.0",
-    "dc-logging": "^0.2.0",
-    "dc-messaging": "0.2.0",
-    "rimraf": "2.6.2",
+    "commander": "^2.19.0",
     "chai": "^4.1.2",
-    "mocha": "^3.2.0"
-  }
+    "dc-configs": "^0.3.0",
+    "dc-core": "^0.3.0",
+    "dc-ethereum-utils": "^0.3.0",
+    "dc-logging": "^0.3.0",
+    "dc-messaging": "^0.3.0",
+    "mocha": "^3.2.0",
+    "rimraf": "2.6.2"
+  },
+  "gitHead": "865d20c921eb00208778bbdcbb47fe95c2b4ed38"
 }

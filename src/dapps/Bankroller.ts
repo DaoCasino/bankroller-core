@@ -13,7 +13,13 @@ import {
 } from "./FileUtils"
 import { EventEmitter } from "events"
 
+import crypto from "crypto"
+
 import { IBankroller, GameInstanceInfo } from "../intefaces/IBankroller"
+
+import { PingService } from "./PingService"
+import { IPingService } from "../intefaces/IPingService"
+
 /*
  * Lib constructor
  */
@@ -21,16 +27,25 @@ const WALLET_PWD = "1234"
 
 const logger = new Logger("Bankroller:")
 
+
+const SERVER_APPROVE_AMOUNT = 100000000
+
+export const createHash = (data) => {
+  return crypto.createHash("md5").update(data).digest("hex")
+}
+
 export default class Bankroller extends EventEmitter implements IBankroller {
   private _started: boolean
   private _loadedDirectories: Set<string>
   private _eth: Eth
   private _apiRoomAddress
   private _platformId
+  private _platformIdHash
   private _blockchainNetwork
   gamesMap: Map<string, DApp>
   id: string
   private _transportProvider: IMessagingProvider
+  private _pingService: IPingService
   constructor() {
     super()
     const {
@@ -43,6 +58,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
       blockchainNetwork
     } = config
     this._platformId = platformId
+    this._platformIdHash = createHash(platformId)
     this._blockchainNetwork = blockchainNetwork
     this._eth = new Eth({
       walletName,
@@ -59,6 +75,9 @@ export default class Bankroller extends EventEmitter implements IBankroller {
   getApiRoomAddress(ethAddress: string) {
     return `${this._platformId}_${this._blockchainNetwork}_${ethAddress}`
   }
+  getPlatformIdHash(): string {
+    return this._platformIdHash
+  }
   async start(transportProvider: IMessagingProvider): Promise<any> {
     if (this._started) {
       throw new Error("Bankroller allready started")
@@ -71,6 +90,12 @@ export default class Bankroller extends EventEmitter implements IBankroller {
 
     this._apiRoomAddress = this.getApiRoomAddress(ethAddress)
     transportProvider.exposeSevice(this._apiRoomAddress, this, true)
+
+    this._pingService = new PingService().start(transportProvider, {
+      platformIdHash: this._platformIdHash,
+      apiRoomAddress: this._apiRoomAddress
+    })
+    // transportProvider.exposeSevice(this.getPlatformIdHash(), PingService, true)
     this._started = true
 
     const subDirectories = getSubDirectories(config.DAppsPath)
@@ -79,7 +104,22 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     }
 
     logger.info(`Bankroller started. Api address: ${this._apiRoomAddress}`)
+
+    const stopBankroller = async () => {
+      const status = await this.stop()
+      process.exit(status ? 0 : 1)
+    }
+    process.on('SIGTERM', stopBankroller)
+    process.on('SIGINT', stopBankroller)
+
     return this
+  }
+
+  async stop (): Promise<boolean> {
+    this._pingService.stop()
+    const status = await this._transportProvider.stopService(this._apiRoomAddress)
+    logger.info(`Bankroller stoped. Api address: ${this._apiRoomAddress}`)
+    return status
   }
 
   async uploadGame({
@@ -152,7 +192,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
         return dapp
       }
     } catch (error) {
-      console.log(error)
+      logger.debug(error)
     }
     return null
   }
