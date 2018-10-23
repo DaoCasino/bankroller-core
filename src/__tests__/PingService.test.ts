@@ -8,6 +8,7 @@ import { PingService } from "../dapps/PingService"
 import { describe, it } from "mocha"
 import { expect } from "chai"
 import { Logger } from "dc-logging"
+import { EventEmitter } from "events"
 
 const randomString = () =>
   Math.random()
@@ -26,7 +27,7 @@ function sleep(ms) {
 const log = new Logger("PingService test")
 const apiRoomAddress = [randomString(), randomString()]
 
-class RemoteClient {
+class RemoteClient extends EventEmitter {
   private pingService: IPingService
 
   start(pingService: IPingService) {
@@ -40,13 +41,13 @@ class RemoteClient {
 
     this.pingService = pingService
 
-    this.on(PingService.EVENT_JOIN, data => {
+    this.proxyOn(PingService.EVENT_JOIN, data => {
       acceptPing(PingService.EVENT_JOIN, data)
     })
-    this.on(PingService.EVENT_EXIT, data =>
+    this.proxyOn(PingService.EVENT_EXIT, data =>
       acceptPing(PingService.EVENT_EXIT, data)
     )
-    this.on(PingService.EVENT_PONG, data =>
+    this.proxyOn(PingService.EVENT_PONG, data =>
       acceptPing(PingService.EVENT_PONG, data)
     )
 
@@ -54,7 +55,7 @@ class RemoteClient {
     return this
   }
 
-  on(event: string, func: (data: any) => void) {
+  proxyOn(event: string, func: (data: any) => void) {
     this.pingService.on(event, func)
   }
 }
@@ -94,12 +95,12 @@ describe("PingService test", () => {
 
     setTimeout(() => {
       const remoteProvider = pingProvider[0]
-      remoteProvider.emitRemote(platformIdHash, provider.getPeerId(), PingService.EVENT_JOIN, { apiRoomAddress: 'test'})
+      provider.emitRemote(platformIdHash, remoteProvider.getPeerId(), "tesetEmitRemote", { apiRoomAddress: 'test'})
     }, 400)
 
     log.debug('Client Started with PeerID - ', provider.getPeerId())
 
-    await sleep(1000)
+    await sleep(2000)
   })
 
   it("Stop PingService", async () => {

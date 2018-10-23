@@ -4,7 +4,7 @@ import {
   PingServiceParams,
   PingResponce
 } from "../intefaces/IPingService"
-import { IMessagingProvider } from "dc-messaging"
+import { IMessagingProvider, IpfsTransportProvider } from "dc-messaging"
 import { Logger } from "dc-logging"
 
 const log = new Logger("PingService")
@@ -39,10 +39,10 @@ export class PingService extends EventEmitter implements IPingService {
     })
 
     this.on("connected", ({ id, address }) => {
-      log.debug(`Peer connected, emit JOIN - ${this._apiRoomAddress}`)
-      this.emit(PingService.EVENT_JOIN, pingResponce)
+      log.debug(`Peer connected, emit remote JOIN - ${this._apiRoomAddress}`)
+      const ipfs:IpfsTransportProvider = transportProvider as IpfsTransportProvider
+      ipfs.emitRemote(address, id, PingService.EVENT_JOIN, pingResponce)
     })
-
 
     this._started = true
 
@@ -53,7 +53,7 @@ export class PingService extends EventEmitter implements IPingService {
     return [
       PingService.EVENT_PING,
       PingService.EVENT_PONG,
-      PingService.EVENT_JOIN,
+      // PingService.EVENT_JOIN,
       PingService.EVENT_EXIT
     ]
   }
