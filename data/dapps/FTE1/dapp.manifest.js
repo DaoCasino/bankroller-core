@@ -2,7 +2,8 @@ const addressFunctions = {
   rinkeby: () => "0x868944cd75d4b70b6fb59254e998d5f757d7de0c",
   ropsten: () => "0xf4dac7a329bcabc02c62d438d1f2dd226680b6f6",
   mainnet: () => "",
-  local: () => require("../../../../dc-protocol/v_0.1/build/addresses.json")
+  local: async () =>
+    require("../../../../dc-protocol/v_0.1/build/addresses.json")
 }
 
 module.exports = {
