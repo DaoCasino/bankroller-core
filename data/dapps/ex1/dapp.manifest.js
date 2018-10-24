@@ -8,7 +8,7 @@ try {
       contractAddress = "0x868944cd75d4b70b6fb59254e998d5f757d7de0c"
       break
     default:
-      contractAddress = require("../../../../dc-protocol/v_0.1/build/aaddresses.json")
+      contractAddress = require("../../../../dc-protocol/v_0.1/build/addresses.json")
         .Game
   }
 } catch (error) {
@@ -16,7 +16,7 @@ try {
 }
 
 module.exports = {
-  slug: "Game_EX_v1",
+  slug: "DCGame_ex_v1",
   disabled: false,
   // if you want to change filename  - change it too in /scripts/config/paths
   logic: "./dapp.logic.js",
