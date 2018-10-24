@@ -1,14 +1,13 @@
 import { IMessagingProvider } from "dc-messaging"
 export interface PingServiceParams  {
-    platformIdHash: string,
-    apiRoomAddress: string
+    platformId: string,
+    apiRoomAddress: string,
+    blockchainNetwork: string,
+    ethAddress: string
 }
 
-export interface PingResponce {
-    apiRoomAddress: string
-}
 export interface IPingService {
-    ping: () => PingResponce
+    ping: () => PingServiceParams
     isStarted: () => boolean
     on: (event: string, listener: (data: any) => void) => void
     emit: (event: string, data: any) => void
