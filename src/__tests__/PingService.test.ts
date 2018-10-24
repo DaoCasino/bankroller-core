@@ -1,8 +1,7 @@
 import { IpfsTransportProvider } from "dc-messaging"
 import {
   PingServiceParams,
-  IPingService,
-  PingResponce
+  IPingService
 } from "../intefaces/IPingService"
 import { PingService } from "../dapps/PingService"
 import { describe, it } from "mocha"
@@ -31,7 +30,7 @@ class RemoteClient extends EventEmitter {
   private pingService: IPingService
 
   start(pingService: IPingService) {
-    const acceptPing = (event: string, data: PingResponce) => {
+    const acceptPing = (event: string, data: PingServiceParams) => {
       log.debug({ event, data })
 
       expect(data.apiRoomAddress).to.be.a("string")
@@ -68,13 +67,15 @@ describe("PingService test", () => {
   let clientService
   let clientProvider
 
-  const platformIdHash = randomString()
+  const platformId = randomString()
   it(`Start ${apiRoomAddress.length} ipfs node with PingService`, async () => {
     for (const address of apiRoomAddress) {
-      const provider = await IpfsTransportProvider.createAdditional()
+      const provider = await IpfsTransportProvider.create()
       const params: PingServiceParams = {
-        platformIdHash,
-        apiRoomAddress: address
+        platformId,
+        apiRoomAddress: address,
+        blockchainNetwork: randomString(),
+        ethAddress: randomString()
       }
       const service: IPingService = new PingService().start(provider, params)
       /* tslint:disable-next-line  */
@@ -85,18 +86,18 @@ describe("PingService test", () => {
   })
 
   it(`Start ipfs node with ClientService`, async () => {
-    const provider = await IpfsTransportProvider.createAdditional()
+    const provider = await IpfsTransportProvider.create()
     const peer: IPingService = await provider.getRemoteInterface<IPingService>(
-      platformIdHash
+      platformId
     )
     const service = await new RemoteClient().start(peer)
     clientService = service
     clientProvider = provider
 
-    setTimeout(() => {
-      const remoteProvider = pingProvider[0]
-      provider.emitRemote(platformIdHash, remoteProvider.getPeerId(), "tesetEmitRemote", { apiRoomAddress: 'test'})
-    }, 400)
+    // setTimeout(() => {
+    //   const remoteProvider = pingProvider[0]
+    //   provider.emitRemote(platformIdHash, remoteProvider.getPeerId(), "tesetEmitRemote", { apiRoomAddress: 'test'})
+    // }, 400)
 
     log.debug('Client Started with PeerID - ', provider.getPeerId())
 
@@ -105,23 +106,19 @@ describe("PingService test", () => {
 
   it("Stop PingService", async () => {
     for (const service of pingService) {
-      service.stop()
+      await service.stop()
       /* tslint:disable-next-line */
       expect(service.isStarted()).to.be.false
     }
 
-    for (const provider of pingProvider) {
-      const isStoped = await provider.stop(platformIdHash)
-      /* tslint:disable-next-line */
-      expect(isStoped).to.be.true
-    }
+    await sleep(1000)
 
-    await sleep(1000) // magic
+    for (const provider of pingProvider) {
+      await provider.destroy()
+    }
   })
 
   it('Client leave room', async () => {
-    const isStoped = await clientProvider.stop(platformIdHash)
-    /* tslint:disable-next-line */
-    expect(isStoped).to.be.true
+    await clientProvider.destroy()
   })
 })
