@@ -67,9 +67,9 @@ export class PingService extends EventEmitter implements IPingService {
   }
 
   async stop(): Promise<void> {
-    await this._transportProvider.stopService(this._address)
-    this._started = false
     log.debug(`Ping service stop, emit EXIT - ${this._params.apiRoomAddress}`)
     this.emit(PingService.EVENT_EXIT, this.ping())
+    await this._transportProvider.stopService(this._address)
+    this._started = false
   }
 }
