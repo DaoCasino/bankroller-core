@@ -1,17 +1,18 @@
-let contractAddress;
+let contractAddress
 try {
   switch (process.env.DC_NETWORK) {
     case "ropsten":
-      contractAddress = "0x8273e4B8ED6c78e252a9fCa5563Adfcc75C91b2A";
-      break;
+      contractAddress = "0x8273e4B8ED6c78e252a9fCa5563Adfcc75C91b2A"
+      break
     case "rinkeby":
-      contractAddress = "0x868944cd75d4b70b6fb59254e998d5f757d7de0c";
-      break;
+      contractAddress = "0x868944cd75d4b70b6fb59254e998d5f757d7de0c"
+      break
     default:
-      contractAddress = "0xe4e47451AAd6C89a6D9E4aD104A7b77FfE1D3b36";
+      contractAddress = require("../../../../dc-protocol/v_0.1/build/aaddresses.json")
+        .Game
   }
 } catch (error) {
-  throw error;
+  throw error
 }
 
 module.exports = {
@@ -361,4 +362,4 @@ module.exports = {
       }
     ]
   }
-};
+}
