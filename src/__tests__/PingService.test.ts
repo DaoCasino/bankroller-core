@@ -71,7 +71,7 @@ describe("PingService test", () => {
   const platformIdHash = randomString()
   it(`Start ${apiRoomAddress.length} ipfs node with PingService`, async () => {
     for (const address of apiRoomAddress) {
-      const provider = await IpfsTransportProvider.createAdditional()
+      const provider = await IpfsTransportProvider.create()
       const params: PingServiceParams = {
         platformIdHash,
         apiRoomAddress: address
@@ -85,7 +85,7 @@ describe("PingService test", () => {
   })
 
   it(`Start ipfs node with ClientService`, async () => {
-    const provider = await IpfsTransportProvider.createAdditional()
+    const provider = await IpfsTransportProvider.create()
     const peer: IPingService = await provider.getRemoteInterface<IPingService>(
       platformIdHash
     )
