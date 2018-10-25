@@ -1,34 +1,20 @@
-let contractAddress
-try {
-  switch (process.env.DC_NETWORK) {
-    case "ropsten":
-      contractAddress = "0x8273e4B8ED6c78e252a9fCa5563Adfcc75C91b2A"
-      break
-    case "rinkeby":
-      contractAddress = "0x868944cd75d4b70b6fb59254e998d5f757d7de0c"
-      break
-    default:
-      contractAddress = require("../../../../dc-protocol/src/build/addresses.json")
-        .Game
-  }
-} catch (error) {
-  throw error
+const addressFunctions = {
+  rinkeby: () => "0x868944cd75d4b70b6fb59254e998d5f757d7de0c",
+  ropsten: () => "0xf4dac7a329bcabc02c62d438d1f2dd226680b6f6",
+  mainnet: () => "",
+  local: async () => ""
 }
 
 module.exports = {
   slug: "DCGame_ex_v1",
-  disabled: false,
+
   // if you want to change filename  - change it too in /scripts/config/paths
   logic: "./dapp.logic.js",
 
   about: "./README.md",
 
-  rules: {
-    depositX: 2
-  },
-
-  contract: {
-    address: contractAddress,
+  getContract: blockchainNetwork => ({
+    address: addressFunctions[blockchainNetwork](),
     abi: [
       {
         constant: true,
@@ -41,8 +27,7 @@ module.exports = {
         ],
         payable: false,
         stateMutability: "view",
-        type: "function",
-        signature: "0x11be1997"
+        type: "function"
       },
       {
         constant: false,
@@ -58,8 +43,7 @@ module.exports = {
         outputs: [],
         payable: false,
         stateMutability: "nonpayable",
-        type: "function",
-        signature: "0x4904b251"
+        type: "function"
       },
       {
         constant: true,
@@ -68,8 +52,7 @@ module.exports = {
         outputs: [{ name: "", type: "address" }],
         payable: false,
         stateMutability: "view",
-        type: "function",
-        signature: "0x562a6c78"
+        type: "function"
       },
       {
         constant: false,
@@ -83,8 +66,7 @@ module.exports = {
         outputs: [],
         payable: false,
         stateMutability: "nonpayable",
-        type: "function",
-        signature: "0x64629522"
+        type: "function"
       },
       {
         constant: false,
@@ -100,8 +82,7 @@ module.exports = {
         outputs: [],
         payable: false,
         stateMutability: "nonpayable",
-        type: "function",
-        signature: "0x698b2fc5"
+        type: "function"
       },
       {
         constant: true,
@@ -117,8 +98,7 @@ module.exports = {
         ],
         payable: false,
         stateMutability: "view",
-        type: "function",
-        signature: "0x79502c55"
+        type: "function"
       },
       {
         constant: true,
@@ -137,8 +117,7 @@ module.exports = {
         ],
         payable: false,
         stateMutability: "view",
-        type: "function",
-        signature: "0x7a7ebd7b"
+        type: "function"
       },
       {
         constant: true,
@@ -147,8 +126,7 @@ module.exports = {
         outputs: [{ name: "", type: "address" }],
         payable: false,
         stateMutability: "view",
-        type: "function",
-        signature: "0x8468ec68"
+        type: "function"
       },
       {
         constant: true,
@@ -160,8 +138,7 @@ module.exports = {
         outputs: [{ name: "", type: "address" }],
         payable: false,
         stateMutability: "pure",
-        type: "function",
-        signature: "0x97aba7f9"
+        type: "function"
       },
       {
         constant: false,
@@ -178,8 +155,7 @@ module.exports = {
         outputs: [],
         payable: false,
         stateMutability: "nonpayable",
-        type: "function",
-        signature: "0xb90b516f"
+        type: "function"
       },
       {
         constant: true,
@@ -188,8 +164,7 @@ module.exports = {
         outputs: [{ name: "", type: "address" }],
         payable: false,
         stateMutability: "view",
-        type: "function",
-        signature: "0xca4b208b"
+        type: "function"
       },
       {
         constant: true,
@@ -198,8 +173,7 @@ module.exports = {
         outputs: [{ name: "", type: "uint256" }],
         payable: false,
         stateMutability: "view",
-        type: "function",
-        signature: "0xdd754511"
+        type: "function"
       },
       {
         constant: true,
@@ -208,8 +182,7 @@ module.exports = {
         outputs: [{ name: "", type: "address" }],
         payable: false,
         stateMutability: "view",
-        type: "function",
-        signature: "0xdf97d31c"
+        type: "function"
       },
       {
         constant: false,
@@ -229,8 +202,7 @@ module.exports = {
         outputs: [],
         payable: false,
         stateMutability: "nonpayable",
-        type: "function",
-        signature: "0xe104b6b3"
+        type: "function"
       },
       {
         constant: true,
@@ -239,8 +211,7 @@ module.exports = {
         outputs: [{ name: "", type: "address" }],
         payable: false,
         stateMutability: "view",
-        type: "function",
-        signature: "0xeaea5174"
+        type: "function"
       },
       {
         constant: false,
@@ -249,8 +220,7 @@ module.exports = {
         outputs: [],
         payable: false,
         stateMutability: "nonpayable",
-        type: "function",
-        signature: "0xed784626"
+        type: "function"
       },
       {
         constant: true,
@@ -259,8 +229,7 @@ module.exports = {
         outputs: [{ name: "", type: "address" }],
         payable: false,
         stateMutability: "view",
-        type: "function",
-        signature: "0xfc0c546a"
+        type: "function"
       },
       {
         inputs: [
@@ -272,8 +241,7 @@ module.exports = {
         ],
         payable: false,
         stateMutability: "nonpayable",
-        type: "constructor",
-        signature: "constructor"
+        type: "constructor"
       },
       {
         anonymous: false,
@@ -285,9 +253,7 @@ module.exports = {
           { indexed: false, name: "session", type: "uint256" }
         ],
         name: "logChannel",
-        type: "event",
-        signature:
-          "0xcf0d23e4e524385efe626d64e9a58ae4a824ab23c37d387469ea22d5ccc456cc"
+        type: "event"
       },
       {
         anonymous: false,
@@ -299,9 +265,7 @@ module.exports = {
           { indexed: false, name: "seed", type: "bytes32" }
         ],
         name: "logDispute",
-        type: "event",
-        signature:
-          "0xa96a4cd9eb9d5917ce9fbed6d8e3cfa2fa5a8dfbc43704a8b8c78138e2f5b89f"
+        type: "event"
       },
       {
         constant: true,
@@ -313,8 +277,7 @@ module.exports = {
         outputs: [{ name: "", type: "bool" }],
         payable: false,
         stateMutability: "view",
-        type: "function",
-        signature: "0xf632262f"
+        type: "function"
       },
       {
         constant: true,
@@ -330,8 +293,7 @@ module.exports = {
         ],
         payable: false,
         stateMutability: "view",
-        type: "function",
-        signature: "0xc352998c"
+        type: "function"
       },
       {
         constant: true,
@@ -343,8 +305,7 @@ module.exports = {
         outputs: [{ name: "_profit", type: "uint256" }],
         payable: false,
         stateMutability: "pure",
-        type: "function",
-        signature: "0x55cd5c10"
+        type: "function"
       },
       {
         constant: true,
@@ -357,9 +318,12 @@ module.exports = {
         outputs: [{ name: "", type: "uint256" }],
         payable: false,
         stateMutability: "pure",
-        type: "function",
-        signature: "0xb5a4a146"
+        type: "function"
       }
     ]
+  }),
+
+  rules: {
+    depositX: 2
   }
 }
