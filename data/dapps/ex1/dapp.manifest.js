@@ -8,7 +8,7 @@ try {
       contractAddress = "0x868944cd75d4b70b6fb59254e998d5f757d7de0c"
       break
     default:
-      contractAddress = require("../../../../dc-protocol/v_0.1/build/addresses.json")
+      contractAddress = require("../../../../dc-protocol/src/build/addresses.json")
         .Game
   }
 } catch (error) {
