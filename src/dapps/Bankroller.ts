@@ -1,6 +1,7 @@
 import { config } from "dc-configs"
 import fs from "fs"
 import path from "path"
+import fetch from "node-fetch"
 import { DApp, GlobalGameLogicStore } from "dc-core"
 import { IpfsTransportProvider, IMessagingProvider } from "dc-messaging"
 import { Eth } from "dc-ethereum-utils"
@@ -44,7 +45,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
       contracts,
       walletName,
       blockchainNetwork
-    } = config
+    } = config.default
     this._platformId = platformId
     // this._platformIdHash = createHash(platformId)
     this._blockchainNetwork = blockchainNetwork
@@ -70,7 +71,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     if (this._started) {
       throw new Error("Bankroller allready started")
     }
-    const { privateKey } = config
+    const { privateKey } = config.default
     this._transportProvider = transportProvider
 
     await this._eth.initAccount(privateKey)
@@ -89,7 +90,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     // transportProvider.exposeSevice(this.getPlatformIdHash(), PingService, true)
     this._started = true
 
-    const subDirectories = getSubDirectories(config.DAppsPath)
+    const subDirectories = getSubDirectories(config.default.DAppsPath)
     for (let i = 0; i < subDirectories.length; i++) {
       await this.tryLoadDApp(subDirectories[i])
     }
@@ -122,7 +123,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     name: string
     files: { fileName: string; fileData: Buffer | string }[]
   }): Promise<{ status: string }> {
-    const DAppsPath = config.DAppsPath
+    const DAppsPath = config.default.DAppsPath
     const newDir = path.join(DAppsPath, name)
     saveFilesToNewDir(newDir, files)
     if (!(await this.tryLoadDApp(newDir))) {
@@ -166,6 +167,14 @@ export default class Bankroller extends EventEmitter implements IBankroller {
         }
         const contract =
           manifestVontract || getContract(this._blockchainNetwork)
+
+
+        if (contract.address && contract.address.indexOf('http') > -1) {
+          contract.address = await fetch(contract.address.split('->')[0])
+          .then( r => r.json() )
+          .then( r => r[contract.address.split('->')[1]] )
+        }
+
         const dapp = new DApp({
           platformId: this._platformId,
           blockchainNetwork: this._blockchainNetwork,

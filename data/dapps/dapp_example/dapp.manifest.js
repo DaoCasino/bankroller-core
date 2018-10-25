@@ -1,7 +1,7 @@
 
 let contractAddress
 try {
-  contractAddress = require('../../../../dc-protocol/v_0.1/build/addresses.json').Game
+  contractAddress = require('../../../../dc-protocol/src/build/addresses.json').Game
 } catch(e){
   contractAddress = '0x8273e4B8ED6c78e252a9fCa5563Adfcc75C91b2A'
 }
