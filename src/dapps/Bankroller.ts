@@ -45,7 +45,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
       contracts,
       walletName,
       blockchainNetwork
-    } = config
+    } = config.default
     this._platformId = platformId
     // this._platformIdHash = createHash(platformId)
     this._blockchainNetwork = blockchainNetwork
@@ -71,7 +71,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     if (this._started) {
       throw new Error("Bankroller allready started")
     }
-    const { privateKey } = config
+    const { privateKey } = config.default
     this._transportProvider = transportProvider
 
     await this._eth.initAccount(privateKey)
@@ -90,7 +90,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     // transportProvider.exposeSevice(this.getPlatformIdHash(), PingService, true)
     this._started = true
 
-    const subDirectories = getSubDirectories(config.DAppsPath)
+    const subDirectories = getSubDirectories(config.default.DAppsPath)
     for (let i = 0; i < subDirectories.length; i++) {
       await this.tryLoadDApp(subDirectories[i])
     }
@@ -123,7 +123,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     name: string
     files: { fileName: string; fileData: Buffer | string }[]
   }): Promise<{ status: string }> {
-    const DAppsPath = config.DAppsPath
+    const DAppsPath = config.default.DAppsPath
     const newDir = path.join(DAppsPath, name)
     saveFilesToNewDir(newDir, files)
     if (!(await this.tryLoadDApp(newDir))) {
