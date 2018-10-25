@@ -26,12 +26,12 @@ const startGame = async () => {
     const gameTransportProvider = directTransportProvider // await IpfsTransportProvider.createAdditional()
 
     // ropsten env
-    let manifestFile = config.DAppsPath + "/FTE1/dapp.manifest.js"
+    let manifestFile = config.default.DAppsPath + "/FTE1/dapp.manifest.js"
     let privkey =
       "0x6A5AE922FDE5C8EE877E9470F45B8030F60C19038E9116DB8B343782D9593602"
     // local env
     if (process.env.DC_NETWORK === "local") {
-      manifestFile = config.DAppsPath + "/ex1/dapp.manifest.js"
+      manifestFile = config.default.DAppsPath + "/ex1/dapp.manifest.js"
       privkey =
         "0xae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f"
     }
@@ -46,7 +46,7 @@ const startGame = async () => {
       platformId,
       walletName,
       blockchainNetwork
-    } = config
+    } = config.default
     const Eth = new Ethereum({
       walletName,
       httpProviderUrl,
