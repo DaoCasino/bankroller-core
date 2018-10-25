@@ -4,6 +4,7 @@ if [ $1 == 'ropsten' ]; then
 export ACCOUNT_PRIVATE_KEY=0xdbb54842330d431c420b6ae6a7319ffdfaa705dcf0bc3ea2229d67e92324e595
 export DC_NETWORK=ropsten
 export DAPPS_PATH=./data/dapps/
+export PLATFORM_ID=DC_sdk
 echo "ropsten"
 fi
 
