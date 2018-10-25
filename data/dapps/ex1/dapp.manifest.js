@@ -1,18 +1,10 @@
 
-let contractAddress
-try {
-  switch(process.env.DC_NETWORK) {
-    case 'ropsten':
-      contractAddress = '0x8273e4B8ED6c78e252a9fCa5563Adfcc75C91b2A'
-      break
-    case 'rinkeby':
-      contractAddress = '0x868944cd75d4b70b6fb59254e998d5f757d7de0c'
-      break
-    default:
-      contractAddress = require('../../../../dc-protocol/v_0.1/build/addresses.json').Game
-  }
-} catch (error) {
-  throw error
+
+const addressFunctions = {
+  rinkeby: () => "0x868944cd75d4b70b6fb59254e998d5f757d7de0c",
+  ropsten: () => "0xf4dac7a329bcabc02c62d438d1f2dd226680b6f6",
+  mainnet: () => "",
+  local:   () => "http://localhost:8545/contracts->Game"
 }
 
 
@@ -28,9 +20,9 @@ module.exports = {
     depositX: 2
   },
 
-  contract: {
-    address: contractAddress,
-    "abi": [
+  getContract: blockchainNetwork => ({
+    address: addressFunctions[blockchainNetwork](),
+    abi: [
       {
         "constant": true,
         "inputs": [
@@ -680,6 +672,6 @@ module.exports = {
         "signature": "0xb5a4a146"
       }
     ],
-  },
+  }),
 
 };

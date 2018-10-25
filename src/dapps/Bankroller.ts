@@ -1,6 +1,7 @@
 import { config } from "dc-configs"
 import fs from "fs"
 import path from "path"
+import fetch from "node-fetch"
 import { DApp, GlobalGameLogicStore } from "dc-core"
 import { IpfsTransportProvider, IMessagingProvider } from "dc-messaging"
 import { Eth } from "dc-ethereum-utils"
@@ -166,6 +167,14 @@ export default class Bankroller extends EventEmitter implements IBankroller {
         }
         const contract =
           manifestVontract || getContract(this._blockchainNetwork)
+
+
+        if (contract.address && contract.address.indexOf('http') > -1) {
+          contract.address = await fetch(contract.address.split('->')[0])
+          .then( r => r.json() )
+          .then( r => r[contract.address.split('->')[1]] )
+        }
+
         const dapp = new DApp({
           platformId: this._platformId,
           blockchainNetwork: this._blockchainNetwork,
