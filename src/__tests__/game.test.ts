@@ -1,6 +1,7 @@
 import { IpfsTransportProvider, DirectTransportProvider } from "dc-messaging"
 import { config } from "dc-configs"
 import { Eth as Ethereum } from "dc-ethereum-utils"
+import fetch from "node-fetch"
 
 import { GlobalGameLogicStore, DApp } from "dc-core"
 import Bankroller from "../dapps/Bankroller"
@@ -58,16 +59,25 @@ const startGame = async () => {
     const gameLogicFunction = new GlobalGameLogicStore().getGameLogic(
       dappManifest.slug
     )
+
+    const contract = dappManifest.getContract(process.env.DC_NETWORK)
+    if (contract.address && contract.address.indexOf('http') > -1) {
+      contract.address = await fetch(contract.address.split('->')[0])
+      .then( r => r.json() )
+      .then( r => r[contract.address.split('->')[1]] )
+    }
+
     const dappParams = {
       slug: dappManifest.slug,
       platformId,
       blockchainNetwork,
-      contract: dappManifest.contract,
+      contract,
       rules: dappManifest.rules,
       roomProvider: gameTransportProvider,
       gameLogicFunction,
       Eth
     }
+
     await Eth.initAccount(privkey)
     const dapp = new DApp(dappParams)
     const dappInstance = await dapp.startClient()
