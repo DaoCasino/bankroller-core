@@ -4,9 +4,9 @@ import { expect } from "chai"
 import { config } from "dc-configs"
 import fs from "fs"
 import path from "path"
-import { getSubDirectories } from "../dapps/FileUtils"
 import { IpfsTransportProvider } from 'dc-messaging'
 
+// TODO: create expect checks
 
 const randomString = () =>
   Math.random()
@@ -41,8 +41,7 @@ const startBankroller = async (bankroller) => {
 
 const suite = describe("Bankroller Tests", async () => {
   let bankroller
-  const game = createFakeGame(randomString())
-
+  let game
   let provider
 
   it('Start bankroller', async () => {
@@ -51,7 +50,21 @@ const suite = describe("Bankroller Tests", async () => {
   })
 
   it('Test upload game', async () => {
-   const result = await bankroller.uploadGame(game)
+    game = createFakeGame(randomString())
+    const result = await bankroller.uploadGame(game)
+  })
+
+  it('Test success reload game', async () => {
+    const reloadGame = {...game, reload: true}
+    const result = await bankroller.uploadGame(reloadGame)
+  })
+
+  it('Test error reload game', async() => {
+    const result = await bankroller.uploadGame(game)
+  })
+
+  it('Test unload game', () => {
+    const result = bankroller.unloadGame(game.name)
   })
 
   it('Stop bankroller', async () => {

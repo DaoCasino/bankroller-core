@@ -8,6 +8,7 @@ import { Eth } from "dc-ethereum-utils"
 import { Logger } from "dc-logging"
 import {
   getSubDirectories,
+  checkFileExists,
   loadLogic,
   saveFilesToNewDir,
   removeDir
@@ -118,16 +119,39 @@ export default class Bankroller extends EventEmitter implements IBankroller {
 
   async uploadGame({
     name,
-    files
+    files,
+    reload = false
   }: {
     name: string
-    files: { fileName: string; fileData: Buffer | string }[]
+    files: { fileName: string; fileData: Buffer | string }[],
+    reload?: boolean
   }): Promise<{ status: string }> {
     const DAppsPath = config.default.DAppsPath
     const newDir = path.join(DAppsPath, name)
+
+    if(reload && this._loadedDirectories.has(newDir)) {
+      this.unloadGame(name)
+    }
+
+    if (this._loadedDirectories.has(newDir)) {
+      throw new Error(`Directory ${newDir} allready created`)
+    }
+
     saveFilesToNewDir(newDir, files)
+    this._loadedDirectories.add(newDir)
     if (!(await this.tryLoadDApp(newDir))) {
       removeDir(newDir)
+      this._loadedDirectories.delete(newDir)
+    }
+    return { status: "ok" }
+  }
+
+  unloadGame(name: string) {
+    const DAppsPath = config.default.DAppsPath
+    const newDir = path.join(DAppsPath, name)
+    if (this.tryUnloadDApp(newDir)) {
+      removeDir(newDir)
+      this._loadedDirectories.delete(newDir)
     }
     return { status: "ok" }
   }
@@ -199,7 +223,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     return null
   }
 
-  tryUnloadDApp(directoryPath: string): void {
+  tryUnloadDApp(directoryPath: string): boolean {
     if (!this._loadedDirectories.has(directoryPath)) {
       throw new Error(`Directory ${directoryPath} not loadeed`)
     }
@@ -214,13 +238,17 @@ export default class Bankroller extends EventEmitter implements IBankroller {
           // const dapp = this.gamesMap.get(slug)
           // await dapp.stopServer() // TODO: !!! need code
           this.gamesMap.delete(slug)
+
           logger.debug(`Unload Dapp ${directoryPath}, took ${Date.now() - now} ms`)
         } else {
           logger.debug(`DApp ${slug} disabled - skip`)
         }
+
+        return true
       }
     } catch (error) {
       logger.debug(error)
+      return false
     }
   }
 }
