@@ -1,6 +1,7 @@
 import { IpfsTransportProvider, DirectTransportProvider } from "dc-messaging"
 import { config } from "dc-configs"
 import { Eth as Ethereum } from "dc-ethereum-utils"
+import fetch from "node-fetch"
 
 import { GlobalGameLogicStore, DApp } from "dc-core"
 import Bankroller from "../dapps/Bankroller"
@@ -26,12 +27,12 @@ const startGame = async () => {
     const gameTransportProvider = directTransportProvider // await IpfsTransportProvider.createAdditional()
 
     // ropsten env
-    let manifestFile = config.DAppsPath + "/FTE1/dapp.manifest.js"
+    let manifestFile = config.default.DAppsPath + "/FTE1/dapp.manifest.js"
     let privkey =
       "0x6A5AE922FDE5C8EE877E9470F45B8030F60C19038E9116DB8B343782D9593602"
     // local env
     if (process.env.DC_NETWORK === "local") {
-      manifestFile = config.DAppsPath + "/ex1/dapp.manifest.js"
+      manifestFile = config.default.DAppsPath + "/ex1/dapp.manifest.js"
       privkey =
         "0xae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f"
     }
@@ -46,7 +47,7 @@ const startGame = async () => {
       platformId,
       walletName,
       blockchainNetwork
-    } = config
+    } = config.default
     const Eth = new Ethereum({
       walletName,
       httpProviderUrl,
@@ -58,16 +59,25 @@ const startGame = async () => {
     const gameLogicFunction = new GlobalGameLogicStore().getGameLogic(
       dappManifest.slug
     )
+
+    const contract = dappManifest.getContract(process.env.DC_NETWORK)
+    if (contract.address && contract.address.indexOf('http') > -1) {
+      contract.address = await fetch(contract.address.split('->')[0])
+      .then( r => r.json() )
+      .then( r => r[contract.address.split('->')[1]] )
+    }
+
     const dappParams = {
       slug: dappManifest.slug,
       platformId,
       blockchainNetwork,
-      contract: dappManifest.contract,
+      contract,
       rules: dappManifest.rules,
       roomProvider: gameTransportProvider,
       gameLogicFunction,
       Eth
     }
+
     await Eth.initAccount(privkey)
     const dapp = new DApp(dappParams)
     const dappInstance = await dapp.startClient()

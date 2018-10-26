@@ -1,6 +1,6 @@
 {
   "name": "bankroller-core",
-  "version": "1.0.2",
+  "version": "0.1.1",
   "description": "Core bankroller functionality",
   "main": "./lib/index",
   "bin": {
@@ -18,23 +18,24 @@
     "typescript": "tsc --build",
     "clean": "rimraf lib",
     "reset": "rm -rf ./data/DB && rm -rf ./data/messaging",
-    "test:l" : "sh run.sh local   src/__tests__/game.test.ts",
-    "test:p" : "sh run.sh local   src/__tests__/testProductionGame.test.ts",
-    "test"   : "sh run.sh ropsten src/__tests__/game.test.ts",
+    "test:l": "sh run.sh local   src/__tests__/game.test.ts",
+    "test:p": "sh run.sh local   src/__tests__/testProductionGame.test.ts",
+    "test": "sh run.sh ropsten src/__tests__/game.test.ts",
     "test:ping": "mocha --timeout 99999999 -r ts-node/register src/__tests__/PingService.test.ts"
   },
   "keywords": [],
   "author": "",
   "license": "GPL-3.0",
   "dependencies": {
-    "commander": "^2.19.0",
     "chai": "^4.1.2",
-    "dc-configs": "^1.0.2",
-    "dc-core": "^1.0.2",
-    "dc-ethereum-utils": "^1.0.2",
-    "dc-logging": "^1.0.2",
-    "dc-messaging": "^1.0.2",
+    "commander": "^2.19.0",
+    "dc-configs": "^0.1.1",
+    "dc-core": "^0.1.1",
+    "dc-ethereum-utils": "^0.1.1",
+    "dc-logging": "^0.1.1",
+    "dc-messaging": "^0.1.1",
     "mocha": "^3.2.0",
+    "node-fetch": "^2.2.0",
     "rimraf": "2.6.2"
   },
   "gitHead": "865d20c921eb00208778bbdcbb47fe95c2b4ed38"
