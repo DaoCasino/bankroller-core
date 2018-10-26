@@ -198,4 +198,29 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     }
     return null
   }
+
+  tryUnloadDApp(directoryPath: string): void {
+    if (!this._loadedDirectories.has(directoryPath)) {
+      throw new Error(`Directory ${directoryPath} not loadeed`)
+    }
+
+    const now = Date.now()
+
+    try {
+      const { gameLogicFunction, manifest } = loadLogic(directoryPath)
+      if (gameLogicFunction) {
+        const { disabled, slug } = manifest
+        if (!disabled) {
+          // const dapp = this.gamesMap.get(slug)
+          // await dapp.stopServer() // TODO: !!! need code
+          this.gamesMap.delete(slug)
+          logger.debug(`Unload Dapp ${directoryPath}, took ${Date.now() - now} ms`)
+        } else {
+          logger.debug(`DApp ${slug} disabled - skip`)
+        }
+      }
+    } catch (error) {
+      logger.debug(error)
+    }
+  }
 }
