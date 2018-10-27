@@ -17,7 +17,7 @@ const startBankroller = async () => {
   } catch (error) {
     log.debug(error)
     process.exitCode = 1
-    process.kill(process.pid, 'SIGTERM')
+    process.kill(process.pid, "SIGTERM")
   }
 }
 
@@ -43,15 +43,16 @@ const startGame = async () => {
       gasPrice: price,
       gasLimit: limit,
       web3HttpProviderUrl: httpProviderUrl,
-      contracts,
+      getContracts,
       platformId,
       walletName,
       blockchainNetwork
     } = config.default
+
     const Eth = new Ethereum({
       walletName,
       httpProviderUrl,
-      ERC20ContractInfo: contracts.ERC20,
+      ERC20ContractInfo: (await getContracts()).ERC20,
       gasParams: { price, limit }
     })
 
@@ -61,10 +62,10 @@ const startGame = async () => {
     )
 
     const contract = dappManifest.getContract(process.env.DC_NETWORK)
-    if (contract.address && contract.address.indexOf('http') > -1) {
-      contract.address = await fetch(contract.address.split('->')[0])
-      .then( r => r.json() )
-      .then( r => r[contract.address.split('->')[1]] )
+    if (contract.address && contract.address.indexOf("http") > -1) {
+      contract.address = await fetch(contract.address.split("->")[0])
+        .then(r => r.json())
+        .then(r => r[contract.address.split("->")[1]])
     }
 
     const dappParams = {
@@ -86,7 +87,7 @@ const startGame = async () => {
     log.debug(error)
 
     process.exitCode = 1
-    process.kill(process.pid, 'SIGTERM')
+    process.kill(process.pid, "SIGTERM")
   }
 }
 
@@ -104,21 +105,24 @@ const test1 = async () => {
   await game.connect({ playerDeposit: 3, gameData: [0, 0] })
   log.info("Channel opened!")
 
-  const rndOpts = [[0,3],[0,5]]
+  const rndOpts = [[0, 3], [0, 5]]
 
   const result1 = await game.play({
     userBet: 1,
-    gameData: [1], rndOpts
+    gameData: [1],
+    rndOpts
   })
   log.info("play 1 res", result1)
   const result2 = await game.play({
     userBet: 1,
-    gameData: [2], rndOpts:[[10,30],[100,500]]
+    gameData: [2],
+    rndOpts: [[10, 30], [100, 500]]
   })
   log.info("play 2 res", result2)
   const result3 = await game.play({
     userBet: 1,
-    gameData: [3], rndOpts:[[1,3],[10,50]]
+    gameData: [3],
+    rndOpts: [[1, 3], [10, 50]]
   })
   // log.info("play 3 res", result3)
 

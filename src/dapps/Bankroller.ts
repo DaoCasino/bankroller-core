@@ -38,24 +38,10 @@ export default class Bankroller extends EventEmitter implements IBankroller {
   private _pingService: IPingService
   constructor() {
     super()
-    const {
-      platformId,
-      gasPrice: price,
-      gasLimit: limit,
-      web3HttpProviderUrl: httpProviderUrl,
-      contracts,
-      walletName,
-      blockchainNetwork
-    } = config.default
+    const { platformId, blockchainNetwork } = config.default
     this._platformId = platformId
     // this._platformIdHash = createHash(platformId)
     this._blockchainNetwork = blockchainNetwork
-    this._eth = new Eth({
-      walletName,
-      httpProviderUrl,
-      ERC20ContractInfo: contracts.ERC20,
-      gasParams: { price, limit }
-    })
 
     this.gamesMap = new Map()
     this._loadedDirectories = new Set()
@@ -69,10 +55,28 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     return this._platformId
   }
   async start(transportProvider: IMessagingProvider): Promise<any> {
+    const {
+      platformId,
+      gasPrice: price,
+      gasLimit: limit,
+      web3HttpProviderUrl: httpProviderUrl,
+
+      walletName,
+      blockchainNetwork,
+      privateKey,
+      getContracts
+    } = config.default
+    const ERC20ContractInfo = (await getContracts()).ERC20
+    this._eth = new Eth({
+      walletName,
+      httpProviderUrl,
+      ERC20ContractInfo,
+      gasParams: { price, limit }
+    })
     if (this._started) {
       throw new Error("Bankroller allready started")
     }
-    const { privateKey } = config.default
+
     this._transportProvider = transportProvider
 
     await this._eth.initAccount(privateKey)
@@ -123,13 +127,13 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     reload = false
   }: {
     name: string
-    files: { fileName: string; fileData: Buffer | string }[],
+    files: { fileName: string; fileData: Buffer | string }[]
     reload?: boolean
   }): Promise<{ status: string }> {
     const DAppsPath = config.default.DAppsPath
     const newDir = path.join(DAppsPath, name)
 
-    if(reload && this._loadedDirectories.has(newDir)) {
+    if (reload && this._loadedDirectories.has(newDir)) {
       this.unloadGame(name)
     }
 
@@ -192,11 +196,10 @@ export default class Bankroller extends EventEmitter implements IBankroller {
         const contract =
           manifestVontract || getContract(this._blockchainNetwork)
 
-
-        if (contract.address && contract.address.indexOf('http') > -1) {
-          contract.address = await fetch(contract.address.split('->')[0])
-          .then( r => r.json() )
-          .then( r => r[contract.address.split('->')[1]] )
+        if (contract.address && contract.address.indexOf("http") > -1) {
+          contract.address = await fetch(contract.address.split("->")[0])
+            .then(r => r.json())
+            .then(r => r[contract.address.split("->")[1]])
         }
 
         const dapp = new DApp({
@@ -239,7 +242,9 @@ export default class Bankroller extends EventEmitter implements IBankroller {
           // await dapp.stopServer() // TODO: !!! need code
           this.gamesMap.delete(slug)
 
-          logger.debug(`Unload Dapp ${directoryPath}, took ${Date.now() - now} ms`)
+          logger.debug(
+            `Unload Dapp ${directoryPath}, took ${Date.now() - now} ms`
+          )
         } else {
           logger.debug(`DApp ${slug} disabled - skip`)
         }
