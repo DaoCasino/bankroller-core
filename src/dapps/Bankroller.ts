@@ -8,6 +8,7 @@ import { Eth } from "dc-ethereum-utils"
 import { Logger } from "dc-logging"
 import {
   getSubDirectories,
+  checkFileExists,
   loadLogic,
   saveFilesToNewDir,
   removeDir
@@ -37,24 +38,10 @@ export default class Bankroller extends EventEmitter implements IBankroller {
   private _pingService: IPingService
   constructor() {
     super()
-    const {
-      platformId,
-      gasPrice: price,
-      gasLimit: limit,
-      web3HttpProviderUrl: httpProviderUrl,
-      contracts,
-      walletName,
-      blockchainNetwork
-    } = config.default
+    const { platformId, blockchainNetwork } = config.default
     this._platformId = platformId
     // this._platformIdHash = createHash(platformId)
     this._blockchainNetwork = blockchainNetwork
-    this._eth = new Eth({
-      walletName,
-      httpProviderUrl,
-      ERC20ContractInfo: contracts.ERC20,
-      gasParams: { price, limit }
-    })
 
     this.gamesMap = new Map()
     this._loadedDirectories = new Set()
@@ -68,10 +55,31 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     return this._platformId
   }
   async start(transportProvider: IMessagingProvider): Promise<any> {
+    const {
+      platformId,
+      gasPrice: price,
+      gasLimit: limit,
+      web3HttpProviderUrl: httpProviderUrl,
+
+      walletName,
+      blockchainNetwork,
+      privateKey,
+      getContracts
+    } = config.default
+
+    console.log(blockchainNetwork, httpProviderUrl)
+
+    const ERC20ContractInfo = (await getContracts()).ERC20
+    this._eth = new Eth({
+      walletName,
+      httpProviderUrl,
+      ERC20ContractInfo,
+      gasParams: { price, limit }
+    })
     if (this._started) {
       throw new Error("Bankroller allready started")
     }
-    const { privateKey } = config.default
+
     this._transportProvider = transportProvider
 
     await this._eth.initAccount(privateKey)
@@ -118,16 +126,39 @@ export default class Bankroller extends EventEmitter implements IBankroller {
 
   async uploadGame({
     name,
-    files
+    files,
+    reload = false
   }: {
     name: string
     files: { fileName: string; fileData: Buffer | string }[]
+    reload?: boolean
   }): Promise<{ status: string }> {
     const DAppsPath = config.default.DAppsPath
     const newDir = path.join(DAppsPath, name)
+
+    if (reload && this._loadedDirectories.has(newDir)) {
+      this.unloadGame(name)
+    }
+
+    if (this._loadedDirectories.has(newDir)) {
+      throw new Error(`Directory ${newDir} allready created`)
+    }
+
     saveFilesToNewDir(newDir, files)
+    this._loadedDirectories.add(newDir)
     if (!(await this.tryLoadDApp(newDir))) {
       removeDir(newDir)
+      this._loadedDirectories.delete(newDir)
+    }
+    return { status: "ok" }
+  }
+
+  unloadGame(name: string) {
+    const DAppsPath = config.default.DAppsPath
+    const newDir = path.join(DAppsPath, name)
+    if (this.tryUnloadDApp(newDir)) {
+      removeDir(newDir)
+      this._loadedDirectories.delete(newDir)
     }
     return { status: "ok" }
   }
@@ -168,11 +199,10 @@ export default class Bankroller extends EventEmitter implements IBankroller {
         const contract =
           manifestVontract || getContract(this._blockchainNetwork)
 
-
-        if (contract.address && contract.address.indexOf('http') > -1) {
-          contract.address = await fetch(contract.address.split('->')[0])
-          .then( r => r.json() )
-          .then( r => r[contract.address.split('->')[1]] )
+        if (contract.address && contract.address.indexOf("http") > -1) {
+          contract.address = await fetch(contract.address.split("->")[0])
+            .then(r => r.json())
+            .then(r => r[contract.address.split("->")[1]])
         }
 
         const dapp = new DApp({
@@ -197,5 +227,36 @@ export default class Bankroller extends EventEmitter implements IBankroller {
       logger.debug(error)
     }
     return null
+  }
+
+  tryUnloadDApp(directoryPath: string): boolean {
+    if (!this._loadedDirectories.has(directoryPath)) {
+      throw new Error(`Directory ${directoryPath} not loadeed`)
+    }
+
+    const now = Date.now()
+
+    try {
+      const { gameLogicFunction, manifest } = loadLogic(directoryPath)
+      if (gameLogicFunction) {
+        const { disabled, slug } = manifest
+        if (!disabled) {
+          // const dapp = this.gamesMap.get(slug)
+          // await dapp.stopServer() // TODO: !!! need code
+          this.gamesMap.delete(slug)
+
+          logger.debug(
+            `Unload Dapp ${directoryPath}, took ${Date.now() - now} ms`
+          )
+        } else {
+          logger.debug(`DApp ${slug} disabled - skip`)
+        }
+
+        return true
+      }
+    } catch (error) {
+      logger.debug(error)
+      return false
+    }
   }
 }
