@@ -85,7 +85,9 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     await this._eth.initAccount(privateKey)
     await this._eth.saveWallet(privateKey)
     const ethAddress = this._eth.getAccount().address.toLowerCase()
-
+    console.log(ethAddress)
+    const bl = await this._eth.getBalances()
+    console.log(bl)
     this._apiRoomAddress = this.getApiRoomAddress(ethAddress)
     transportProvider.exposeSevice(this._apiRoomAddress, this, true)
 
