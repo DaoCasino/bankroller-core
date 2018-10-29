@@ -48,9 +48,11 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     this.tryLoadDApp = this.tryLoadDApp.bind(this)
     ;(global as any).DCLib = new GlobalGameLogicStore()
   }
+
   getApiRoomAddress(ethAddress: string) {
     return `${this._platformId}_${this._blockchainNetwork}_${ethAddress}`
   }
+
   getPlatformId(): string {
     return this._platformId
   }
@@ -66,8 +68,6 @@ export default class Bankroller extends EventEmitter implements IBankroller {
       privateKey,
       getContracts
     } = config.default
-
-    console.log(blockchainNetwork, httpProviderUrl)
 
     const ERC20ContractInfo = (await getContracts()).ERC20
     this._eth = new Eth({
@@ -85,9 +85,6 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     await this._eth.initAccount(privateKey)
     await this._eth.saveWallet(privateKey)
     const ethAddress = this._eth.getAccount().address.toLowerCase()
-    console.log(ethAddress)
-    const bl = await this._eth.getBalances()
-    console.log(bl)
     this._apiRoomAddress = this.getApiRoomAddress(ethAddress)
     transportProvider.exposeSevice(this._apiRoomAddress, this, true)
 
