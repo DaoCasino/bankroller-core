@@ -11,7 +11,7 @@ export const checkFileExists = (
 ): string | null => {
   for (let i = 0; i < maybeExtension.length; i++) {
     const pathToFile = `${fileName}${maybeExtension[i]}`
-    if (fs.existsSync(pathToFile)) {
+    if (fs.existsSync(pathToFile) ) {
       return pathToFile
     }
   }
@@ -22,6 +22,7 @@ export const getSubDirectories = (directoryPath: string): string[] => {
   return fs
     .readdirSync(directoryPath)
     .map(subDir => path.join(directoryPath, subDir))
+    .filter(subDir => (fs.lstatSync(subDir).isDirectory()) && subDir)
 }
 
 export const removeDir = (directoryPath: string): void => {

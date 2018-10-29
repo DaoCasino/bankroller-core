@@ -60,7 +60,14 @@ const suite = describe("Bankroller Tests", async () => {
   })
 
   it('Test error reload game', async() => {
-    const result = await bankroller.uploadGame(game)
+    let error
+      try {
+        await bankroller.uploadGame(game)
+      } catch (e) {
+        error = e
+      }
+
+      expect(error).to.be.an.instanceof(Error)
   })
 
   it('Test unload game', () => {

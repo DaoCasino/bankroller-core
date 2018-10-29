@@ -9,7 +9,7 @@ export interface GameInstanceInfo {
 // export interface BankrollerStart {
 
 // }
-export interface IBankroller {
+export interface IBankroller extends NodeJS.EventEmitter {
   id: string
   getGames: () => { name: string }[]
   uploadGame: (
