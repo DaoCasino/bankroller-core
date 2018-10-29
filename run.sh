@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+$PRIVATE_KEY=$3
+$NETWORK=$4
+
 case "$1" in
 "local")
     export ACCOUNT_PRIVATE_KEY=0x1882c2a6d0df1210d643f82f69d0bdfa0e2e1eaa963384826a4f24d5b5529e10
@@ -20,6 +23,13 @@ case "$1" in
     export DAPPS_PATH=./data/dapps/
     export PLATFORM_ID=DC_sdk
     echo "rinkeby"
+    ;;
+"cli-start")
+    export ACCOUNT_PRIVATE_KEY=$3
+    export DC_NETWORK=$4
+    export DAPPS_PATH=./data/dapps/
+    export PLATFORM_ID=DC_sdk
+    echo "cli-start"
     ;;
 *)
     echo "Undefined network"

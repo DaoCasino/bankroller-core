@@ -68,7 +68,6 @@ export default class Bankroller extends EventEmitter implements IBankroller {
       privateKey,
       getContracts
     } = config.default
-
     const ERC20ContractInfo = (await getContracts()).ERC20
     this._eth = new Eth({
       walletName,

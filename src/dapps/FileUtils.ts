@@ -35,7 +35,7 @@ export const saveFilesToNewDir = (
   fs.mkdirSync(directoryPath)
   try {
     files.forEach(file => {
-      fs.writeFileSync(path.join(directoryPath, file.fileName), file.fileData)
+      fs.writeFileSync(path.join(directoryPath, file.fileName), file.fileData, 'utf-8')
     })
   } catch (error) {
     fs.rmdirSync(directoryPath)

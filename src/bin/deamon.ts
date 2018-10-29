@@ -25,11 +25,7 @@ function startDeamon(
   privateKey: string,
   cmd: deamon.Command
 ): void {
-  process.env.DAPPS_PATH = cmd.dappPath || "./data/dapps/"
-  process.env.DC_NETWORK = network
-  process.env.ACCOUNT_PRIVATE_KEY = privateKey
-
-  const deamonRun = spawn(`npm run start:${network}`, [], {
+  const deamonRun = spawn(`sh ./run.sh cli-start src/index.ts ${privateKey} ${network}`, [], {
     cwd: path.join(__dirname, "../.."),
     stdio: "inherit",
     shell: true
