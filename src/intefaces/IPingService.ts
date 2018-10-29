@@ -6,11 +6,12 @@ export interface PingServiceParams  {
     ethAddress: string
 }
 
-export interface IPingService {
+export interface IPingService extends NodeJS.EventEmitter {
     ping: () => PingServiceParams
     isStarted: () => boolean
-    on: (event: string, listener: (data: any) => void) => void
-    emit: (event: string, data: any) => void
+    // off: (event: string) => void
+    // on: (event: string, listener: (data: any) => void) => void
+    // emit: (event: string, data: any) => void
     stop: () => void
     start: (transportProvider: IMessagingProvider, params: PingServiceParams) => IPingService
 }

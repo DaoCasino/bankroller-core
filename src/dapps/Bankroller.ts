@@ -134,7 +134,6 @@ export default class Bankroller extends EventEmitter implements IBankroller {
   }): Promise<{ status: string }> {
     const DAppsPath = config.default.DAppsPath
     const newDir = path.join(DAppsPath, name)
-
     if (reload && this._loadedDirectories.has(newDir)) {
       this.unloadGame(name)
     }
@@ -175,9 +174,9 @@ export default class Bankroller extends EventEmitter implements IBankroller {
   }
   async tryLoadDApp(directoryPath: string): Promise<DApp | null> {
     const now = Date.now()
-    if (this._loadedDirectories.has(directoryPath)) {
-      throw new Error(`Directory ${directoryPath} allready loadeed`)
-    }
+    // if (this._loadedDirectories.has(directoryPath)) {
+    //   throw new Error(`Directory ${directoryPath} allready loadeed`)
+    // }
     try {
       const { gameLogicFunction, manifest } = loadLogic(directoryPath)
       const roomProvider = this._transportProvider
