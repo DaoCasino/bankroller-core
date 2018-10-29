@@ -1,6 +1,6 @@
 /* global DCLib */
 
-DCLib.defineDAppLogic("slotstage_v1", function() {
+DCLib.defineDAppLogic("slot_game_E", function() {
   const S_ROWS = 3
   const S_COLS = 5
 
