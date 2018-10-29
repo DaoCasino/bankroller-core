@@ -1,6 +1,6 @@
-DCLib.defineDAppLogic("game_test_v1", function() {
+module.exports = function () {
   return {
-    play: function(userBet, gameData, randoms) {
+    play: function (userBet, gameData, randoms) {
       const userNum = gameData[0]
       const randomNum = randoms[0]
 
@@ -8,11 +8,11 @@ DCLib.defineDAppLogic("game_test_v1", function() {
 
       // if user win
       if (userNum * 1 === randomNum * 1) {
-        profit = userBet * 2
+        profit = userBet * 2 - userBet
       }
 
       // return player profit
       return profit
     }
   }
-})
+}

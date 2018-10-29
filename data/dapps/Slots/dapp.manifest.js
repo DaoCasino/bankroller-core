@@ -7,9 +7,9 @@ const addressFunctions = {
 
 module.exports = {
   slug: "slot_game_E",
-
+  disabled: true,
   // if you want to change filename  - change it too in /scripts/config/paths
-  logic: "./slot_logic.js",
+  logic: "./slot_logic",
 
   about: "./README.md",
 

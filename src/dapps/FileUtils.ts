@@ -22,6 +22,7 @@ export const getSubDirectories = (directoryPath: string): string[] => {
   return fs
     .readdirSync(directoryPath)
     .map(subDir => path.join(directoryPath, subDir))
+    .filter(subDir => fs.lstatSync(subDir).isDirectory() && subDir)
 }
 
 export const removeDir = (directoryPath: string): void => {
@@ -42,12 +43,12 @@ export const saveFilesToNewDir = (
   }
 }
 
-export const loadLogic = (
+export const loadLogic = async (
   directoryPath: string
-): {
+): Promise<{
   manifest: any
   gameLogicFunction: () => IGameLogic
-} => {
+}> => {
   const manifestPath: string = `${directoryPath}/${MANIFEST_FILENAME}`
   const manifestFoundPath = checkFileExists(manifestPath, [".js", "", ".json"])
   if (!manifestFoundPath) {
@@ -66,12 +67,17 @@ export const loadLogic = (
     return { manifest, gameLogicFunction: null }
   }
   const logicPath: string = path.join(directoryPath, manifest.logic)
-  const logicFoundPath = checkFileExists(logicPath, [".js", "", ".json"])
+  const logicFoundPath = checkFileExists(logicPath, [
+    ".js",
+    ".mjs",
+    "",
+    ".json"
+  ])
   if (!logicFoundPath) {
     throw new Error(`Manifest file not found ${logicFoundPath}`)
   }
-  require(logicFoundPath)
-  const gameLogicFunction = (global as any).DAppsLogic[manifest.slug]
+
+  const gameLogicFunction = require(logicFoundPath)
   if (!gameLogicFunction) {
     throw new Error(`Error loading logic from directory ${directoryPath}`)
   }

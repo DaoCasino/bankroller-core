@@ -1,4 +1,4 @@
-DCLib.defineDAppLogic("DCGame_FTE_v1", function() {
+module.exports = function() {
   return {
     play: function(userBet, gameData, randoms) {
       const userNum = gameData[0]
@@ -15,4 +15,4 @@ DCLib.defineDAppLogic("DCGame_FTE_v1", function() {
       return profit
     }
   }
-})
+}

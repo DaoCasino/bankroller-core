@@ -10,7 +10,7 @@ module.exports = {
   disabled: false,
 
   // if you want to change filename  - change it too in /scripts/config/paths
-  logic: "./dapp.logic.js",
+  logic: "./dapp.logic",
 
   about: "./README.md",
 
