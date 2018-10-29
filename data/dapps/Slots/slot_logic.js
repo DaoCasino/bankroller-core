@@ -1,6 +1,6 @@
 /* global DCLib */
 
-DCLib.defineDAppLogic("slot_game_E", function() {
+module.exports = function() {
   const S_ROWS = 3
   const S_COLS = 5
 
@@ -804,4 +804,4 @@ DCLib.defineDAppLogic("slot_game_E", function() {
       return { profit, gameData: returnGameData }
     }
   }
-})
+}
