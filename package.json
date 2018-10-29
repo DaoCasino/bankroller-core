@@ -34,7 +34,7 @@
     "dc-core": "^0.1.1",
     "dc-ethereum-utils": "^0.1.1",
     "dc-logging": "^0.1.1",
-    "dc-messaging": "^0.1.1",
+    "dc-messaging": "^0.1.2",
     "mocha": "^3.2.0",
     "node-fetch": "^2.2.0",
     "rimraf": "2.6.2"
