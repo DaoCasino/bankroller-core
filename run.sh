@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-$PRIVATE_KEY=$3
-$NETWORK=$4
-
 case "$1" in
 "local")
     export ACCOUNT_PRIVATE_KEY=0x1882c2a6d0df1210d643f82f69d0bdfa0e2e1eaa963384826a4f24d5b5529e10
