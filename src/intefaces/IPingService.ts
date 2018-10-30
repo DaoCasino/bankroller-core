@@ -9,9 +9,6 @@ export interface PingServiceParams  {
 export interface IPingService extends NodeJS.EventEmitter {
     ping: () => PingServiceParams
     isStarted: () => boolean
-    // off: (event: string) => void
-    // on: (event: string, listener: (data: any) => void) => void
-    // emit: (event: string, data: any) => void
     stop: () => void
     start: (transportProvider: IMessagingProvider, params: PingServiceParams) => IPingService
 }
