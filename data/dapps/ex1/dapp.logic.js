@@ -8,7 +8,7 @@ module.exports = function() {
 
       // if user win
       if (userNum * 1 === randomNum * 1) {
-        profit = userBet * 2
+        profit = userBet * 2 - userBet
       }
 
       // return player profit
