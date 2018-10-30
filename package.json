@@ -1,6 +1,6 @@
 {
   "name": "bankroller-core",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Core bankroller functionality",
   "main": "./lib/index",
   "bin": {
@@ -34,7 +34,7 @@
     "dc-core": "^0.1.6",
     "dc-ethereum-utils": "^0.1.6",
     "dc-logging": "^0.1.6",
-    "dc-messaging": "^0.1.6",
+    "dc-messaging": "^0.1.4",
     "mocha": "^3.2.0",
     "nodemon": "^1.18.5",
     "node-fetch": "^2.2.0",
