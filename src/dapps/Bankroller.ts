@@ -196,7 +196,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
         }
         const contract =
           manifestContract || getContract(this._blockchainNetwork)
-
+        // TODO this should be placed somewhere else
         if (contract.address && contract.address.indexOf("http") > -1) {
           contract.address = await fetch(contract.address.split("->")[0])
             .then(r => r.json())
