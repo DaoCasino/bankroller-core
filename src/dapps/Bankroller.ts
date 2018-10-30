@@ -150,10 +150,10 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     return { status: "ok" }
   }
 
-  unloadGame(name: string) {
+  async unloadGame(name: string) {
     const DAppsPath = config.default.DAppsPath
     const newDir = path.join(DAppsPath, name)
-    if (this.tryUnloadDApp(newDir)) {
+    if (await this.tryUnloadDApp(newDir)) {
       removeDir(newDir)
       this._loadedDirectories.delete(newDir)
     }
@@ -177,7 +177,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     //   throw new Error(`Directory ${directoryPath} allready loadeed`)
     // }
     try {
-      const { gameLogicFunction, manifest } = loadLogic(directoryPath)
+      const { gameLogicFunction, manifest } = await loadLogic(directoryPath)
       const roomProvider = this._transportProvider
 
       if (gameLogicFunction) {
@@ -226,7 +226,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     return null
   }
 
-  tryUnloadDApp(directoryPath: string): boolean {
+  async tryUnloadDApp(directoryPath: string): Promise<boolean> {
     if (!this._loadedDirectories.has(directoryPath)) {
       throw new Error(`Directory ${directoryPath} not loadeed`)
     }
@@ -234,7 +234,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     const now = Date.now()
 
     try {
-      const { gameLogicFunction, manifest } = loadLogic(directoryPath)
+      const { gameLogicFunction, manifest } = await loadLogic(directoryPath)
       if (gameLogicFunction) {
         const { disabled, slug } = manifest
         if (!disabled) {

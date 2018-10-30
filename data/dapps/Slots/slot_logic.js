@@ -1,6 +1,6 @@
 /* global DCLib */
 
-DCLib.defineDAppLogic("slot_game_E", function() {
+module.exports = function() {
   const S_ROWS = 3
   const S_COLS = 5
 
@@ -797,12 +797,11 @@ DCLib.defineDAppLogic("slot_game_E", function() {
       // randoms.push( DCLib.numFromHash(parts[6], 0, 4) );
       // randoms.push( DCLib.numFromHash(parts[7], 0, 4) );
       // randoms.push( DCLib.numFromHash(parts[8], 0, 4) );
-
-      let gameData = slotGame.spin(totalBet / S_LINES.length, randoms)
+      let returnGameData = slotGame.spin(totalBet / S_LINES.length, randoms)
 
       const profit = (res.win - totalBet) * creditprice
 
-      return { profit, gameData }
+      return { profit, gameData: returnGameData }
     }
   }
-})
+}
