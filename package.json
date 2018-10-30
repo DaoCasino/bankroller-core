@@ -40,5 +40,6 @@
     "node-fetch": "^2.2.0",
     "rimraf": "2.6.2"
   },
+  
   "gitHead": "865d20c921eb00208778bbdcbb47fe95c2b4ed38"
 }
