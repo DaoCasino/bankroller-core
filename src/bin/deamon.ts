@@ -23,22 +23,14 @@ function getNetwork(cmd: deamon.Command): string {
 function startDeamon(
   network: string,
   privateKey: string,
-  cmd: deamon.Command
+  options: deamon.Command
 ): void {
-  const deamonRun = spawn(`sh ./run.sh cli-start src/index.ts ${privateKey} ${network}`, [], {
-    cwd: path.join(__dirname, "../.."),
-    stdio: "inherit",
-    shell: true
-  })
+  process.env.DC_NETWORK = network
+  process.env.ACCOUNT_PRIVATE_KEY = privateKey
+  process.env.DAPPS_FULL_PATH = options.dappPath || path.join(__dirname, '../../data/dapps/')
+  process.env.PLATFORM_ID = options.platformid
 
-  deamonRun.on("error", error => log.error(error))
-  deamonRun.on("exit", code => {
-    if (code !== 0) {
-      log.error(`App crashed with exit code: ${code}`)
-      process.exitCode = code
-      process.kill(process.pid, "SIGTERM")
-    }
-  })
+  require('../index')
 }
 
 deamon
@@ -54,6 +46,7 @@ deamon
   .option("-r, --ropsten", "start bankroller-core with ropsten network")
   .option("-n, --rinkeby", "start bankroller-core with rinkeby network")
   .option("-d, --dapp-path <path>", "path to dapp logic in bankroller")
+  .option('-p, --platformid <platformid>', 'Input platform id for start')
   .action((privateKey, cmd) => {
     const networt: string = getNetwork(cmd)
     startDeamon(networt, privateKey, cmd)
