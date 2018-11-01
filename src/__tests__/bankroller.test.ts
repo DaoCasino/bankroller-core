@@ -50,26 +50,13 @@ const checkSize = (game: GameUpload): void => {
   })
 }
 
-
-const startBankroller = async bankroller => {
-  try {
-    const bankrollerTransportProvider = await IpfsTransportProvider.create()
-    await bankroller.start(bankrollerTransportProvider)
-  } catch (error) {
-    log.error(error)
-    process.exitCode = 1
-    process.kill(process.pid, "SIGTERM")
-  }
-}
-
-const suite = describe("Bankroller Tests", async () => {
+const bankrollerTest = (name, provider) => describe(name, async () => {
   let bankroller
   let game
-  let provider
 
   it("Start bankroller", async () => {
-    provider = await IpfsTransportProvider.create()
-    expect(provider).to.be.an.instanceof(IpfsTransportProvider)
+    // provider = await IpfsTransportProvider.create()
+    // expect(provider).to.be.an.instanceof(IpfsTransportProvider)
     bankroller = await new Bankroller().start(provider)
     /* tslint:disable-next-line */
     expect(bankroller.isStarted()).to.be.true
@@ -128,5 +115,14 @@ const suite = describe("Bankroller Tests", async () => {
     /* tslint:disable-next-line */
     expect(bankroller.isStarted()).to.be.false
     await provider.destroy()
+  })
+})
+
+describe('Bankroller providers', () => {
+  it('IPFS', async () => {
+    const provider = await IpfsTransportProvider.create()
+    expect(provider).to.be.an.instanceof(IpfsTransportProvider)
+
+    bankrollerTest('Bankroller -> IPFS', provider)
   })
 })
