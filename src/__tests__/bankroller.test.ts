@@ -6,7 +6,7 @@ import fs from "fs"
 import path from "path"
 import { IpfsTransportProvider } from "dc-messaging"
 import { Logger } from "dc-logging"
-import { GameUpload } from "../intefaces/IBankroller"
+import { GameUpload, GameInstanceInfo } from "../intefaces/IBankroller"
 
 const log = new Logger("Bankroller test")
 
@@ -88,6 +88,11 @@ const suite = describe("Bankroller Tests", async () => {
     expect(list.length !== 0).to.be.true
     /* tslint:disable-next-line */
     expect(list.findIndex(item => item.name === EXAMPLE_GAME_NAME) !== -1).to.be.true
+  })
+
+  it("Get game instances", () => {
+    const instances: GameInstanceInfo[] = bankroller.getGameInstances(EXAMPLE_GAME_NAME)
+    expect(instances).to.be.a('array')
   })
 
   it("Success reload game", async () => {
