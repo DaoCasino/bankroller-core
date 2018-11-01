@@ -4,7 +4,7 @@ import { expect } from "chai"
 import { config } from "dc-configs"
 import fs from "fs"
 import path from "path"
-import { IpfsTransportProvider } from "dc-messaging"
+import { IpfsTransportProvider, WebSocketTransportProvider } from "dc-messaging"
 import { Logger } from "dc-logging"
 import { GameUpload, GameInstanceInfo } from "../intefaces/IBankroller"
 
@@ -124,5 +124,12 @@ describe('Bankroller providers', () => {
     expect(provider).to.be.an.instanceof(IpfsTransportProvider)
 
     bankrollerTest('Bankroller -> IPFS', provider)
+  })
+
+  it('WebSockets', () => {
+    const provider = WebSocketTransportProvider.create()
+    expect(provider).to.be.an.instanceof(WebSocketTransportProvider)
+
+    bankrollerTest('Bankroller -> WebSocket', provider)
   })
 })
