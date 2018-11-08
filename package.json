@@ -1,12 +1,13 @@
 {
   "name": "bankroller-core",
-  "version": "0.1.1",
+  "version": "0.1.7",
   "description": "Core bankroller functionality",
   "main": "./lib/index",
   "bin": {
     "bankroller-core": "bin/deamon"
   },
   "scripts": {
+    "start": "node lib/index.js",
     "tsmon": "nodemon --delay 2 --inspect --watch ../ --ignore ../dc-protocol -r ts-node/register --",
     "tsmon:docker": "nodemon --delay 2 --inspect --watch ../ --ignore ../dc-protocol --",
     "start:local": "sh run.sh local src/index.ts",
@@ -30,14 +31,16 @@
   "dependencies": {
     "chai": "^4.1.2",
     "commander": "^2.19.0",
-    "dc-configs": "^0.1.4",
-    "dc-core": "^0.1.4",
-    "dc-ethereum-utils": "^0.1.4",
-    "dc-logging": "^0.1.4",
+    "dc-configs": "^0.1.6",
+    "dc-core": "^0.1.6",
+    "dc-ethereum-utils": "^0.1.6",
+    "dc-logging": "^0.1.6",
     "dc-messaging": "^0.1.4",
     "mocha": "^3.2.0",
+    "nodemon": "^1.18.5",
     "node-fetch": "^2.2.0",
     "rimraf": "2.6.2"
   },
+
   "gitHead": "865d20c921eb00208778bbdcbb47fe95c2b4ed38"
 }

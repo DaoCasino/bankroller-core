@@ -1,6 +1,6 @@
-module.exports = function() {
+module.exports = function () {
   return {
-    play: function(userBet, gameData, randoms) {
+    play: function (userBet, gameData, randoms) {
       const userNum = gameData[0]
       const randomNum = randoms[0]
 

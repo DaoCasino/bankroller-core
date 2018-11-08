@@ -3,7 +3,7 @@ import fs from "fs"
 import path from "path"
 import fetch from "node-fetch"
 import { DApp, GlobalGameLogicStore } from "dc-core"
-import { IpfsTransportProvider, IMessagingProvider } from "dc-messaging"
+import { IMessagingProvider } from "dc-messaging"
 import { Eth } from "dc-ethereum-utils"
 import { Logger } from "dc-logging"
 import {
@@ -17,7 +17,7 @@ import { EventEmitter } from "events"
 
 // import crypto from "crypto"
 
-import { IBankroller, GameInstanceInfo } from "../intefaces/IBankroller"
+import { IBankroller, GameInstanceInfo, GameUpload } from "../intefaces/IBankroller"
 
 import { PingService } from "./PingService"
 import { IPingService } from "../intefaces/IPingService"
@@ -25,6 +25,8 @@ import { IPingService } from "../intefaces/IPingService"
 const logger = new Logger("Bankroller:")
 
 export default class Bankroller extends EventEmitter implements IBankroller {
+  public static STATUS_SUCCESS: string = "ok"
+  public static STATUS_FAILURE: string = "fail"
   private _started: boolean
   private _loadedDirectories: Set<string>
   private _eth: Eth
@@ -45,16 +47,20 @@ export default class Bankroller extends EventEmitter implements IBankroller {
 
     this.gamesMap = new Map()
     this._loadedDirectories = new Set()
-    this.tryLoadDApp = this.tryLoadDApp.bind(this)
+    // this.tryLoadDApp = this.tryLoadDApp.bind(this)
+    // this.tryUnloadDApp = this.tryUnloadDApp.bind(this)
     ;(global as any).DCLib = new GlobalGameLogicStore()
   }
-  getApiRoomAddress(ethAddress: string) {
+
+  getApiRoomAddress(ethAddress: string): string {
     return `${this._platformId}_${this._blockchainNetwork}_${ethAddress}`
   }
+
   getPlatformId(): string {
     return this._platformId
   }
-  async start(transportProvider: IMessagingProvider): Promise<any> {
+
+  async start(transportProvider: IMessagingProvider): Promise<IBankroller> {
     const {
       platformId,
       gasPrice: price,
@@ -82,7 +88,6 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     await this._eth.initAccount(privateKey)
     await this._eth.saveWallet(privateKey)
     const ethAddress = this._eth.getAccount().address.toLowerCase()
-
     this._apiRoomAddress = this.getApiRoomAddress(ethAddress)
     transportProvider.exposeSevice(this._apiRoomAddress, this, true)
 
@@ -112,12 +117,19 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     return this
   }
 
+  isStarted(): boolean {
+    return this._started
+  }
+
   async stop(): Promise<boolean> {
     await this._pingService.stop()
     const status = await this._transportProvider.stopService(
       this._apiRoomAddress
     )
-    logger.info(`Bankroller stoped. Api address: ${this._apiRoomAddress}`)
+    if (status) {
+      logger.info(`Bankroller stoped. Api address: ${this._apiRoomAddress}`)
+      this._started = false
+    }
     return status
   }
 
@@ -125,39 +137,42 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     name,
     files,
     reload = false
-  }: {
-    name: string
-    files: { fileName: string; fileData: Buffer | string }[]
-    reload?: boolean
-  }): Promise<{ status: string }> {
-    const DAppsPath = config.default.DAppsPath
-    const newDir = path.join(DAppsPath, name)
+  }: GameUpload): Promise<{ status: string }> {
+    const DAppsPath: string = config.default.DAppsPath
+    const newDir: string = path.join(DAppsPath, name)
+    let status: string = Bankroller.STATUS_SUCCESS
 
     if (reload && this._loadedDirectories.has(newDir)) {
-      this.unloadGame(name)
+      await this.unloadGame(name)
     }
 
     if (this._loadedDirectories.has(newDir)) {
       throw new Error(`Directory ${newDir} allready created`)
     }
 
-    saveFilesToNewDir(newDir, files)
+    if (!saveFilesToNewDir(newDir, files)) {
+        throw new Error(`Error save files to ${newDir}`)
+    }
+
     this._loadedDirectories.add(newDir)
     if (!(await this.tryLoadDApp(newDir))) {
       removeDir(newDir)
       this._loadedDirectories.delete(newDir)
+      status = Bankroller.STATUS_FAILURE
     }
-    return { status: "ok" }
+    return { status }
   }
 
-  async unloadGame(name: string) {
+  async unloadGame(name: string): Promise<{ status: string }> {
     const DAppsPath = config.default.DAppsPath
     const newDir = path.join(DAppsPath, name)
+    let status = false
     if (await this.tryUnloadDApp(newDir)) {
       removeDir(newDir)
       this._loadedDirectories.delete(newDir)
+      status = true
     }
-    return { status: "ok" }
+    return { status: status ? Bankroller.STATUS_SUCCESS : Bankroller.STATUS_FAILURE  }
   }
 
   getGames(): { name: string }[] {
@@ -171,7 +186,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     }
     return dapp.getInstancesView()
   }
-  async tryLoadDApp(directoryPath: string): Promise<DApp | null> {
+  private async tryLoadDApp(directoryPath: string): Promise<DApp | null> {
     const now = Date.now()
     // if (this._loadedDirectories.has(directoryPath)) {
     //   throw new Error(`Directory ${directoryPath} allready loadeed`)
@@ -185,7 +200,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
           disabled,
           slug,
           rules,
-          contract: manifestVontract,
+          contract: manifestContract,
           getContract
         } = manifest
 
@@ -194,8 +209,8 @@ export default class Bankroller extends EventEmitter implements IBankroller {
           return null
         }
         const contract =
-          manifestVontract || getContract(this._blockchainNetwork)
-
+          manifestContract || getContract(this._blockchainNetwork)
+        // TODO this should be placed somewhere else
         if (contract.address && contract.address.indexOf("http") > -1) {
           contract.address = await fetch(contract.address.split("->")[0])
             .then(r => r.json())
@@ -226,7 +241,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     return null
   }
 
-  async tryUnloadDApp(directoryPath: string): Promise<boolean> {
+  private async tryUnloadDApp(directoryPath: string): Promise<boolean> {
     if (!this._loadedDirectories.has(directoryPath)) {
       throw new Error(`Directory ${directoryPath} not loadeed`)
     }

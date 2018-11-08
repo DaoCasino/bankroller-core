@@ -9,25 +9,11 @@ logger.debug('')
 logger.debug('-------------------------------')
 logger.debug('BANKROLLER NODE START          ')
 logger.debug('process.env.DC_NETWORK: ', process.env.DC_NETWORK)
+logger.debug('Bankroller private key', process.env.ACCOUNT_PRIVATE_KEY)
+logger.debug('DApps path', process.env.DAPPS_FULL_PATH || process.env.DAPPS_PATH)
 logger.debug('-------------------------------')
 logger.debug('')
 logger.debug('')
-
-// const rollbar_path = path.resolve('../../tools/rollbar/index.js')
-// if (fs.existsSync(rollbar_path)) {
-//   require(rollbar_path)()
-// }
-
-// process.on("unhandledRejection", (reason, promise) => {
-//   console.log("")
-//   console.log("")
-//   console.log("----------------------------------")
-//   console.log("  unhandledRejection - restart    ")
-//   console.log("----------------------------------")
-//   console.log("")
-//   console.log(reason, promise)
-//   process.exit()
-// })
 
 const startBankroller = async () => {
   try {
