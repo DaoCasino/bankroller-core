@@ -32,7 +32,8 @@ export const removeDir = (directoryPath: string): void => {
 export const saveFilesToNewDir = (
   directoryPath: string,
   files: { fileName: string; fileData: Buffer | string }[]
-) => {
+): boolean => {
+  let result: boolean = true
   fs.mkdirSync(directoryPath)
   try {
     files.forEach(file => {
@@ -40,7 +41,9 @@ export const saveFilesToNewDir = (
     })
   } catch (error) {
     fs.rmdirSync(directoryPath)
+    result = false
   }
+  return result
 }
 
 export const loadLogic = async (
