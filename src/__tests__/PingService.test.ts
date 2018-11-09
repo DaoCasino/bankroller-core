@@ -1,4 +1,4 @@
-import { IpfsTransportProvider } from "dc-messaging"
+import { IpfsTransportProvider, WebSocketTransportProvider } from "dc-messaging"
 import {
   PingServiceParams,
   IPingService
@@ -59,7 +59,7 @@ class RemoteClient extends EventEmitter {
   }
 }
 
-describe("PingService test", () => {
+describe("PingService IPFS test", () => {
   const pingService = []
   const pingProvider = []
   const timeout = 400
@@ -121,4 +121,70 @@ describe("PingService test", () => {
   it('Client leave room', async () => {
     await clientProvider.destroy()
   })
+})
+
+
+describe("PingService WebSocket test", () => {
+  const pingService = []
+  const pingProvider = []
+  const timeout = 400
+
+  let clientService
+  let clientProvider
+
+  const platformId = randomString()
+  it(`Start ${apiRoomAddress.length} clients with PingService`, async () => {
+    for (const address of apiRoomAddress) {
+      const provider = await WebSocketTransportProvider.create()
+      const params: PingServiceParams = {
+        platformId,
+        apiRoomAddress: address,
+        blockchainNetwork: randomString(),
+        ethAddress: randomString()
+      }
+      const service: IPingService = new PingService().start(provider, params)
+      /* tslint:disable-next-line  */
+      expect(service.isStarted()).to.be.true
+      pingService.push(service)
+      pingProvider.push(provider)
+    }
+  })
+
+  it(`Start client with ClientService`, async () => {
+    const provider = await WebSocketTransportProvider.create()
+    const peer: IPingService = await provider.getRemoteInterface<IPingService>(
+      platformId
+    )
+    console.log(peer)
+    const service = await new RemoteClient().start(peer)
+    clientService = service
+    clientProvider = provider
+
+    // setTimeout(() => {
+    //   const remoteProvider = pingProvider[0]
+    //   provider.emitRemote(platformIdHash, remoteProvider.getPeerId(), "tesetEmitRemote", { apiRoomAddress: 'test'})
+    // }, 400)
+
+    log.debug('Client Started')
+
+    await sleep(2000)
+  })
+
+  // it("Stop PingService", async () => {
+  //   for (const service of pingService) {
+  //     await service.stop()
+  //     /* tslint:disable-next-line */
+  //     expect(service.isStarted()).to.be.false
+  //   }
+
+  //   await sleep(1000)
+
+  //   for (const provider of pingProvider) {
+  //     await provider.destroy()
+  //   }
+  // })
+
+  // it('Client leave room', async () => {
+  //   await clientProvider.destroy()
+  // })
 })
