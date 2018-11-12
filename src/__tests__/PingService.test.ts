@@ -1,4 +1,4 @@
-import { IpfsTransportProvider, WebSocketTransportProvider } from "dc-messaging"
+import { IpfsTransportProvider, TransportFactory, ITransportFactory, IMessagingProvider, TransportType } from "dc-messaging"
 import {
   PingServiceParams,
   IPingService
@@ -59,9 +59,9 @@ class RemoteClient extends EventEmitter {
   }
 }
 
-describe("PingService IPFS test", () => {
-  const pingService = []
-  const pingProvider = []
+const test = (transportProviderFactory: ITransportFactory) => describe(`PingService ${transportProviderFactory.toString()} test`, () => {
+  const pingService: IPingService[] = []
+  const pingProvider: IMessagingProvider[] = []
   const timeout = 400
 
   let clientService
@@ -70,7 +70,7 @@ describe("PingService IPFS test", () => {
   const platformId = randomString()
   it(`Start ${apiRoomAddress.length} ipfs node with PingService`, async () => {
     for (const address of apiRoomAddress) {
-      const provider = await IpfsTransportProvider.create()
+      const provider = await transportProviderFactory.create()
       const params: PingServiceParams = {
         platformId,
         apiRoomAddress: address,
@@ -86,7 +86,7 @@ describe("PingService IPFS test", () => {
   })
 
   it(`Start ipfs node with ClientService`, async () => {
-    const provider = await IpfsTransportProvider.create()
+    const provider = await transportProviderFactory.create()
     const peer: IPingService = await provider.getRemoteInterface<IPingService>(
       platformId
     )
@@ -94,12 +94,7 @@ describe("PingService IPFS test", () => {
     clientService = service
     clientProvider = provider
 
-    // setTimeout(() => {
-    //   const remoteProvider = pingProvider[0]
-    //   provider.emitRemote(platformIdHash, remoteProvider.getPeerId(), "tesetEmitRemote", { apiRoomAddress: 'test'})
-    // }, 400)
-
-    log.debug('Client Started with PeerID - ', provider.getPeerId())
+    log.debug('Client started.')
 
     await sleep(2000)
   })
@@ -123,68 +118,6 @@ describe("PingService IPFS test", () => {
   })
 })
 
-
-describe("PingService WebSocket test", () => {
-  const pingService = []
-  const pingProvider = []
-  const timeout = 400
-
-  let clientService
-  let clientProvider
-
-  const platformId = randomString()
-  it(`Start ${apiRoomAddress.length} clients with PingService`, async () => {
-    for (const address of apiRoomAddress) {
-      const provider = await WebSocketTransportProvider.create()
-      const params: PingServiceParams = {
-        platformId,
-        apiRoomAddress: address,
-        blockchainNetwork: randomString(),
-        ethAddress: randomString()
-      }
-      const service: IPingService = new PingService().start(provider, params)
-      /* tslint:disable-next-line  */
-      expect(service.isStarted()).to.be.true
-      pingService.push(service)
-      pingProvider.push(provider)
-    }
-  })
-
-  it(`Start client with ClientService`, async () => {
-    const provider = await WebSocketTransportProvider.create()
-    const peer: IPingService = await provider.getRemoteInterface<IPingService>(
-      platformId
-    )
-    console.log(peer)
-    const service = await new RemoteClient().start(peer)
-    clientService = service
-    clientProvider = provider
-
-    // setTimeout(() => {
-    //   const remoteProvider = pingProvider[0]
-    //   provider.emitRemote(platformIdHash, remoteProvider.getPeerId(), "tesetEmitRemote", { apiRoomAddress: 'test'})
-    // }, 400)
-
-    log.debug('Client Started')
-
-    await sleep(2000)
-  })
-
-  // it("Stop PingService", async () => {
-  //   for (const service of pingService) {
-  //     await service.stop()
-  //     /* tslint:disable-next-line */
-  //     expect(service.isStarted()).to.be.false
-  //   }
-
-  //   await sleep(1000)
-
-  //   for (const provider of pingProvider) {
-  //     await provider.destroy()
-  //   }
-  // })
-
-  // it('Client leave room', async () => {
-  //   await clientProvider.destroy()
-  // })
-})
+const transportProviderFactory = new TransportFactory()
+transportProviderFactory.setType(TransportType.IPFS)
+test(transportProviderFactory)
