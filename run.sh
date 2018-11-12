@@ -33,4 +33,4 @@ case "$1" in
     ;;
 esac
 
-yarn run tsmon
+yarn run tsmon $2
