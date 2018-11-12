@@ -28,7 +28,7 @@ function startDeamon(
   process.env.DC_NETWORK = network
   process.env.ACCOUNT_PRIVATE_KEY = privateKey
   process.env.DAPPS_FULL_PATH = options.dappPath || path.join(__dirname, '../../data/dapps/')
-  process.env.PLATFORM_ID = options.platformid
+  process.env.PLATFORM_ID = options.platformid || ''
 
   require('../index')
 }
