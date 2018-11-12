@@ -59,7 +59,7 @@ class RemoteClient extends EventEmitter {
   }
 }
 
-const test = (transportProviderFactory: ITransportFactory) => describe(`PingService ${transportProviderFactory.toString()} test`, () => {
+const test = (transportProviderFactory: ITransportFactory) => describe(transportProviderFactory.toString() , () => {
   const pingService: IPingService[] = []
   const pingProvider: IMessagingProvider[] = []
   const timeout = 400
@@ -68,7 +68,7 @@ const test = (transportProviderFactory: ITransportFactory) => describe(`PingServ
   let clientProvider
 
   const platformId = randomString()
-  it(`Start ${apiRoomAddress.length} ipfs node with PingService`, async () => {
+  it(`Start ${apiRoomAddress.length} node with PingService`, async () => {
     for (const address of apiRoomAddress) {
       const provider = await transportProviderFactory.create()
       const params: PingServiceParams = {
@@ -85,7 +85,7 @@ const test = (transportProviderFactory: ITransportFactory) => describe(`PingServ
     }
   })
 
-  it(`Start ipfs node with ClientService`, async () => {
+  it(`Start node with ClientService`, async () => {
     const provider = await transportProviderFactory.create()
     const peer: IPingService = await provider.getRemoteInterface<IPingService>(
       platformId
@@ -118,6 +118,11 @@ const test = (transportProviderFactory: ITransportFactory) => describe(`PingServ
   })
 })
 
-const transportProviderFactory = new TransportFactory()
-transportProviderFactory.setType(TransportType.IPFS)
-test(transportProviderFactory)
+
+describe('PingService test', () => {
+  const factory = new TransportFactory()
+  factory.setType(TransportType.IPFS)
+  test(factory)
+  factory.setType(TransportType.WS)
+  test(factory)
+})
