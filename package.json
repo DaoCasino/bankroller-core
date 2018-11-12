@@ -19,7 +19,6 @@
     "clean": "rimraf lib",
     "reset": "rm -rf ./data/DB && rm -rf ./data/messaging",
     "test:l": "sh run.sh local   src/__tests__/game.test.ts",
-    "test:p": "sh run.sh local   src/__tests__/testProductionGame.test.ts",
     "test": "sh run.sh ropsten src/__tests__/game.test.ts",
     "test:ping": "mocha --timeout 99999999 -r ts-node/register src/__tests__/PingService.test.ts",
     "test:bankroller": "ACCOUNT_PRIVATE_KEY=0xf45ce6697b0dd472f5f290953274b279ad15ea956065b9a9a7b443eb8f8a7267 DC_NETWORK=ropsten DAPPS_PATH=./data/dapps/ PLATFORM_ID=DC_sdk mocha --timeout 99999999 -r ts-node/register src/__tests__/Bankroller.test.ts"
