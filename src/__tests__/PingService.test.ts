@@ -1,4 +1,4 @@
-import { IpfsTransportProvider, TransportFactory, ITransportFactory, IMessagingProvider, TransportType } from "dc-messaging"
+import { TransportFactory, ITransportFactory, IMessagingProvider, TransportType } from "dc-messaging"
 import {
   PingServiceParams,
   IPingService
