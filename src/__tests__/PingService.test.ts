@@ -120,9 +120,15 @@ const test = (transportProviderFactory: ITransportProviderFactory) => describe(t
 
 
 describe('PingService test', () => {
-  const factory = new TransportProviderFactory()
-  factory.setType(TransportType.IPFS)
-  test(factory)
-  factory.setType(TransportType.WS)
-  test(factory)
+  it('IPFS', () => {
+    const factory = new TransportProviderFactory(TransportType.IPFS)
+    test(factory)
+  })
+
+  it('WS', () => {
+    const factory = new TransportProviderFactory(TransportType.WS)
+    test(factory)
+  })
+  // factory.setType(TransportType.WS)
+  // test(factory)
 })
