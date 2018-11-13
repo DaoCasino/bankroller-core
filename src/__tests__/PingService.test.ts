@@ -1,4 +1,4 @@
-import { TransportFactory, ITransportFactory, IMessagingProvider, TransportType } from "dc-messaging"
+import { TransportProviderFactory, ITransportProviderFactory, IMessagingProvider, TransportType } from "dc-messaging"
 import {
   PingServiceParams,
   IPingService
@@ -59,7 +59,7 @@ class RemoteClient extends EventEmitter {
   }
 }
 
-const test = (transportProviderFactory: ITransportFactory) => describe(transportProviderFactory.toString() , () => {
+const test = (transportProviderFactory: ITransportProviderFactory) => describe(transportProviderFactory.toString() , () => {
   const pingService: IPingService[] = []
   const pingProvider: IMessagingProvider[] = []
   const timeout = 400
@@ -120,7 +120,7 @@ const test = (transportProviderFactory: ITransportFactory) => describe(transport
 
 
 describe('PingService test', () => {
-  const factory = new TransportFactory()
+  const factory = new TransportProviderFactory()
   factory.setType(TransportType.IPFS)
   test(factory)
   factory.setType(TransportType.WS)
