@@ -23,7 +23,7 @@ logger.debug('-------------------------------')
 logger.debug('')
 logger.debug('')
 
-const startBankroller = async () => {
+export const start = async () => {
   try {
     const factory = new TransportProviderFactory(transportType)
     const bankrollerTransportProvider = await factory.create()
@@ -35,4 +35,3 @@ const startBankroller = async () => {
   }
 }
 
-startBankroller()
