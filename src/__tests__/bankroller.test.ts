@@ -55,8 +55,6 @@ const bankrollerTest = (name, provider) => describe(name, async () => {
   let game
 
   it("Start bankroller", async () => {
-    // provider = await IpfsTransportProvider.create()
-    // expect(provider).to.be.an.instanceof(IpfsTransportProvider)
     bankroller = await new Bankroller().start(provider)
     /* tslint:disable-next-line */
     expect(bankroller.isStarted()).to.be.true

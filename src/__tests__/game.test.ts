@@ -2,7 +2,7 @@ import os from "os"
 
 import { BlockchainNetwork, setDefaultConfig } from "dc-configs"
 
-import { IpfsTransportProvider } from 'dc-messaging'
+import { TransportProviderFactory } from 'dc-messaging'
 import Bankroller from "../dapps/Bankroller"
 // TODO move to integration tests
 import DCWebapi from "dc-webapi"
@@ -17,7 +17,8 @@ const log = new Logger('Test:')
  */
 const startBankroller = async () => {
   try {
-    const bankrollerTransportProvider = await IpfsTransportProvider.create() // directTransportProvider // await IpfsTransportProvider.create()
+    const factory = new TransportProviderFactory()
+    const bankrollerTransportProvider = await factory.create()
     return await new Bankroller().start(bankrollerTransportProvider)
   } catch (error) {
     log.debug(error)
