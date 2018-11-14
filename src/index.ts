@@ -1,5 +1,5 @@
 import Bankroller from './dapps/Bankroller'
-import { TransportProviderFactory } from 'dc-messaging'
+import { TransportProviderFactory, IpfsTransportProvider } from 'dc-messaging'
 import { Logger } from 'dc-logging'
 import { config, TransportType } from 'dc-configs'
 
@@ -26,7 +26,7 @@ logger.debug('')
 export const start = async () => {
   try {
     const factory = new TransportProviderFactory(transportType)
-    const bankrollerTransportProvider = await factory.create()
+    const bankrollerTransportProvider = await IpfsTransportProvider.create()
     await new Bankroller().start(bankrollerTransportProvider)
   } catch (error) {
     logger.debug(error)
@@ -34,4 +34,3 @@ export const start = async () => {
     process.kill(process.pid, 'SIGTERM')
   }
 }
-
