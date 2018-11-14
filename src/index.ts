@@ -15,7 +15,7 @@ logger.debug('-------------------------------')
 logger.debug('')
 logger.debug('')
 
-const startBankroller = async () => {
+export const start = async () => {
   try {
     const bankrollerTransportProvider = await IpfsTransportProvider.create()
     await new Bankroller().start(bankrollerTransportProvider)
@@ -26,4 +26,3 @@ const startBankroller = async () => {
   }
 }
 
-startBankroller()
