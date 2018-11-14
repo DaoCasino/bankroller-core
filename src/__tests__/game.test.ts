@@ -4,8 +4,8 @@ import { BlockchainNetwork, setDefaultConfig } from "dc-configs"
 
 import { IpfsTransportProvider } from 'dc-messaging'
 import Bankroller from "../dapps/Bankroller"
-
-import DCWebapi from "../../../dc-webapi"
+// TODO move to integration tests
+import DCWebapi from "dc-webapi"
 import { GlobalGameLogicStore } from "dc-core"
 
 import { Logger } from 'dc-logging'
