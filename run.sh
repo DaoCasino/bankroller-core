@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
+export START_BANKROLLER=1
+
 case "$1" in
 "local")
-    export ACCOUNT_PRIVATE_KEY=0x1882c2a6d0df1210d643f82f69d0bdfa0e2e1eaa963384826a4f24d5b5529e10
+    export ACCOUNT_PRIVATE_KEY=0xae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f
     export DC_NETWORK=local
     export DAPPS_PATH=./data/dapps/
     echo "local"
