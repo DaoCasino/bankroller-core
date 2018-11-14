@@ -28,4 +28,4 @@ const bankrollerStart = async () => {
 if (process.env.START_BANKROLLER) bankrollerStart()
 
 
-export const start = bankrollerStart 
+export const start = bankrollerStart

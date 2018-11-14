@@ -1,10 +1,5 @@
 import path from "path"
-import { spawn } from "child_process"
-import { Logger } from "dc-logging"
 import deamon from "commander"
-import {start} from "../index"
-
-const log = new Logger("Deamon:")
 
 function getNetwork(cmd: deamon.Command): string {
   switch (true) {
@@ -28,10 +23,11 @@ function startDeamon(
 ): void {
   process.env.DC_NETWORK = network
   process.env.ACCOUNT_PRIVATE_KEY = privateKey
-  process.env.DAPPS_FULL_PATH = options.dappPath || path.join(__dirname, '../../data/dapps/')
+  process.env.DAPPS_FULL_PATH = path.join(__dirname, '../../data/dapps/')
   process.env.PLATFORM_ID = options.platformid || ''
 
-  start()
+  require('../index')
+  .start()
 }
 
 deamon
