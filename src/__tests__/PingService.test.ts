@@ -1,4 +1,4 @@
-import { IpfsTransportProvider } from "dc-messaging"
+import { TransportProviderFactory, ITransportProviderFactory, IMessagingProvider, TransportType } from "dc-messaging"
 import {
   PingServiceParams,
   IPingService
@@ -59,18 +59,18 @@ class RemoteClient extends EventEmitter {
   }
 }
 
-describe("PingService test", () => {
-  const pingService = []
-  const pingProvider = []
+const test = (transportProviderFactory: ITransportProviderFactory) => describe(transportProviderFactory.toString() , () => {
+  const pingService: IPingService[] = []
+  const pingProvider: IMessagingProvider[] = []
   const timeout = 400
 
   let clientService
   let clientProvider
 
   const platformId = randomString()
-  it(`Start ${apiRoomAddress.length} ipfs node with PingService`, async () => {
+  it(`Start ${apiRoomAddress.length} node with PingService`, async () => {
     for (const address of apiRoomAddress) {
-      const provider = await IpfsTransportProvider.create()
+      const provider = await transportProviderFactory.create()
       const params: PingServiceParams = {
         platformId,
         apiRoomAddress: address,
@@ -85,8 +85,8 @@ describe("PingService test", () => {
     }
   })
 
-  it(`Start ipfs node with ClientService`, async () => {
-    const provider = await IpfsTransportProvider.create()
+  it(`Start node with ClientService`, async () => {
+    const provider = await transportProviderFactory.create()
     const peer: IPingService = await provider.getRemoteInterface<IPingService>(
       platformId
     )
@@ -94,12 +94,7 @@ describe("PingService test", () => {
     clientService = service
     clientProvider = provider
 
-    // setTimeout(() => {
-    //   const remoteProvider = pingProvider[0]
-    //   provider.emitRemote(platformIdHash, remoteProvider.getPeerId(), "tesetEmitRemote", { apiRoomAddress: 'test'})
-    // }, 400)
-
-    log.debug('Client Started with PeerID - ', provider.getPeerId())
+    log.debug('Client started.')
 
     await sleep(2000)
   })
@@ -121,4 +116,19 @@ describe("PingService test", () => {
   it('Client leave room', async () => {
     await clientProvider.destroy()
   })
+})
+
+
+describe('PingService test', () => {
+  it('IPFS', () => {
+    const factory = new TransportProviderFactory(TransportType.IPFS)
+    test(factory)
+  })
+
+  it('WS', () => {
+    const factory = new TransportProviderFactory(TransportType.WS)
+    test(factory)
+  })
+  // factory.setType(TransportType.WS)
+  // test(factory)
 })

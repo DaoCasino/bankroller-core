@@ -33,6 +33,7 @@
     "dc-core": "^0.1.6",
     "dc-ethereum-utils": "^0.1.6",
     "dc-logging": "^0.1.6",
+    "dc-webapi": "^0.1.6",
     "dc-messaging": "^0.1.4",
     "mocha": "^3.2.0",
     "nodemon": "^1.18.5",

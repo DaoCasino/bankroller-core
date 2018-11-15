@@ -2,10 +2,10 @@ import os from "os"
 
 import { BlockchainNetwork, setDefaultConfig } from "dc-configs"
 
-import { IpfsTransportProvider } from 'dc-messaging'
+import { TransportProviderFactory } from 'dc-messaging'
 import Bankroller from "../dapps/Bankroller"
-
-import DCWebapi from "../../../dc-webapi"
+// TODO move to integration tests
+import DCWebapi from "dc-webapi"
 import { GlobalGameLogicStore } from "dc-core"
 
 import { Logger } from 'dc-logging'
@@ -17,7 +17,8 @@ const log = new Logger('Test:')
  */
 const startBankroller = async () => {
   try {
-    const bankrollerTransportProvider = await IpfsTransportProvider.create() // directTransportProvider // await IpfsTransportProvider.create()
+    const factory = new TransportProviderFactory()
+    const bankrollerTransportProvider = await factory.create()
     return await new Bankroller().start(bankrollerTransportProvider)
   } catch (error) {
     log.debug(error)
@@ -43,7 +44,7 @@ const WALLET_PWD = "1234"
 const playerPrivateKeys = {
   ropsten: "0x6A5AE922FDE5C8EE877E9470F45B8030F60C19038E9116DB8B343782D9593602",
   rinkeby: "0x6A5AE922FDE5C8EE877E9470F45B8030F60C19038E9116DB8B343782D9593602",
-  local: "0x96e554c13382babe7cbf4354da7616d1544730a187b2ab654ebcdfb15d169c24"
+  local: "0x82d052c865f5763aad42add438569276c00d3d88a2d062d36b2bae914d58b8c8"
 }
 
 
