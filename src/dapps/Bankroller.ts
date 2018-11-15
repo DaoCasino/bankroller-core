@@ -14,11 +14,7 @@ import {
   removeDir
 } from "./FileUtils"
 import { EventEmitter } from "events"
-
-// import crypto from "crypto"
-
 import { IBankroller, GameInstanceInfo, GameUpload } from "../intefaces/IBankroller"
-
 import { PingService } from "./PingService"
 import { IPingService } from "../intefaces/IPingService"
 

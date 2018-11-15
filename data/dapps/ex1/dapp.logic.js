@@ -5,10 +5,10 @@ module.exports = function() {
       const randomNum = randoms[0]
 
       let profit = -userBet
-
-      // if user win
-      if (userNum * 1 === randomNum * 1) {
-        profit = userBet * 2 - userBet
+      for(let i in randoms){
+        if (gameData[i]==randoms[i]) {
+          profit += userBet*2
+        }
       }
 
       // return player profit
