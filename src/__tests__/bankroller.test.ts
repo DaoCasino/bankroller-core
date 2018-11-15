@@ -4,7 +4,7 @@ import { expect } from "chai"
 import { config } from "dc-configs"
 import fs from "fs"
 import path from "path"
-import { IpfsTransportProvider, WebSocketTransportProvider } from "dc-messaging"
+import { TransportProviderFactory, ITransportProviderFactory, TransportType } from "dc-messaging"
 import { Logger } from "dc-logging"
 import { GameUpload, GameInstanceInfo } from "../intefaces/IBankroller"
 
@@ -55,8 +55,6 @@ const bankrollerTest = (name, provider) => describe(name, async () => {
   let game
 
   it("Start bankroller", async () => {
-    // provider = await IpfsTransportProvider.create()
-    // expect(provider).to.be.an.instanceof(IpfsTransportProvider)
     bankroller = await new Bankroller().start(provider)
     /* tslint:disable-next-line */
     expect(bankroller.isStarted()).to.be.true
@@ -120,15 +118,15 @@ const bankrollerTest = (name, provider) => describe(name, async () => {
 
 describe('Bankroller providers', () => {
   it('IPFS', async () => {
-    const provider = await IpfsTransportProvider.create()
-    expect(provider).to.be.an.instanceof(IpfsTransportProvider)
+    const factory = new TransportProviderFactory(TransportType.IPFS)
+    const provider = await factory.create()
 
     bankrollerTest('Bankroller -> IPFS', provider)
   })
 
-  it('WebSockets', () => {
-    const provider = WebSocketTransportProvider.create()
-    expect(provider).to.be.an.instanceof(WebSocketTransportProvider)
+  it('WebSockets', async () => {
+    const factory = new TransportProviderFactory(TransportType.WS)
+    const provider = await factory.create()
 
     bankrollerTest('Bankroller -> WebSocket', provider)
   })
