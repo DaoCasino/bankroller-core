@@ -2,22 +2,22 @@ import os from "os"
 
 import { BlockchainNetwork, setDefaultConfig } from "dc-configs"
 
-import { IpfsTransportProvider } from 'dc-messaging'
+import { TransportProviderFactory } from "dc-messaging"
 import Bankroller from "../dapps/Bankroller"
 // TODO move to integration tests
 import DCWebapi from "dc-webapi"
 import { GlobalGameLogicStore } from "dc-core"
 
-import { Logger } from 'dc-logging'
-const log = new Logger('Test:')
-
+import { Logger } from "dc-logging"
+const log = new Logger("Test:")
 
 /*
  * Start bankroller node
  */
 const startBankroller = async () => {
   try {
-    const bankrollerTransportProvider = await IpfsTransportProvider.create() // directTransportProvider // await IpfsTransportProvider.create()
+    const factory = new TransportProviderFactory()
+    const bankrollerTransportProvider = await factory.create()
     return await new Bankroller().start(bankrollerTransportProvider)
   } catch (error) {
     log.debug(error)
@@ -26,15 +26,12 @@ const startBankroller = async () => {
   }
 }
 
-
-
-
 /*
  * Run game test with dc-webapi
  */
 
 // Game settings for different networks
-const DAPP_PATH = '../../'+process.env.DAPPS_PATH
+const DAPP_PATH = "../../" + process.env.DAPPS_PATH
 const DAPP_FOLDERS = {
   ropsten: "FTE1/",
   local: "ex1/"
@@ -46,7 +43,6 @@ const playerPrivateKeys = {
   local: "0x82d052c865f5763aad42add438569276c00d3d88a2d062d36b2bae914d58b8c8"
 }
 
-
 const testGame = async blockchainNetwork => {
   // Init web api lib
   const webapi = await new DCWebapi({
@@ -57,12 +53,12 @@ const testGame = async blockchainNetwork => {
   // Init player account
   webapi.account.init(WALLET_PWD, playerPrivateKeys[blockchainNetwork])
   const balances = await webapi.account.getBalances()
-  log.debug('Balances', balances)
+  log.debug("Balances", balances)
 
   // Init game
-  const p = DAPP_PATH+DAPP_FOLDERS[blockchainNetwork]
-  const gameManifest = require(p+'dapp.manifest.js')
-  const logic = require(p+gameManifest.logic)
+  const p = DAPP_PATH + DAPP_FOLDERS[blockchainNetwork]
+  const gameManifest = require(p + "dapp.manifest.js")
+  const logic = require(p + gameManifest.logic)
 
   const game = webapi.createGame({
     name: gameManifest.slug,
@@ -71,19 +67,18 @@ const testGame = async blockchainNetwork => {
     rules: gameManifest.rules
   })
   await game.start()
-  
+
   // Find and connect to bankroller
-  await game.connect({ playerDeposit: 10, gameData: [0, 0] })
+  await game.connect({ playerDeposit: 10, gameData: "0x42" })
   // game.on('webapi::status', log.debug)
 
-
   // Play
-  const rolls:any = [
-    [1, [1,2,3], [[1,3],[1,3],[1,3]] ],
-    [2, [3,2,1], [[2,3],[1,2],[1,2]] ],
-    [3, [1,1],   [[1,1],[2,3]] ],
+  const rolls: any = [
+    [1, [1, 2, 3], [[1, 3], [1, 3], [1, 3]]],
+    [2, [3, 2, 1], [[2, 3], [1, 2], [1, 2]]],
+    [3, [1, 1], [[1, 1], [2, 3]]]
   ]
-  for(let i=0; i<rolls.length; i++){
+  for (let i = 0; i < rolls.length; i++) {
     log.debug(`Play ${i}`)
     const res = await game.play({
       userBet: Number(rolls[i][0]),
@@ -93,17 +88,13 @@ const testGame = async blockchainNetwork => {
     log.debug(`Play ${i} res:`, res)
   }
 
-
-  log.debug('End game')
+  log.debug("End game")
   const end = await game.disconnect()
-  log.debug('End game res:', end)
+  log.debug("End game res:", end)
 }
 
-
-(async function Run() {
+;(async function Run() {
   await startBankroller()
 
   testGame(process.env.DC_NETWORK)
 })()
-
-
