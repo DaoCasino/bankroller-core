@@ -15,7 +15,7 @@ const bankrollerStart = async () => {
   logger.debug('')
   logger.debug('-------------------------------')
   logger.debug('BANKROLLER NODE START          ')
-  logger.debug('Bankroller transport:', transportType)
+  logger.debug('Bankroller transport:', TransportType[transportType])
   logger.debug('process.env.DC_NETWORK: ', process.env.DC_NETWORK)
 
   logger.debug('Bankroller private key', process.env.ACCOUNT_PRIVATE_KEY)
@@ -26,7 +26,7 @@ const bankrollerStart = async () => {
 
   try {
     const factory = new TransportProviderFactory(transportType)
-    const bankrollerTransportProvider = await IpfsTransportProvider.create()
+    const bankrollerTransportProvider = await factory.create()
     return await new Bankroller().start(bankrollerTransportProvider)
   } catch (error) {
     logger.debug(error)
