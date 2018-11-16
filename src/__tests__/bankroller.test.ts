@@ -50,11 +50,14 @@ const checkSize = (game: GameUpload): void => {
   })
 }
 
-const bankrollerTest = (name, provider) => describe(name, async () => {
+const bankrollerTest = (type:TransportType) => describe(`Transport layer ${TransportType[type]}`, () => {
+  let provider
   let bankroller
   let game
 
-  it("Start bankroller", async () => {
+  it(`Start bankroller`, async () => {
+    const factory = new TransportProviderFactory(type)
+    provider = await factory.create()
     bankroller = await new Bankroller().start(provider)
     /* tslint:disable-next-line */
     expect(bankroller.isStarted()).to.be.true
@@ -68,7 +71,8 @@ const bankrollerTest = (name, provider) => describe(name, async () => {
   })
 
   it('Get games list', () => {
-    const list:{ name: string }[] = bankroller.getGames()
+    const list:{ name: string, path: string }[] = bankroller.getGames()
+    console.log(list)
     /* tslint:disable-next-line */
     expect(list.length !== 0).to.be.true
     /* tslint:disable-next-line */
@@ -116,18 +120,8 @@ const bankrollerTest = (name, provider) => describe(name, async () => {
   })
 })
 
-describe('Bankroller providers', () => {
-  it('IPFS', async () => {
-    const factory = new TransportProviderFactory(TransportType.IPFS)
-    const provider = await factory.create()
-
-    bankrollerTest('Bankroller -> IPFS', provider)
-  })
-
-  it('WebSockets', async () => {
-    const factory = new TransportProviderFactory(TransportType.WS)
-    const provider = await factory.create()
-
-    bankrollerTest('Bankroller -> WebSocket', provider)
-  })
+describe('BANKROLLER TEST', () => {
+  bankrollerTest(TransportType.IPFS)
+  bankrollerTest(TransportType.WS)
+  bankrollerTest(TransportType.DIRECT)
 })

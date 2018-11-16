@@ -15,7 +15,7 @@ const bankrollerStart = async () => {
   logger.debug('')
   logger.debug('-------------------------------')
   logger.debug('BANKROLLER NODE START          ')
-  logger.debug('Bankroller transport:', transportType)
+  logger.debug('Bankroller transport:', TransportType[transportType])
   logger.debug('process.env.DC_NETWORK: ', process.env.DC_NETWORK)
 
   logger.debug('Bankroller private key', process.env.ACCOUNT_PRIVATE_KEY)
