@@ -26,7 +26,7 @@ const bankrollerStart = async () => {
 
   try {
     const factory = new TransportProviderFactory(transportType)
-    const bankrollerTransportProvider = await IpfsTransportProvider.create()
+    const bankrollerTransportProvider = await factory.create()
     return await new Bankroller().start(bankrollerTransportProvider)
   } catch (error) {
     logger.debug(error)
