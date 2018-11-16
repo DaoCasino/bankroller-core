@@ -243,6 +243,12 @@ export default class Bankroller extends EventEmitter implements IBankroller {
 
         logger.debug(`Load Dapp ${directoryPath}, took ${Date.now() - now} ms`)
 
+        // broadcast result to uploadGame
+        this.emit("uploadGame", {
+          name: slug,
+          path: this.gamesPath.get(slug)
+        })
+
         return dapp
       }
     } catch (error) {
@@ -265,7 +271,12 @@ export default class Bankroller extends EventEmitter implements IBankroller {
         if (!disabled) {
           // const dapp = this.gamesMap.get(slug)
           // await dapp.stopServer() // TODO: !!! need code
+          this.emit("unloadGame", {
+            name: slug,
+            path: this.gamesPath.get(slug)
+          })
           this.gamesMap.delete(slug)
+          this.gamesPath.delete(slug)
 
           logger.debug(
             `Unload Dapp ${directoryPath}, took ${Date.now() - now} ms`
