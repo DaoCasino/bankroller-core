@@ -217,15 +217,22 @@ export default class Bankroller extends EventEmitter implements IBankroller {
         logger.debug(`DApp ${slug} disabled - skip`)
         return null
       }
-      const contract = manifestContract || getContract(this._blockchainNetwork)
-     
+
+      let gameContractAddress = manifestContract || getContract(this._blockchainNetwork)
+
+      if (gameContractAddress.indexOf("->") > -1 && this._blockchainNetwork === 'local') {
+       gameContractAddress = await fetch(gameContractAddress.split("->")[0])
+         .then(result => result.json())
+         .then(result => result[gameContractAddress.split("->")[1]])
+      }
+
       const dapp = new DApp({
         platformId: this._platformId,
         blockchainNetwork: this._blockchainNetwork,
         slug,
         rules,
         gameLogicFunction,
-        gameContractAddress: 'contract.address',
+        gameContractAddress,
         roomProvider,
         Eth: this._eth
       })
