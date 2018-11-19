@@ -4,7 +4,7 @@ import path from "path"
 import fetch from "node-fetch"
 import { DApp, GlobalGameLogicStore } from "dc-core"
 import { IMessagingProvider } from "dc-messaging"
-import { Eth } from "dc-ethereum-utils"
+import { Eth, buf2bytes32 } from "dc-ethereum-utils"
 import { Logger } from "dc-logging"
 import {
   getSubDirectories,
@@ -31,6 +31,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
   // private _platformIdHash
   private _blockchainNetwork
   gamesMap: Map<string, DApp>
+  gamesPath: Map<string, string> // slug => directoryPath
   id: string
   private _transportProvider: IMessagingProvider
   private _pingService: IPingService
@@ -42,6 +43,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     this._blockchainNetwork = blockchainNetwork
 
     this.gamesMap = new Map()
+    this.gamesPath = new Map()
     this._loadedDirectories = new Set()
     // this.tryLoadDApp = this.tryLoadDApp.bind(this)
     // this.tryUnloadDApp = this.tryUnloadDApp.bind(this)
@@ -171,8 +173,16 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     return { status: status ? Bankroller.STATUS_SUCCESS : Bankroller.STATUS_FAILURE  }
   }
 
-  getGames(): { name: string }[] {
-    return Array.from(this.gamesMap.values()).map(dapp => dapp.getView())
+  getGames(): { name: string, path: string }[] {
+    const games = []
+    for (const [slug, dapp] of this.gamesMap) {
+      games.push({
+        name: slug,
+        path: this.gamesPath.get(slug)
+      })
+    }
+
+    return games
   }
 
   getGameInstances(name: string): GameInstanceInfo[] {
@@ -227,7 +237,17 @@ export default class Bankroller extends EventEmitter implements IBankroller {
         await dapp.startServer()
         this.gamesMap.set(slug, dapp)
 
+        // Это нужно что бы использовать unloadGame удаленно
+        const DAppsPath = config.default.DAppsPath
+        this.gamesPath.set(slug, directoryPath.replace(DAppsPath, ''))
+
         logger.debug(`Load Dapp ${directoryPath}, took ${Date.now() - now} ms`)
+
+        // broadcast result to uploadGame
+        this.emit("uploadGame", {
+          name: slug,
+          path: this.gamesPath.get(slug)
+        })
 
         return dapp
       }
@@ -251,7 +271,12 @@ export default class Bankroller extends EventEmitter implements IBankroller {
         if (!disabled) {
           // const dapp = this.gamesMap.get(slug)
           // await dapp.stopServer() // TODO: !!! need code
+          this.emit("unloadGame", {
+            name: slug,
+            path: this.gamesPath.get(slug)
+          })
           this.gamesMap.delete(slug)
+          this.gamesPath.delete(slug)
 
           logger.debug(
             `Unload Dapp ${directoryPath}, took ${Date.now() - now} ms`
