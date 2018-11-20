@@ -10,7 +10,7 @@ export interface GameInstanceInfo {
 
 export interface GameUpload {
     name: string
-    files: { fileName: string; fileData: Buffer | string, fileSize?: number }[],
+    files: { fileName: string; fileData: string, fileSize?: number }[],
     reload?: boolean
 }
 
