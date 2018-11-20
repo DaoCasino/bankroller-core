@@ -122,6 +122,6 @@ const bankrollerTest = (type:TransportType) => describe(`Transport layer ${Trans
 
 describe('BANKROLLER TEST', () => {
   bankrollerTest(TransportType.IPFS)
-  bankrollerTest(TransportType.WS)
-  bankrollerTest(TransportType.DIRECT)
+  // bankrollerTest(TransportType.WS)
+  // bankrollerTest(TransportType.DIRECT)
 })
