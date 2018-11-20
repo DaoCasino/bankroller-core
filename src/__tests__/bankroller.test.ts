@@ -150,6 +150,16 @@ const bankrollerRemoteTest = (type: TransportType) => {
     checkSize(game)
   })
 
+  it("Unload game", async () => {
+    const result = await remoteBankroller.unloadGame(game.name)
+    expect(result.status).to.equal(Bankroller.STATUS_SUCCESS)
+
+    const DAppsPath = config.default.DAppsPath
+    const uploadedDir = path.join(DAppsPath, game.name)
+    /* tslint:disable-next-line */
+    expect(fs.existsSync(uploadedDir)).to.be.false
+  })
+
   it(`Stop remote interface`, async () => {
     await remoteProvider.destroy()
   })
@@ -162,9 +172,10 @@ const bankrollerRemoteTest = (type: TransportType) => {
   })
 }
 
-describe('BANKROLLER TEST', () => {
-  // bankrollerTest(TransportType.IPFS)
-  bankrollerRemoteTest(TransportType.IPFS)
-  // bankrollerTest(TransportType.WS)
-  // bankrollerTest(TransportType.DIRECT)
-})
+bankrollerTest(TransportType.IPFS)
+bankrollerTest(TransportType.WS)
+bankrollerTest(TransportType.DIRECT)
+
+// bankrollerRemoteTest(TransportType.IPFS)
+// bankrollerRemoteTest(TransportType.WS)
+// bankrollerRemoteTest(TransportType.DIRECT)
