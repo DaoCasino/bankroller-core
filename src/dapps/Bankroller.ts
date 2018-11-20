@@ -218,8 +218,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
         return null
       }
 
-      let gameContractAddress = manifestContract || getContract(this._blockchainNetwork)
-
+      let gameContractAddress = manifestContract || getContract(this._blockchainNetwork).address
       if (gameContractAddress.indexOf("->") > -1 && this._blockchainNetwork === 'local') {
        gameContractAddress = await fetch(gameContractAddress.split("->")[0])
          .then(result => result.json())
