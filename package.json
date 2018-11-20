@@ -3,9 +3,6 @@
   "version": "0.1.9",
   "description": "Core bankroller functionality",
   "main": "./lib/index",
-  "bin": {
-    "bankroller-core": "bin/deamon"
-  },
   "scripts": {
     "tsmon": "nodemon --delay 2 --inspect --watch ../ --ignore ../dc-protocol -r ts-node/register --",
     "build:ts": "yarn typescript",
