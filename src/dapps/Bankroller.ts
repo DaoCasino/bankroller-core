@@ -68,9 +68,9 @@ export default class Bankroller extends EventEmitter implements IBankroller {
       walletName,
       blockchainNetwork,
       privateKey,
-      getContracts
+      contracts
     } = config.default
-    const ERC20ContractInfo = (await getContracts()).ERC20
+    const ERC20ContractInfo = contracts.ERC20
     this._eth = new Eth({
       walletName,
       httpProviderUrl,
@@ -201,50 +201,57 @@ export default class Bankroller extends EventEmitter implements IBankroller {
       const { gameLogicFunction, manifest } = await loadLogic(directoryPath)
       const roomProvider = this._transportProvider
 
-      if (gameLogicFunction) {
-        const {
-          disabled,
-          slug,
-          rules,
-          contract: manifestContract,
-          getContract
-        } = manifest
-
-        if (manifest.disabled) {
-          logger.debug(`DApp ${slug} disabled - skip`)
-          return null
-        }
-        const contract =
-          manifestContract || getContract(this._blockchainNetwork)
-        // TODO this should be placed somewhere else
-        if (contract.address && contract.address.indexOf("http") > -1) {
-          contract.address = await fetch(contract.address.split("->")[0])
-            .then(r => r.json())
-            .then(r => r[contract.address.split("->")[1]])
-        }
-
-        const dapp = new DApp({
-          platformId: this._platformId,
-          blockchainNetwork: this._blockchainNetwork,
-          slug,
-          rules,
-          contract,
-          roomProvider,
-          gameLogicFunction,
-          Eth: this._eth
-        })
-
-        await dapp.startServer()
-        this.gamesMap.set(slug, dapp)
-
-        // Это нужно что бы использовать unloadGame удаленно
-        const DAppsPath = config.default.DAppsPath
-        this.gamesPath.set(slug, directoryPath.replace(DAppsPath, ''))
-
-        logger.debug(`Load Dapp ${directoryPath}, took ${Date.now() - now} ms`)
-
-        return dapp
+      if (typeof gameLogicFunction !== 'function') {
+        throw new Error("gameLogic is not a function")
       }
+
+      const {
+        disabled,
+        slug,
+        rules,
+        contract: manifestContract,
+        getContract
+      } = manifest
+
+      if (manifest.disabled) {
+        logger.debug(`DApp ${slug} disabled - skip`)
+        return null
+      }
+
+      let gameContractAddress = manifestContract || getContract(this._blockchainNetwork).address
+      if (gameContractAddress.indexOf("->") > -1 && this._blockchainNetwork === 'local') {
+       gameContractAddress = await fetch(gameContractAddress.split("->")[0])
+         .then(result => result.json())
+         .then(result => result[gameContractAddress.split("->")[1]])
+      }
+
+      const dapp = new DApp({
+        platformId: this._platformId,
+        blockchainNetwork: this._blockchainNetwork,
+        slug,
+        rules,
+        gameLogicFunction,
+        gameContractAddress,
+        roomProvider,
+        Eth: this._eth
+      })
+
+      await dapp.startServer()
+      this.gamesMap.set(slug, dapp)
+
+      // Это нужно что бы использовать unloadGame удаленно
+      const DAppsPath = config.default.DAppsPath
+      this.gamesPath.set(slug, directoryPath.replace(DAppsPath, ''))
+
+      logger.debug(`Load Dapp ${directoryPath}, took ${Date.now() - now} ms`)
+
+      // broadcast result to uploadGame
+      this.emit("uploadGame", {
+        name: slug,
+        path: this.gamesPath.get(slug)
+      })
+
+      return dapp
     } catch (error) {
       logger.debug(error)
     }
@@ -265,7 +272,12 @@ export default class Bankroller extends EventEmitter implements IBankroller {
         if (!disabled) {
           // const dapp = this.gamesMap.get(slug)
           // await dapp.stopServer() // TODO: !!! need code
+          this.emit("unloadGame", {
+            name: slug,
+            path: this.gamesPath.get(slug)
+          })
           this.gamesMap.delete(slug)
+          this.gamesPath.delete(slug)
 
           logger.debug(
             `Unload Dapp ${directoryPath}, took ${Date.now() - now} ms`

@@ -50,14 +50,14 @@ const checkSize = (game: GameUpload): void => {
   })
 }
 
-const bankrollerTest = (transport: TransportType) =>
-  describe(TransportType[transport], async () => {
-  const factory = new TransportProviderFactory(transport)
-  const provider = await factory.create()
+const bankrollerTest = (type:TransportType) => describe(`Transport layer ${TransportType[type]}`, () => {
+  let provider
   let bankroller
   let game
 
-  it("Start bankroller", async () => {
+  it(`Start bankroller`, async () => {
+    const factory = new TransportProviderFactory(type)
+    provider = await factory.create()
     bankroller = await new Bankroller().start(provider)
     /* tslint:disable-next-line */
     expect(bankroller.isStarted()).to.be.true
@@ -120,6 +120,8 @@ const bankrollerTest = (transport: TransportType) =>
   })
 })
 
-describe('Bankroller Test', () => {
+describe('BANKROLLER TEST', () => {
   bankrollerTest(TransportType.IPFS)
+  bankrollerTest(TransportType.WS)
+  bankrollerTest(TransportType.DIRECT)
 })
