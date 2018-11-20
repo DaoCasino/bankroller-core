@@ -50,8 +50,12 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     ;(global as any).DCLib = new GlobalGameLogicStore()
   }
 
-  getApiRoomAddress(ethAddress: string): string {
+  private _getApiRoomAddress(ethAddress: string): string {
     return `${this._platformId}_${this._blockchainNetwork}_${ethAddress}`
+  }
+
+  getApiRoomAddress(): string {
+    return this._apiRoomAddress
   }
 
   getPlatformId(): string {
@@ -86,7 +90,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     await this._eth.initAccount(privateKey)
     await this._eth.saveWallet(privateKey)
     const ethAddress = this._eth.getAccount().address.toLowerCase()
-    this._apiRoomAddress = this.getApiRoomAddress(ethAddress)
+    this._apiRoomAddress = this._getApiRoomAddress(ethAddress)
     transportProvider.exposeSevice(this._apiRoomAddress, this, true)
 
     this._pingService = new PingService().start(transportProvider, {
@@ -103,7 +107,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
       await this.tryLoadDApp(subDirectories[i])
     }
 
-    logger.info(`Bankroller started. Api address: ${this._apiRoomAddress}`)
+    logger.info(`Bankroller started. Api address: \x1b[32m${this._apiRoomAddress}\x1b[0m`)
 
     const stopBankroller = async () => {
       const status = await this.stop()
