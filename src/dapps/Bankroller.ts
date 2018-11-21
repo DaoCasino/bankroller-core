@@ -23,6 +23,8 @@ const logger = new Logger("Bankroller:")
 export default class Bankroller extends EventEmitter implements IBankroller {
   public static STATUS_SUCCESS: string = "ok"
   public static STATUS_FAILURE: string = "fail"
+  public static EVENT_UPLOAD_GAME: string = "uploadGame"
+  public static EVENT_UNLOAD_GAME: string = "unloadGame"
   private _started: boolean
   private _loadedDirectories: Set<string>
   private _eth: Eth
@@ -250,7 +252,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
       logger.debug(`Load Dapp ${directoryPath}, took ${Date.now() - now} ms`)
 
       // broadcast result to uploadGame
-      this.emit("uploadGame", {
+      this.emit(Bankroller.EVENT_UPLOAD_GAME, {
         name: slug,
         path: this.gamesPath.get(slug)
       })
@@ -276,7 +278,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
         if (!disabled) {
           // const dapp = this.gamesMap.get(slug)
           // await dapp.stopServer() // TODO: !!! need code
-          this.emit("unloadGame", {
+          this.emit(Bankroller.EVENT_UNLOAD_GAME, {
             name: slug,
             path: this.gamesPath.get(slug)
           })
@@ -296,5 +298,12 @@ export default class Bankroller extends EventEmitter implements IBankroller {
       logger.debug(error)
       return false
     }
+  }
+
+  eventNames() {
+    return [
+      Bankroller.EVENT_UNLOAD_GAME,
+      Bankroller.EVENT_UPLOAD_GAME
+    ]
   }
 }
