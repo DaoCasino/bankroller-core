@@ -10,7 +10,7 @@ export interface GameInstanceInfo {
 
 export interface GameUpload {
     name: string
-    files: { fileName: string; fileData: Buffer | string, fileSize?: number }[],
+    files: { fileName: string; fileData: string, fileSize?: number }[],
     reload?: boolean
 }
 
@@ -23,7 +23,7 @@ export interface IBankroller extends NodeJS.EventEmitter {
   uploadGame: (params: GameUpload) => Promise<{ status: string }>
   unloadGame: (name: string) => Promise<{ status: string }>
   getGameInstances: (name: string) => GameInstanceInfo[]
-  getApiRoomAddress: (ethAddress: string) => string
+  getApiRoomAddress: () => string
   getPlatformId: () => string
   isStarted: () => boolean
   start: (provider: IMessagingProvider) => Promise<IBankroller>
