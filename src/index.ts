@@ -2,6 +2,7 @@ import Bankroller from './dapps/Bankroller'
 import { TransportProviderFactory, IpfsTransportProvider } from 'dc-messaging'
 import { Logger } from 'dc-logging'
 import { config, TransportType } from 'dc-configs'
+export * from './intefaces'
 
 const logger = new Logger('Bankroller:')
 
