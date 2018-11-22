@@ -1,27 +1,17 @@
 {
   "name": "bankroller-core",
-  "version": "0.1.9",
+  "version": "0.1.17",
   "description": "Core bankroller functionality",
   "main": "./lib/index",
-  "bin": {
-    "bankroller-core": "bin/deamon"
-  },
   "scripts": {
     "tsmon": "nodemon --delay 2 --inspect --watch ../ --ignore ../dc-protocol -r ts-node/register --",
-    "tsmon:docker": "nodemon --delay 2 --inspect --watch ../ --ignore ../dc-protocol --",
-    "start:local": "sh run.sh local src/index.ts",
-    "start:rinkeby": "sh run.sh rinkeby src/index.ts",
-    "start:ropsten": "sh run.sh ropsten src/index.ts",
     "build:ts": "yarn typescript",
     "build": "yarn typescript",
-    "check:build": "nodemon --inspect ./lib/index.js --delay 2 --watch ../ --ignore ../dc-protocol",
     "typescript": "tsc --build",
     "clean": "rimraf lib",
     "reset": "rm -rf ./data/DB && rm -rf ./data/messaging",
-    "test:l": "sh run.sh local src/__tests__/game.test.ts",
-    "test": "sh run.sh ropsten src/__tests__/game.test.ts",
     "test:ping": "mocha --timeout 99999999 -r ts-node/register src/__tests__/PingService.test.ts",
-    "test:bankroller": "ACCOUNT_PRIVATE_KEY=0xf45ce6697b0dd472f5f290953274b279ad15ea956065b9a9a7b443eb8f8a7267 DC_NETWORK=ropsten DAPPS_PATH=./data/dapps/ PLATFORM_ID=DC_sdk mocha --timeout 99999999 -r ts-node/register src/__tests__/Bankroller.test.ts"
+    "test:bankroller": "ACCOUNT_PRIVATE_KEY=0xf45ce6697b0dd472f5f290953274b279ad15ea956065b9a9a7b443eb8f8a7267 DC_NETWORK=ropsten DAPPS_PATH=../bankroller-node/data/dapps/ PLATFORM_ID=DC_sdk mocha --timeout 99999999 -r ts-node/register src/__tests__/bankroller.test.ts"
   },
   "keywords": [],
   "author": "",
@@ -29,17 +19,16 @@
   "dependencies": {
     "chai": "^4.1.2",
     "commander": "^2.19.0",
-    "dc-configs": "^0.1.8",
-    "dc-core": "^0.1.6",
-    "dc-ethereum-utils": "^0.1.6",
-    "dc-logging": "^0.1.6",
-    "dc-webapi": "^0.1.6",
-    "dc-messaging": "^0.1.4",
+    "dc-configs": "^0.1.23",
+    "dc-core": "^0.1.21",
+    "dc-ethereum-utils": "^0.1.15",
+    "dc-logging": "^0.1.15",
+    "dc-messaging": "^0.1.23",
+    "dc-webapi": "^0.1.23",
     "mocha": "^3.2.0",
-    "nodemon": "^1.18.5",
     "node-fetch": "^2.2.0",
+    "nodemon": "^1.18.5",
     "rimraf": "2.6.2"
   },
-
-  "gitHead": "865d20c921eb00208778bbdcbb47fe95c2b4ed38"
+  "gitHead": "3e5dcaecc303cdce6b606ab1fc570c530592eef4"
 }

@@ -4,9 +4,9 @@ import { expect } from "chai"
 import { config } from "dc-configs"
 import fs from "fs"
 import path from "path"
-import { IpfsTransportProvider, WebSocketTransportProvider } from "dc-messaging"
+import { TransportProviderFactory, ITransportProviderFactory, TransportType, IMessagingProvider } from "dc-messaging"
 import { Logger } from "dc-logging"
-import { GameUpload, GameInstanceInfo } from "../intefaces/IBankroller"
+import { GameUpload, GameInstanceInfo, IBankroller } from "../intefaces/IBankroller"
 
 const log = new Logger("Bankroller test")
 
@@ -29,7 +29,7 @@ const createFakeGame = (name: string): GameUpload => {
   const files = fs.readdirSync(openDir).map(fileName => {
     const filePath = path.join(openDir, fileName)
     const { size } = fs.statSync(filePath)
-    return { fileName, fileData: fs.readFileSync(filePath), fileSize: size }
+    return { fileName, fileData: fs.readFileSync(filePath).toString('base64'), fileSize: size }
   })
 
   return { name, files }
@@ -50,13 +50,14 @@ const checkSize = (game: GameUpload): void => {
   })
 }
 
-const bankrollerTest = (name, provider) => describe(name, async () => {
+const bankrollerTest = (type:TransportType) => describe(`Transport layer ${TransportType[type]}`, () => {
+  let provider
   let bankroller
   let game
 
-  it("Start bankroller", async () => {
-    // provider = await IpfsTransportProvider.create()
-    // expect(provider).to.be.an.instanceof(IpfsTransportProvider)
+  it(`Start bankroller`, async () => {
+    const factory = new TransportProviderFactory(type)
+    provider = await factory.create()
     bankroller = await new Bankroller().start(provider)
     /* tslint:disable-next-line */
     expect(bankroller.isStarted()).to.be.true
@@ -70,7 +71,7 @@ const bankrollerTest = (name, provider) => describe(name, async () => {
   })
 
   it('Get games list', () => {
-    const list:{ name: string }[] = bankroller.getGames()
+    const list:{ name: string, path: string }[] = bankroller.getGames()
     /* tslint:disable-next-line */
     expect(list.length !== 0).to.be.true
     /* tslint:disable-next-line */
@@ -118,18 +119,62 @@ const bankrollerTest = (name, provider) => describe(name, async () => {
   })
 })
 
-describe('Bankroller providers', () => {
-  it('IPFS', async () => {
-    const provider = await IpfsTransportProvider.create()
-    expect(provider).to.be.an.instanceof(IpfsTransportProvider)
+const bankrollerRemoteTest = (type: TransportType) => {
+  let provider: IMessagingProvider
+  let remoteProvider: IMessagingProvider
+  let bankroller: IBankroller
+  let remoteBankroller: IBankroller
+  let game
 
-    bankrollerTest('Bankroller -> IPFS', provider)
+  it(`Start bankroller`, async () => {
+    const factory = new TransportProviderFactory(type)
+    provider = await factory.create()
+    bankroller = await new Bankroller().start(provider)
+    /* tslint:disable-next-line */
+    expect(bankroller.isStarted()).to.be.true
   })
 
-  it('WebSockets', () => {
-    const provider = WebSocketTransportProvider.create()
-    expect(provider).to.be.an.instanceof(WebSocketTransportProvider)
-
-    bankrollerTest('Bankroller -> WebSocket', provider)
+  it(`Get remote interface`, async () => {
+    const factory = new TransportProviderFactory(type)
+    remoteProvider = await factory.create()
+    remoteBankroller = await remoteProvider.getRemoteInterface<IBankroller>(bankroller.getApiRoomAddress())
+    /* tslint:disable-next-line */
+    expect(await remoteBankroller.isStarted()).to.be.true
   })
-})
+
+  it('Remote upload game', async () => {
+    game = createFakeGame(randomString())
+    const result = await remoteBankroller.uploadGame(game)
+    expect(result.status).to.equal(Bankroller.STATUS_SUCCESS)
+    checkSize(game)
+  })
+
+  it("Unload game", async () => {
+    const result = await remoteBankroller.unloadGame(game.name)
+    expect(result.status).to.equal(Bankroller.STATUS_SUCCESS)
+
+    const DAppsPath = config.default.DAppsPath
+    const uploadedDir = path.join(DAppsPath, game.name)
+    /* tslint:disable-next-line */
+    expect(fs.existsSync(uploadedDir)).to.be.false
+  })
+
+  it(`Stop remote interface`, async () => {
+    await remoteProvider.destroy()
+  })
+
+  it("Stop bankroller", async () => {
+    await bankroller.stop()
+    /* tslint:disable-next-line */
+    expect(bankroller.isStarted()).to.be.false
+    await provider.destroy()
+  })
+}
+
+bankrollerTest(TransportType.IPFS)
+bankrollerTest(TransportType.WS)
+bankrollerTest(TransportType.DIRECT)
+
+// bankrollerRemoteTest(TransportType.IPFS)
+// bankrollerRemoteTest(TransportType.WS)
+// bankrollerRemoteTest(TransportType.DIRECT)
