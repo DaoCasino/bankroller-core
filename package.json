@@ -1,6 +1,6 @@
 {
   "name": "bankroller-core",
-  "version": "0.1.17",
+  "version": "0.1.37",
   "description": "Core bankroller functionality",
   "main": "./lib/index",
   "scripts": {
@@ -19,16 +19,16 @@
   "dependencies": {
     "chai": "^4.1.2",
     "commander": "^2.19.0",
-    "dc-configs": "^0.1.23",
-    "dc-core": "^0.1.21",
-    "dc-ethereum-utils": "^0.1.15",
-    "dc-logging": "^0.1.15",
-    "dc-messaging": "^0.1.23",
-    "dc-webapi": "^0.1.23",
+    "dc-configs": "^0.1.37",
+    "dc-core": "^0.1.37",
+    "dc-ethereum-utils": "^0.1.37",
+    "dc-logging": "^0.1.37",
+    "dc-messaging": "^0.1.37",
+    "dc-webapi": "^0.1.37",
     "mocha": "^3.2.0",
     "node-fetch": "^2.2.0",
     "nodemon": "^1.18.5",
     "rimraf": "2.6.2"
   },
-  "gitHead": "3e5dcaecc303cdce6b606ab1fc570c530592eef4"
+  "gitHead": "33f46704e19499a4dafe61e7b11697c5adcf3b71"
 }
