@@ -95,6 +95,19 @@ export default class Bankroller extends EventEmitter implements IBankroller {
 
     await this._eth.initAccount(privateKey)
     await this._eth.saveWallet(privateKey)
+    //  check balance
+    const balances = await this._eth.getBalances()
+    if (balances.bet.balance === 0) {
+      throw new Error(
+        `Empty bet balance at address: ${this._eth.getAccount().address}`
+      )
+    }
+    if (balances.eth.balance < 0.01) {
+      throw new Error(
+        `Not enough ETH balance at address: ${this._eth.getAccount().address}`
+      )
+    }
+
     const ethAddress = this._eth.getAccount().address.toLowerCase()
     this._apiRoomAddress = this._getApiRoomAddress(ethAddress)
     transportProvider.exposeSevice(this._apiRoomAddress, this, true)
