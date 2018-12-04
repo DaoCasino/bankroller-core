@@ -7,26 +7,21 @@ export * from './intefaces'
 const logger = new Logger('Bankroller:')
 
 const bankrollerStart = async () => {
-  let transportType: TransportType = config.default.transport
-  if (process.env.DC_TRANSPORT && process.env.DC_TRANSPORT in TransportType) {
-    transportType = TransportType[process.env.DC_TRANSPORT]
-  }
-
   logger.debug('')
   logger.debug('')
   logger.debug('-------------------------------')
   logger.debug('BANKROLLER NODE START          ')
-  logger.debug('Bankroller transport:', TransportType[transportType])
-  logger.debug('process.env.DC_NETWORK: ', process.env.DC_NETWORK)
+  logger.debug('Bankroller transport:', config.default.transport)
+  logger.debug('process.env.DC_NETWORK: ', config.default.blockchainNetwork)
 
-  logger.debug('Bankroller private key', process.env.ACCOUNT_PRIVATE_KEY)
-  logger.debug('DApps path', process.env.DAPPS_FULL_PATH || process.env.DAPPS_PATH)
+  logger.debug('Bankroller private key', config.default.privateKey)
+  logger.debug('DApps path', config.default.DAppsPath)
   logger.debug('-------------------------------')
   logger.debug('')
   logger.debug('')
 
   try {
-    const factory = new TransportProviderFactory(transportType)
+    const factory = new TransportProviderFactory(config.default.transport)
     const bankrollerTransportProvider = await factory.create()
     return await new Bankroller().start(bankrollerTransportProvider)
   } catch (error) {
