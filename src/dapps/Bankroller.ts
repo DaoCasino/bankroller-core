@@ -14,7 +14,11 @@ import {
   removeDir
 } from "./FileUtils"
 import { EventEmitter } from "events"
-import { IBankroller, GameInstanceInfo, GameUpload } from "../intefaces/IBankroller"
+import {
+  IBankroller,
+  GameInstanceInfo,
+  GameUpload
+} from "../intefaces/IBankroller"
 import { PingService } from "./PingService"
 import { IPingService } from "../intefaces/IPingService"
 
@@ -91,6 +95,19 @@ export default class Bankroller extends EventEmitter implements IBankroller {
 
     await this._eth.initAccount(privateKey)
     await this._eth.saveWallet(privateKey)
+    //  check balance
+    const balances = await this._eth.getBalances()
+    if (balances.bet.balance === 0) {
+      throw new Error(
+        `Empty bet balance at address: ${this._eth.getAccount().address}`
+      )
+    }
+    if (balances.eth.balance < 0.01) {
+      throw new Error(
+        `Not enough ETH balance at address: ${this._eth.getAccount().address}`
+      )
+    }
+
     const ethAddress = this._eth.getAccount().address.toLowerCase()
     this._apiRoomAddress = this._getApiRoomAddress(ethAddress)
     transportProvider.exposeSevice(this._apiRoomAddress, this, true)
@@ -109,7 +126,9 @@ export default class Bankroller extends EventEmitter implements IBankroller {
       await this.tryLoadDApp(subDirectories[i])
     }
 
-    logger.info(`Bankroller started. Api address: \x1b[32m${this._apiRoomAddress}\x1b[0m`)
+    logger.info(
+      `Bankroller started. Api address: \x1b[32m${this._apiRoomAddress}\x1b[0m`
+    )
 
     const stopBankroller = async () => {
       const status = await this.stop()
@@ -155,7 +174,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     }
 
     if (!saveFilesToNewDir(newDir, files)) {
-        throw new Error(`Error save files to ${newDir}`)
+      throw new Error(`Error save files to ${newDir}`)
     }
 
     this._loadedDirectories.add(newDir)
@@ -176,10 +195,12 @@ export default class Bankroller extends EventEmitter implements IBankroller {
       this._loadedDirectories.delete(newDir)
       status = true
     }
-    return { status: status ? Bankroller.STATUS_SUCCESS : Bankroller.STATUS_FAILURE  }
+    return {
+      status: status ? Bankroller.STATUS_SUCCESS : Bankroller.STATUS_FAILURE
+    }
   }
 
-  getGames(): { name: string, path: string }[] {
+  getGames(): { name: string; path: string }[] {
     const games = []
     for (const [slug, dapp] of this.gamesMap) {
       games.push({
@@ -207,7 +228,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
       const { gameLogicFunction, manifest } = await loadLogic(directoryPath)
       const roomProvider = this._transportProvider
 
-      if (typeof gameLogicFunction !== 'function') {
+      if (typeof gameLogicFunction !== "function") {
         throw new Error("gameLogic is not a function")
       }
 
@@ -224,11 +245,19 @@ export default class Bankroller extends EventEmitter implements IBankroller {
         return null
       }
 
-      let gameContractAddress = manifestContract || getContract(this._blockchainNetwork).address
-      if (gameContractAddress.indexOf("->") > -1 && this._blockchainNetwork === 'local') {
-       gameContractAddress = await fetch(gameContractAddress.split("->")[0])
-         .then(result => result.json())
-         .then(result => result[gameContractAddress.split("->")[1]])
+      let gameContractAddress =
+        manifestContract || getContract(this._blockchainNetwork).address
+
+      if (
+        gameContractAddress.indexOf("->") > -1 &&
+        this._blockchainNetwork === "local"
+      ) {
+        const { web3HttpProviderUrl } = config.default
+        gameContractAddress = await fetch(
+          `${web3HttpProviderUrl}/${gameContractAddress.split("->")[0]}`
+        )
+          .then(result => result.json())
+          .then(result => result[gameContractAddress.split("->")[1]])
       }
 
       const dapp = new DApp({
@@ -247,7 +276,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
 
       // Это нужно что бы использовать unloadGame удаленно
       const DAppsPath = config.default.DAppsPath
-      this.gamesPath.set(slug, directoryPath.replace(DAppsPath, ''))
+      this.gamesPath.set(slug, directoryPath.replace(DAppsPath, ""))
 
       logger.debug(`Load Dapp ${directoryPath}, took ${Date.now() - now} ms`)
 
@@ -301,9 +330,6 @@ export default class Bankroller extends EventEmitter implements IBankroller {
   }
 
   eventNames() {
-    return [
-      Bankroller.EVENT_UNLOAD_GAME,
-      Bankroller.EVENT_UPLOAD_GAME
-    ]
+    return [Bankroller.EVENT_UNLOAD_GAME, Bankroller.EVENT_UPLOAD_GAME]
   }
 }
