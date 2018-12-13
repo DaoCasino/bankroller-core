@@ -1,4 +1,4 @@
-import { TransportProviderFactory, ITransportProviderFactory, IMessagingProvider, TransportType } from "dc-messaging"
+import { TransportProviderFactory, ITransportProviderFactory, IMessagingProvider, TransportType } from "@daocasino/dc-messaging"
 import {
   PingServiceParams,
   IPingService
@@ -6,7 +6,7 @@ import {
 import { PingService } from "../dapps/PingService"
 import { describe, it } from "mocha"
 import { expect } from "chai"
-import { Logger } from "dc-logging"
+import { Logger } from "@daocasino/dc-logging"
 import { EventEmitter } from "events"
 
 const randomString = () =>

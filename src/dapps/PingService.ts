@@ -3,8 +3,8 @@ import {
   IPingService,
   PingServiceParams
 } from "../intefaces/IPingService"
-import { IMessagingProvider } from "dc-messaging"
-import { Logger } from "dc-logging"
+import { IMessagingProvider } from "@daocasino/dc-messaging"
+import { Logger } from "@daocasino/dc-logging"
 
 const log = new Logger("PingService")
 
