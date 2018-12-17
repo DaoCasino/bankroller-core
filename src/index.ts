@@ -1,7 +1,7 @@
 import Bankroller from './dapps/Bankroller'
-import { TransportProviderFactory, IpfsTransportProvider } from 'dc-messaging'
-import { Logger } from 'dc-logging'
-import { config, TransportType } from 'dc-configs'
+import { TransportProviderFactory, IpfsTransportProvider } from '@daocasino/dc-messaging'
+import { Logger } from '@daocasino/dc-logging'
+import { config, TransportType } from '@daocasino/dc-configs'
 export * from './intefaces'
 
 const logger = new Logger('Bankroller:')

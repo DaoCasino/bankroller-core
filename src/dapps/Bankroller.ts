@@ -1,11 +1,11 @@
-import { config } from "dc-configs"
+import { config } from "@daocasino/dc-configs"
 import fs from "fs"
 import path from "path"
 import fetch from "node-fetch"
-import { DApp, GlobalGameLogicStore } from "dc-core"
-import { IMessagingProvider } from "dc-messaging"
-import { Eth, buf2bytes32 } from "dc-ethereum-utils"
-import { Logger } from "dc-logging"
+import { DApp, GlobalGameLogicStore } from "@daocasino/dc-core"
+import { IMessagingProvider } from "@daocasino/dc-messaging"
+import { Eth, buf2bytes32 } from "@daocasino/dc-ethereum-utils"
+import { Logger } from "@daocasino/dc-logging"
 import {
   getSubDirectories,
   checkFileExists,

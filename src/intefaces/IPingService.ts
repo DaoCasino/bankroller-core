@@ -1,4 +1,4 @@
-import { IMessagingProvider } from "dc-messaging"
+import { IMessagingProvider } from "@daocasino/dc-messaging"
 export interface PingServiceParams  {
     platformId: string,
     apiRoomAddress: string,
