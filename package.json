@@ -11,7 +11,10 @@
     "clean": "rimraf lib",
     "reset": "rm -rf ./data/DB && rm -rf ./data/messaging",
     "test:ping": "mocha --timeout 99999999 -r ts-node/register src/__tests__/PingService.test.ts",
-    "test:bankroller": "ACCOUNT_PRIVATE_KEY=0xf45ce6697b0dd472f5f290953274b279ad15ea956065b9a9a7b443eb8f8a7267 DC_NETWORK=ropsten DAPPS_PATH=../bankroller-node/data/dapps/ PLATFORM_ID=DC_sdk mocha --timeout 99999999 -r ts-node/register src/__tests__/bankroller.test.ts"
+    "test:ping:libp2p": "DC_TRANSPORT=LIBP2P yarn test:ping",
+    "test:bankroller": "ACCOUNT_PRIVATE_KEY=0xf45ce6697b0dd472f5f290953274b279ad15ea956065b9a9a7b443eb8f8a7267 DC_NETWORK=ropsten DAPPS_PATH=../bankroller-node/data/dapps/ PLATFORM_ID=test mocha --timeout 99999999 -r ts-node/register src/__tests__/bankroller.test.ts",
+    "test:bankroller:libp2p": "DC_TRANSPORT=LIBP2P yarn test:bankroller",
+    "test:bankroller:ipfs": "DC_TRANSPORT=IPFS yarn test:bankroller"
   },
   "keywords": [],
   "author": "",

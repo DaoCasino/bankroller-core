@@ -172,10 +172,16 @@ const bankrollerRemoteTest = (type: TransportType) => {
   })
 }
 
-bankrollerTest(TransportType.IPFS)
-bankrollerTest(TransportType.WS)
-bankrollerTest(TransportType.DIRECT)
 
-// bankrollerRemoteTest(TransportType.IPFS)
-// bankrollerRemoteTest(TransportType.WS)
-// bankrollerRemoteTest(TransportType.DIRECT)
+describe('Bankroller test', () => {
+  if(Object.values(TransportType).includes(process.env.DC_TRANSPORT)) {
+    bankrollerTest(TransportType[process.env.DC_TRANSPORT])
+  }
+  else {
+    Object.values(TransportType).forEach(key => {
+        if(typeof key === 'number') {
+            bankrollerTest(key)
+        }
+    })
+  }
+})
