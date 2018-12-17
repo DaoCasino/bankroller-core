@@ -118,17 +118,15 @@ const test = (transportProviderFactory: ITransportProviderFactory) => describe(t
   })
 })
 
-
 describe('PingService test', () => {
-  it('IPFS', () => {
-    const factory = new TransportProviderFactory(TransportType.IPFS)
-    test(factory)
-  })
-
-  it('WS', () => {
-    const factory = new TransportProviderFactory(TransportType.WS)
-    test(factory)
-  })
-  // factory.setType(TransportType.WS)
-  // test(factory)
+  if(Object.values(TransportType).includes(process.env.DC_TRANSPORT)) {
+    test(new TransportProviderFactory(TransportType[process.env.DC_TRANSPORT]))
+  }
+  else {
+    Object.values(TransportType).forEach(key => {
+        if(typeof key === 'number') {
+            test(new TransportProviderFactory(key))
+        }
+    })
+  }
 })
