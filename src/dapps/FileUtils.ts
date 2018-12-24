@@ -1,7 +1,7 @@
 import fs from "fs"
 import path from "path"
 import rimraf from "rimraf"
-import { IGameLogic } from "dc-core"
+import { IGameLogic } from "@daocasino/dc-core"
 
 const MANIFEST_FILENAME = "dapp.manifest"
 

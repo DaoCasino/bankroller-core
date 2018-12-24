@@ -1,11 +1,11 @@
 import Bankroller from "../dapps/Bankroller"
 import { describe, it } from "mocha"
 import { expect } from "chai"
-import { config } from "dc-configs"
+import { config } from "@daocasino/dc-configs"
 import fs from "fs"
 import path from "path"
-import { TransportProviderFactory, ITransportProviderFactory, TransportType, IMessagingProvider } from "dc-messaging"
-import { Logger } from "dc-logging"
+import { TransportProviderFactory, ITransportProviderFactory, TransportType, IMessagingProvider } from "@daocasino/dc-messaging"
+import { Logger } from "@daocasino/dc-logging"
 import { GameUpload, GameInstanceInfo, IBankroller } from "../intefaces/IBankroller"
 
 const log = new Logger("Bankroller test")
@@ -171,10 +171,15 @@ const bankrollerRemoteTest = (type: TransportType) => {
   })
 }
 
-bankrollerTest(TransportType.IPFS)
-bankrollerTest(TransportType.WS)
-bankrollerTest(TransportType.DIRECT)
-
-// bankrollerRemoteTest(TransportType.IPFS)
-// bankrollerRemoteTest(TransportType.WS)
-// bankrollerRemoteTest(TransportType.DIRECT)
+describe('Bankroller test', () => {
+  if(Object.values(TransportType).includes(process.env.DC_TRANSPORT)) {
+    bankrollerTest(TransportType[process.env.DC_TRANSPORT])
+  }
+  else {
+    Object.values(TransportType).forEach(key => {
+        if(typeof key === 'number') {
+            bankrollerTest(key)
+        }
+    })
+  }
+})

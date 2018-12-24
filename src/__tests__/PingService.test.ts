@@ -1,4 +1,4 @@
-import { TransportProviderFactory, ITransportProviderFactory, IMessagingProvider, TransportType } from "dc-messaging"
+import { TransportProviderFactory, ITransportProviderFactory, IMessagingProvider, TransportType } from "@daocasino/dc-messaging"
 import {
   PingServiceParams,
   IPingService
@@ -6,7 +6,7 @@ import {
 import { PingService } from "../dapps/PingService"
 import { describe, it } from "mocha"
 import { expect } from "chai"
-import { Logger } from "dc-logging"
+import { Logger } from "@daocasino/dc-logging"
 import { EventEmitter } from "events"
 
 const randomString = () =>
@@ -118,17 +118,15 @@ const test = (transportProviderFactory: ITransportProviderFactory) => describe(t
   })
 })
 
-
 describe('PingService test', () => {
-  it('IPFS', () => {
-    const factory = new TransportProviderFactory(TransportType.IPFS)
-    test(factory)
-  })
-
-  it('WS', () => {
-    const factory = new TransportProviderFactory(TransportType.WS)
-    test(factory)
-  })
-  // factory.setType(TransportType.WS)
-  // test(factory)
+  if(Object.values(TransportType).includes(process.env.DC_TRANSPORT)) {
+    test(new TransportProviderFactory(TransportType[process.env.DC_TRANSPORT]))
+  }
+  else {
+    Object.values(TransportType).forEach(key => {
+        if(typeof key === 'number') {
+            test(new TransportProviderFactory(key))
+        }
+    })
+  }
 })
