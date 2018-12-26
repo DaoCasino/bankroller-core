@@ -72,7 +72,6 @@ const bankrollerTest = (type:TransportType) => describe(`Transport layer ${Trans
 
   it('Get games list', () => {
     const list:{ name: string, path: string }[] = bankroller.getGames()
-    console.log(list)
     /* tslint:disable-next-line */
     expect(list.length !== 0).to.be.true
     /* tslint:disable-next-line */
@@ -171,7 +170,6 @@ const bankrollerRemoteTest = (type: TransportType) => {
     await provider.destroy()
   })
 }
-
 
 describe('Bankroller test', () => {
   if(Object.values(TransportType).includes(process.env.DC_TRANSPORT)) {
