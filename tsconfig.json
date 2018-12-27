@@ -7,6 +7,7 @@
   },
   "include": ["src/**/*"],
   "references": [
+    { "path": "../dc-core" },
     { "path": "../dc-messaging" },
     { "path": "../dc-ethereum-utils" },
     { "path": "../dc-logging" },
