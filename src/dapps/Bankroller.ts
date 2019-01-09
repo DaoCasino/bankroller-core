@@ -1,5 +1,4 @@
 import { config } from "@daocasino/dc-configs"
-import fs from "fs"
 import path from "path"
 import fetch from "node-fetch"
 import { DApp, GlobalGameLogicStore } from "@daocasino/dc-core"
@@ -36,11 +35,13 @@ export default class Bankroller extends EventEmitter implements IBankroller {
   private _platformId
   // private _platformIdHash
   private _blockchainNetwork
-  gamesMap: Map<string, DApp>
-  gamesPath: Map<string, string> // slug => directoryPath
-  id: string
   private _transportProvider: IMessagingProvider
   private _pingService: IPingService
+
+  public gamesMap: Map<string, DApp>
+  public gamesPath: Map<string, string> // slug => directoryPath
+  public id: string
+
   constructor() {
     super()
     const { platformId, blockchainNetwork } = config.default
