@@ -11,6 +11,7 @@
     { "path": "../dc-messaging" },
     { "path": "../dc-ethereum-utils" },
     { "path": "../dc-logging" },
-    { "path": "../dc-configs" }
+    { "path": "../dc-configs" },
+    { "path": "../dc-statistics-client" }
   ]
 }
