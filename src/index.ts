@@ -1,10 +1,17 @@
+import Raven from 'raven'
+
 import Bankroller from './dapps/Bankroller'
 import { TransportProviderFactory, IpfsTransportProvider } from '@daocasino/dc-messaging'
 import { Logger } from '@daocasino/dc-logging'
 import { config, TransportType } from '@daocasino/dc-configs'
+
 export * from './intefaces'
 
 const logger = new Logger('Bankroller:')
+
+if (config.default.sentry.dsn !== undefined) {
+  Raven.config(config.default.sentry.dsn).install()
+}
 
 const bankrollerStart = async () => {
   logger.debug('')
@@ -27,7 +34,15 @@ const bankrollerStart = async () => {
   } catch (error) {
     logger.debug(error)
     process.exitCode = 1
-    process.kill(process.pid, 'SIGTERM')
+
+    Raven.captureException(error, (sendErr, eventId) => {
+      if (sendErr) {
+        console.error('Failed to send captured exception to Sentry')
+      } else if (process.env.DEBUG !== undefined) {
+        console.log('Error wrote with id: ' + eventId)
+      }
+      process.kill(process.pid, 'SIGTERM')
+    })
   }
 }
 
