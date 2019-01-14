@@ -11,6 +11,13 @@ const logger = new Logger('Bankroller:')
 
 if (config.default.sentry.dsn !== undefined) {
   Raven.config(config.default.sentry.dsn).install()
+  Raven.mergeContext({
+    transport: {
+      transport: TransportType[config.default.transport],
+      network: config.default.blockchainNetwork,
+      DAppsPath: config.default.DAppsPath
+    }
+  })
 }
 
 const bankrollerStart = async () => {
