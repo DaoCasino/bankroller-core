@@ -54,3 +54,4 @@ const bankrollerStart = async () => {
 }
 
 export const start = bankrollerStart
+export { IBankroller } from './intefaces/IBankroller'
