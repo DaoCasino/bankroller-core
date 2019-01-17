@@ -1,2 +1,2 @@
-export * from "./IPingService"
-export * from "./IBankroller"
+export * from './IPingService'
+export * from './IBankroller'

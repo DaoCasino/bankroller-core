@@ -1,14 +1,19 @@
-import Bankroller from "../dapps/Bankroller"
-import { describe, it } from "mocha"
-import { expect } from "chai"
-import { config } from "@daocasino/dc-configs"
-import fs from "fs"
-import path from "path"
-import { TransportProviderFactory, ITransportProviderFactory, TransportType, IMessagingProvider } from "@daocasino/dc-messaging"
-import { Logger } from "@daocasino/dc-logging"
-import { GameUpload, GameInstanceInfo, IBankroller } from "../intefaces/IBankroller"
+import Bankroller from '../dapps/Bankroller'
+import { describe, it } from 'mocha'
+import { expect } from 'chai'
+import { config } from '@daocasino/dc-configs'
+import fs from 'fs'
+import path from 'path'
+import {
+  TransportProviderFactory,
+  ITransportProviderFactory,
+  TransportType,
+  IMessagingProvider
+} from '@daocasino/dc-messaging'
+import { Logger } from '@daocasino/dc-logging'
+import { GameUpload, GameInstanceInfo, IBankroller } from '../intefaces/IBankroller'
 
-const log = new Logger("Bankroller test")
+const log = new Logger('Bankroller test')
 
 // TODO: create expect checks
 
@@ -20,8 +25,8 @@ const randomString = () =>
     .toString(36)
     .substring(2, 15)
 
-const EXAMPLE_GAME_PATH = "FTE1"
-const EXAMPLE_GAME_NAME = "DCGame_FTE_v1"
+const EXAMPLE_GAME_PATH = 'FTE1'
+const EXAMPLE_GAME_NAME = 'DCGame_FTE_v1'
 
 const createFakeGame = (name: string): GameUpload => {
   const DAppsPath = config.default.DAppsPath
@@ -50,7 +55,7 @@ const checkSize = (game: GameUpload): void => {
   })
 }
 
-const bankrollerTest = (type:TransportType) => describe(`Transport layer ${TransportType[type]}`, () => {
+const bankrollerTest = (type: TransportType) => describe(`Transport layer ${TransportType[type]}`, () => {
   let provider
   let bankroller
   let game
@@ -63,7 +68,7 @@ const bankrollerTest = (type:TransportType) => describe(`Transport layer ${Trans
     expect(bankroller.isStarted()).to.be.true
   })
 
-  it("Upload game", async () => {
+  it('Upload game', async () => {
     game = createFakeGame(randomString())
     const result = await bankroller.uploadGame(game)
     expect(result.status).to.equal(Bankroller.STATUS_SUCCESS)
@@ -71,26 +76,26 @@ const bankrollerTest = (type:TransportType) => describe(`Transport layer ${Trans
   })
 
   it('Get games list', () => {
-    const list:{ name: string, path: string }[] = bankroller.getGames()
+    const list: { name: string, path: string }[] = bankroller.getGames()
     /* tslint:disable-next-line */
     expect(list.length !== 0).to.be.true
     /* tslint:disable-next-line */
     expect(list.findIndex(item => item.name === EXAMPLE_GAME_NAME) !== -1).to.be.true
   })
 
-  it("Get game instances", () => {
+  it('Get game instances', () => {
     const instances: GameInstanceInfo[] = bankroller.getGameInstances(EXAMPLE_GAME_NAME)
     expect(instances).to.be.a('array')
   })
 
-  it("Success reload game", async () => {
+  it('Success reload game', async () => {
     const reloadGame = { ...game, reload: true }
     const result = await bankroller.uploadGame(reloadGame)
     expect(result.status).to.equal(Bankroller.STATUS_SUCCESS)
     checkSize(reloadGame)
   })
 
-  it("Error reload game", async () => {
+  it('Error reload game', async () => {
     let error
     try {
       await bankroller.uploadGame(game)
@@ -101,7 +106,7 @@ const bankrollerTest = (type:TransportType) => describe(`Transport layer ${Trans
     expect(error).to.be.an.instanceof(Error)
   })
 
-  it("Unload game", async () => {
+  it('Unload game', async () => {
     const result = await bankroller.unloadGame(game.name)
     expect(result.status).to.equal(Bankroller.STATUS_SUCCESS)
 
@@ -111,7 +116,7 @@ const bankrollerTest = (type:TransportType) => describe(`Transport layer ${Trans
     expect(fs.existsSync(uploadedDir)).to.be.false
   })
 
-  it("Stop bankroller", async () => {
+  it('Stop bankroller', async () => {
     await bankroller.stop()
     /* tslint:disable-next-line */
     expect(bankroller.isStarted()).to.be.false
@@ -149,7 +154,7 @@ const bankrollerRemoteTest = (type: TransportType) => {
     checkSize(game)
   })
 
-  it("Unload game", async () => {
+  it('Unload game', async () => {
     const result = await remoteBankroller.unloadGame(game.name)
     expect(result.status).to.equal(Bankroller.STATUS_SUCCESS)
 
@@ -163,7 +168,7 @@ const bankrollerRemoteTest = (type: TransportType) => {
     await remoteProvider.destroy()
   })
 
-  it("Stop bankroller", async () => {
+  it('Stop bankroller', async () => {
     await bankroller.stop()
     /* tslint:disable-next-line */
     expect(bankroller.isStarted()).to.be.false
@@ -172,14 +177,14 @@ const bankrollerRemoteTest = (type: TransportType) => {
 }
 
 describe('Bankroller test', () => {
-  if(Object.values(TransportType).includes(process.env.DC_TRANSPORT)) {
+  if (Object.values(TransportType).includes(process.env.DC_TRANSPORT)) {
     bankrollerTest(TransportType[process.env.DC_TRANSPORT])
   }
   else {
     Object.values(TransportType).forEach(key => {
-        if(typeof key === 'number') {
-            bankrollerTest(key)
-        }
+      if (typeof key === 'number') {
+        bankrollerTest(key)
+      }
     })
   }
 })
