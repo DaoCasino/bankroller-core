@@ -37,6 +37,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
   private _blockchainNetwork
   private _transportProvider: IMessagingProvider
   private _pingService: IPingService
+  private _statisticsServerParams
 
   public gamesMap: Map<string, DApp>
   public gamesPath: Map<string, string> // slug => directoryPath
@@ -44,10 +45,12 @@ export default class Bankroller extends EventEmitter implements IBankroller {
 
   constructor() {
     super()
-    const { platformId, blockchainNetwork } = config.default
-    this._platformId = platformId
+    const { platformId, blockchainNetwork, statisticsServer } = config.default
+
     // this._platformIdHash = createHash(platformId)
+    this._platformId = platformId
     this._blockchainNetwork = blockchainNetwork
+    this._statisticsServerParams = statisticsServer
 
     this.gamesMap = new Map()
     this.gamesPath = new Map()
@@ -269,7 +272,8 @@ export default class Bankroller extends EventEmitter implements IBankroller {
         gameLogicFunction,
         gameContractAddress,
         roomProvider,
-        Eth: this._eth
+        Eth: this._eth,
+        statisticsClient: this._statisticsServerParams
       })
 
       await dapp.startServer()
