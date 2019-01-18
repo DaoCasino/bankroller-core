@@ -1,33 +1,33 @@
-import { config } from "@daocasino/dc-configs"
-import path from "path"
-import fetch from "node-fetch"
-import { DApp, GlobalGameLogicStore } from "@daocasino/dc-core"
-import { IMessagingProvider } from "@daocasino/dc-messaging"
-import { Eth, buf2bytes32 } from "@daocasino/dc-ethereum-utils"
-import { Logger } from "@daocasino/dc-logging"
+import { config } from '@daocasino/dc-configs'
+import path from 'path'
+import fetch from 'node-fetch'
+import { DApp, GlobalGameLogicStore } from '@daocasino/dc-core'
+import { IMessagingProvider } from '@daocasino/dc-messaging'
+import { Eth, buf2bytes32 } from '@daocasino/dc-ethereum-utils'
+import { Logger } from '@daocasino/dc-logging'
 import {
   getSubDirectories,
   checkFileExists,
   loadLogic,
   saveFilesToNewDir,
   removeDir
-} from "./FileUtils"
-import { EventEmitter } from "events"
+} from './FileUtils'
+import { EventEmitter } from 'events'
 import {
   IBankroller,
   GameInstanceInfo,
   GameUpload
-} from "../intefaces/IBankroller"
-import { PingService } from "./PingService"
-import { IPingService } from "../intefaces/IPingService"
+} from '../intefaces/IBankroller'
+import { PingService } from './PingService'
+import { IPingService } from '../intefaces/IPingService'
 
-const logger = new Logger("Bankroller:")
+const logger = new Logger('Bankroller:')
 
 export default class Bankroller extends EventEmitter implements IBankroller {
-  public static STATUS_SUCCESS: string = "ok"
-  public static STATUS_FAILURE: string = "fail"
-  public static EVENT_UPLOAD_GAME: string = "uploadGame"
-  public static EVENT_UNLOAD_GAME: string = "unloadGame"
+  public static STATUS_SUCCESS: string = 'ok'
+  public static STATUS_FAILURE: string = 'fail'
+  public static EVENT_UPLOAD_GAME: string = 'uploadGame'
+  public static EVENT_UNLOAD_GAME: string = 'unloadGame'
   private _started: boolean
   private _loadedDirectories: Set<string>
   private _eth: Eth
@@ -92,7 +92,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
       gasParams: { price, limit }
     })
     if (this._started) {
-      throw new Error("Bankroller allready started")
+      throw new Error('Bankroller allready started')
     }
 
     this._transportProvider = transportProvider
@@ -138,8 +138,8 @@ export default class Bankroller extends EventEmitter implements IBankroller {
       const status = await this.stop()
       process.exit(status ? 0 : 1)
     }
-    process.on("SIGTERM", stopBankroller)
-    process.on("SIGINT", stopBankroller)
+    process.on('SIGTERM', stopBankroller)
+    process.on('SIGINT', stopBankroller)
 
     return this
   }
@@ -161,10 +161,10 @@ export default class Bankroller extends EventEmitter implements IBankroller {
   }
 
   async uploadGame({
-    name,
-    files,
-    reload = false
-  }: GameUpload): Promise<{ status: string }> {
+                     name,
+                     files,
+                     reload = false
+                   }: GameUpload): Promise<{ status: string }> {
     const DAppsPath: string = config.default.DAppsPath
     const newDir: string = path.join(DAppsPath, name)
     let status: string = Bankroller.STATUS_SUCCESS
@@ -223,6 +223,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
     }
     return dapp.getInstancesView()
   }
+
   private async tryLoadDApp(directoryPath: string): Promise<DApp | null> {
     const now = Date.now()
     // if (this._loadedDirectories.has(directoryPath)) {
@@ -232,8 +233,8 @@ export default class Bankroller extends EventEmitter implements IBankroller {
       const { gameLogicFunction, manifest } = await loadLogic(directoryPath)
       const roomProvider = this._transportProvider
 
-      if (typeof gameLogicFunction !== "function") {
-        throw new Error("gameLogic is not a function")
+      if (typeof gameLogicFunction !== 'function') {
+        throw new Error('gameLogic is not a function')
       }
 
       const {
@@ -253,15 +254,15 @@ export default class Bankroller extends EventEmitter implements IBankroller {
         manifestContract || getContract(this._blockchainNetwork).address
 
       if (
-        gameContractAddress.indexOf("->") > -1 &&
-        this._blockchainNetwork === "local"
+        gameContractAddress.indexOf('->') > -1 &&
+        this._blockchainNetwork === 'local'
       ) {
         const { web3HttpProviderUrl } = config.default
         gameContractAddress = await fetch(
-          `${web3HttpProviderUrl}/${gameContractAddress.split("->")[0]}`
+          `${web3HttpProviderUrl}/${gameContractAddress.split('->')[0]}`
         )
           .then(result => result.json())
-          .then(result => result[gameContractAddress.split("->")[1]])
+          .then(result => result[gameContractAddress.split('->')[1]])
       }
 
       const dapp = new DApp({
@@ -282,7 +283,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
 
       // Это нужно что бы использовать unloadGame удаленно
       const DAppsPath = config.default.DAppsPath
-      this.gamesPath.set(slug, directoryPath.replace(DAppsPath, ""))
+      this.gamesPath.set(slug, directoryPath.replace(DAppsPath, ''))
 
       logger.debug(`Load Dapp ${directoryPath}, took ${Date.now() - now} ms`)
 

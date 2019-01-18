@@ -1,13 +1,18 @@
-import { TransportProviderFactory, ITransportProviderFactory, IMessagingProvider, TransportType } from "@daocasino/dc-messaging"
+import {
+  TransportProviderFactory,
+  ITransportProviderFactory,
+  IMessagingProvider,
+  TransportType
+} from '@daocasino/dc-messaging'
 import {
   PingServiceParams,
   IPingService
-} from "../intefaces/IPingService"
-import { PingService } from "../dapps/PingService"
-import { describe, it } from "mocha"
-import { expect } from "chai"
-import { Logger } from "@daocasino/dc-logging"
-import { EventEmitter } from "events"
+} from '../intefaces/IPingService'
+import { PingService } from '../dapps/PingService'
+import { describe, it } from 'mocha'
+import { expect } from 'chai'
+import { Logger } from '@daocasino/dc-logging'
+import { EventEmitter } from 'events'
 
 const randomString = () =>
   Math.random()
@@ -23,7 +28,7 @@ function sleep(ms) {
   })
 }
 
-const log = new Logger("PingService test")
+const log = new Logger('PingService test')
 const apiRoomAddress = [randomString(), randomString()]
 
 class RemoteClient extends EventEmitter {
@@ -33,7 +38,7 @@ class RemoteClient extends EventEmitter {
     const acceptPing = (event: string, data: PingServiceParams) => {
       log.debug({ event, data })
 
-      expect(data.apiRoomAddress).to.be.a("string")
+      expect(data.apiRoomAddress).to.be.a('string')
       /* tslint:disable-next-line  */
       expect(apiRoomAddress.includes(data.apiRoomAddress)).to.be.true
     }
@@ -59,7 +64,7 @@ class RemoteClient extends EventEmitter {
   }
 }
 
-const test = (transportProviderFactory: ITransportProviderFactory) => describe(transportProviderFactory.toString() , () => {
+const test = (transportProviderFactory: ITransportProviderFactory) => describe(transportProviderFactory.toString(), () => {
   const pingService: IPingService[] = []
   const pingProvider: IMessagingProvider[] = []
   const timeout = 400
@@ -99,7 +104,7 @@ const test = (transportProviderFactory: ITransportProviderFactory) => describe(t
     await sleep(2000)
   })
 
-  it("Stop PingService", async () => {
+  it('Stop PingService', async () => {
     for (const service of pingService) {
       await service.stop()
       /* tslint:disable-next-line */
@@ -119,14 +124,14 @@ const test = (transportProviderFactory: ITransportProviderFactory) => describe(t
 })
 
 describe('PingService test', () => {
-  if(Object.values(TransportType).includes(process.env.DC_TRANSPORT)) {
+  if (Object.values(TransportType).includes(process.env.DC_TRANSPORT)) {
     test(new TransportProviderFactory(TransportType[process.env.DC_TRANSPORT]))
   }
   else {
     Object.values(TransportType).forEach(key => {
-        if(typeof key === 'number') {
-            test(new TransportProviderFactory(key))
-        }
+      if (typeof key === 'number') {
+        test(new TransportProviderFactory(key))
+      }
     })
   }
 })

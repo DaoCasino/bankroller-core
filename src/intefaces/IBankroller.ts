@@ -1,4 +1,4 @@
-import { IMessagingProvider } from "@daocasino/dc-messaging"
+import { IMessagingProvider } from '@daocasino/dc-messaging'
 
 export interface GameInstanceInfo {
   playerAddress: string
@@ -9,9 +9,9 @@ export interface GameInstanceInfo {
 }
 
 export interface GameUpload {
-    name: string
-    files: { fileName: string; fileData: string, fileSize?: number }[],
-    reload?: boolean
+  name: string
+  files: { fileName: string; fileData: string, fileSize?: number }[],
+  reload?: boolean
 }
 
 // export interface BankrollerStart {

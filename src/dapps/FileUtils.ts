@@ -1,9 +1,9 @@
-import fs from "fs"
-import path from "path"
-import rimraf from "rimraf"
-import { IGameLogic } from "@daocasino/dc-core"
+import fs from 'fs'
+import path from 'path'
+import rimraf from 'rimraf'
+import { IGameLogic } from '@daocasino/dc-core'
 
-const MANIFEST_FILENAME = "dapp.manifest"
+const MANIFEST_FILENAME = 'dapp.manifest'
 
 export const checkFileExists = (
   fileName: string,
@@ -53,16 +53,16 @@ export const loadLogic = async (
   gameLogicFunction: () => IGameLogic
 }> => {
   const manifestPath: string = `${directoryPath}/${MANIFEST_FILENAME}`
-  const manifestFoundPath = checkFileExists(manifestPath, [".js", "", ".json"])
+  const manifestFoundPath = checkFileExists(manifestPath, ['.js', '', '.json'])
   if (!manifestFoundPath) {
     throw new Error(`Manifest file not found ${manifestPath}`)
   }
-  const manifest = manifestFoundPath.endsWith(".js")
+  const manifest = manifestFoundPath.endsWith('.js')
     ? require(manifestFoundPath)
     : JSON.parse(fs.readFileSync(manifestFoundPath).toString())
 
   if (
-    typeof manifest !== "object" ||
+    typeof manifest !== 'object' ||
     manifest.disable ||
     manifest.disabled ||
     manifest.enable === false
@@ -71,10 +71,10 @@ export const loadLogic = async (
   }
   const logicPath: string = path.join(directoryPath, manifest.logic)
   const logicFoundPath = checkFileExists(logicPath, [
-    ".js",
-    ".mjs",
-    "",
-    ".json"
+    '.js',
+    '.mjs',
+    '',
+    '.json'
   ])
   if (!logicFoundPath) {
     throw new Error(`Manifest file not found ${logicFoundPath}`)
