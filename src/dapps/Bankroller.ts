@@ -270,6 +270,7 @@ export default class Bankroller extends EventEmitter implements IBankroller {
         blockchainNetwork: this._blockchainNetwork,
         slug,
         rules,
+        userAddress: this._eth.getAccount().address,
         gameLogicFunction,
         gameContractAddress,
         roomProvider,
