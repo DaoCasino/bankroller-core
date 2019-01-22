@@ -26,7 +26,6 @@
     "@daocasino/dc-logging": "^0.2.6",
     "@daocasino/dc-messaging": "^0.2.6",
     "@daocasino/dc-statistics-client": "^0.2.6",
-    "@daocasino/dc-webapi": "^0.2.6",
     "chai": "^4.1.2",
     "commander": "^2.19.0",
     "mocha": "^3.2.0",
