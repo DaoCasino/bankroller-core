@@ -1,6 +1,6 @@
 {
   "name": "@daocasino/bankroller-core",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Core bankroller functionality",
   "main": "./lib/index",
   "scripts": {
@@ -20,19 +20,19 @@
   "author": "",
   "license": "GPL-3.0",
   "dependencies": {
-    "@daocasino/dc-configs": "^0.2.6",
-    "@daocasino/dc-core": "^0.2.6",
-    "@daocasino/dc-ethereum-utils": "^0.2.6",
-    "@daocasino/dc-logging": "^0.2.6",
-    "@daocasino/dc-messaging": "^0.2.6",
-    "@daocasino/dc-statistics-client": "^0.2.6",
+    "@daocasino/dc-configs": "^0.2.7",
+    "@daocasino/dc-core": "^0.2.7",
+    "@daocasino/dc-ethereum-utils": "^0.2.7",
+    "@daocasino/dc-logging": "^0.2.7",
+    "@daocasino/dc-messaging": "^0.2.7",
+    "@daocasino/dc-statistics-client": "^0.2.7",
     "chai": "^4.1.2",
     "commander": "^2.19.0",
     "mocha": "^3.2.0",
     "node-fetch": "^2.2.0",
     "nodemon": "^1.18.5",
-    "rimraf": "2.6.2",
-    "raven": "^2.6.4"
+    "raven": "^2.6.4",
+    "rimraf": "2.6.2"
   },
   "gitHead": "c83ce2ab1c77daa4fabf666260b0698d37dbf312"
 }
