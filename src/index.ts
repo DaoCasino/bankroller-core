@@ -1,42 +1,34 @@
-// import fs    from 'fs'
-// import path  from 'path'
+import Bankroller from './dapps/Bankroller'
+import { TransportProviderFactory, IpfsTransportProvider } from '@daocasino/dc-messaging'
+import { Logger } from '@daocasino/dc-logging'
+import { config, TransportType } from '@daocasino/dc-configs'
+export * from './intefaces'
 
-import Bankroller from "./dapps/Bankroller";
-import { IpfsTransportProvider } from "dc-messaging";
+const logger = new Logger('Bankroller:')
 
-console.log("");
-console.log("");
-console.log("-------------------------------");
-console.log("BANKROLLER NODE START          ");
-console.log("process.env.DC_NETWORK: ", process.env.DC_NETWORK);
-console.log("-------------------------------");
-console.log("");
-console.log("");
+const bankrollerStart = async () => {
+  logger.debug('')
+  logger.debug('')
+  logger.debug('-------------------------------')
+  logger.debug('BANKROLLER NODE START          ')
+  logger.debug('Bankroller transport:', TransportType[config.default.transport])
+  logger.debug('Bankroller network: ', config.default.blockchainNetwork)
 
-// const rollbar_path = path.resolve('../../tools/rollbar/index.js')
-// if (fs.existsSync(rollbar_path)) {
-//   require(rollbar_path)()
-// }
+  logger.debug('Bankroller private key', config.default.privateKey)
+  logger.debug('DApps path', config.default.DAppsPath)
+  logger.debug('-------------------------------')
+  logger.debug('')
+  logger.debug('')
 
-// process.on("unhandledRejection", (reason, promise) => {
-//   console.log("");
-//   console.log("");
-//   console.log("----------------------------------");
-//   console.log("  unhandledRejection - restart    ");
-//   console.log("----------------------------------");
-//   console.log("");
-//   console.log(reason, promise);
-//   process.exit();
-// });
-
-const startBankroller = async () => {
   try {
-    const bankrollerTransportProvider = await IpfsTransportProvider.create();
-    await new Bankroller().start(bankrollerTransportProvider);
+    const factory = new TransportProviderFactory(config.default.transport)
+    const bankrollerTransportProvider = await factory.create()
+    return await new Bankroller().start(bankrollerTransportProvider)
   } catch (error) {
-    console.log(error);
-    process.exit();
+    logger.debug(error)
+    process.exitCode = 1
+    process.kill(process.pid, 'SIGTERM')
   }
-};
+}
 
-startBankroller();
+export const start = bankrollerStart
